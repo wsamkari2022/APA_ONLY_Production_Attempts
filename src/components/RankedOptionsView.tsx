@@ -162,8 +162,10 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
 
   const handleConfirm = () => {
     if (selectedOption) {
-      // Store the current metrics for the next scenario
+      // Update metrics in localStorage
       localStorage.setItem('currentMetrics', JSON.stringify(previewMetrics));
+      
+      // Call onConfirm with the selected option to update parent component
       onConfirm(selectedOption);
     }
   };

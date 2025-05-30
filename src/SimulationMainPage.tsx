@@ -53,6 +53,17 @@ const SimulationMainPage: React.FC = () => {
         console.error('Error parsing matched stable values:', error);
       }
     }
+
+    // Load saved metrics if they exist
+    const savedMetrics = localStorage.getItem('currentMetrics');
+    if (savedMetrics) {
+      try {
+        const parsedMetrics = JSON.parse(savedMetrics);
+        setMetrics(parsedMetrics);
+      } catch (error) {
+        console.error('Error parsing saved metrics:', error);
+      }
+    }
   }, []);
 
   const currentScenario = scenarios[currentScenarioIndex];
@@ -114,17 +125,15 @@ const SimulationMainPage: React.FC = () => {
     setShowAlternativesModal(false);
   };
 
-  const handleConfirmDecision = () => {
-    if (!selectedDecision) return;
-    
+  const handleConfirmDecision = (decision: DecisionOptionType) => {
     const newMetrics = {
-      livesSaved: metrics.livesSaved + selectedDecision.impact.livesSaved,
-      humanCasualties: metrics.humanCasualties + selectedDecision.impact.humanCasualties,
-      firefightingResource: Math.max(0, metrics.firefightingResource + selectedDecision.impact.firefightingResource),
-      infrastructureCondition: Math.max(0, metrics.infrastructureCondition + selectedDecision.impact.infrastructureCondition),
-      biodiversityCondition: Math.max(0, metrics.biodiversityCondition + selectedDecision.impact.biodiversityCondition),
-      propertiesCondition: Math.max(0, metrics.propertiesCondition + selectedDecision.impact.propertiesCondition),
-      nuclearPowerStation: Math.max(0, metrics.nuclearPowerStation + selectedDecision.impact.nuclearPowerStation),
+      livesSaved: metrics.livesSaved + decision.impact.livesSaved,
+      humanCasualties: metrics.humanCasualties + decision.impact.humanCasualties,
+      firefightingResource: Math.max(0, metrics.firefightingResource + decision.impact.firefightingResource),
+      infrastructureCondition: Math.max(0, metrics.infrastructureCondition + decision.impact.infrastructureCondition),
+      biodiversityCondition: Math.max(0, metrics.biodiversityCondition + decision.impact.biodiversityCondition),
+      propertiesCondition: Math.max(0, metrics.propertiesCondition + decision.impact.propertiesCondition),
+      nuclearPowerStation: Math.max(0, metrics.nuclearPowerStation + decision.impact.nuclearPowerStation),
     };
 
     const changing = Object.keys(metrics).filter(
@@ -148,6 +157,9 @@ const SimulationMainPage: React.FC = () => {
         setAddedAlternatives([]);
       }, 1500);
     }
+
+    // Save current metrics to localStorage
+    localStorage.setItem('currentMetrics', JSON.stringify(newMetrics));
   };
 
   const handleToggleOption = useCallback((optionId: string) => {
@@ -243,26 +255,12 @@ const SimulationMainPage: React.FC = () => {
 
   if (showAdaptivePreference) {
     return (
-      <div className="h-screen bg-gray-50 p-4 flex flex-col">
-        <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col">
-          <div className="flex justify-between items-center mb-3">
-            <h1 className="text-2xl font-bold text-gray-800">
-              Wildfire Crisis Simulation
-            </h1>
-            <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-              Scenario {currentScenario.id} of {scenarios.length}
-            </div>
-          </div>
-          
-          <MetricsDisplay metrics={metrics} animatingMetrics={animatingMetrics} />
-          
-          <AdaptivePreferenceView 
-            onBack={() => setShowAdaptivePreference(false)} 
-            selectedOption={selectedDecision}
-            mainScenario={currentScenario}
-          />
-        </div>
-      </div>
+      <AdaptivePreferenceView 
+        onBack={() => setShowAdaptivePreference(false)}
+        selectedOption={selectedDecision}
+        mainScenario={currentScenario}
+        onConfirm={handleConfirmDecision}
+      />
     );
   }
 
@@ -353,7 +351,7 @@ const SimulationMainPage: React.FC = () => {
               </div>
               
               <button
-                onClick={handleConfirmDecision}
+                onClick={() => handleConfirmDecision(selectedDecision)}
                 className="mt-auto bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center transition-colors duration-200"
               >
                 <Check size={16} className="mr-1" />
