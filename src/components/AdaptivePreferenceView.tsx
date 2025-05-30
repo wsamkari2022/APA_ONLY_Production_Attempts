@@ -110,7 +110,8 @@ const moralValues = [
 
 const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({ 
   onBack, 
-  selectedOption
+  selectedOption,
+  mainScenario
 }) => {
   const [selectedValue, setSelectedValue] = useState<string>("");
   const [valueOrder, setValueOrder] = useState([
@@ -122,6 +123,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
   ]);
   const [preferenceType, setPreferenceType] = useState<'metrics' | 'values' | null>(null);
   const [rankingItems, setRankingItems] = useState<Array<{ id: string; label: string }>>(simulationMetrics);
+  const [showRankedOptions, setShowRankedOptions] = useState(false);
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -146,8 +148,30 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
       localStorage.setItem('moralValuesRanking', JSON.stringify(rankingItems));
     }
 
-    onBack();
+    setShowRankedOptions(true);
   };
+
+  if (showRankedOptions) {
+    return (
+      <RankedOptionsView
+        scenario={mainScenario}
+        onBack={() => setShowRankedOptions(false)}
+        onConfirm={(option) => {
+          // Handle the confirmation here
+          onBack();
+        }}
+        currentMetrics={{
+          livesSaved: 0,
+          humanCasualties: 0,
+          firefightingResource: 100,
+          infrastructureCondition: 100,
+          biodiversityCondition: 100,
+          propertiesCondition: 100,
+          nuclearPowerStation: 100,
+        }}
+      />
+    );
+  }
 
   const { comparisonTableColumnContent } = selectedOption;
 
