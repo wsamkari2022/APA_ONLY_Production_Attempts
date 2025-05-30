@@ -22,13 +22,13 @@ interface RankedOptionsViewProps {
 }
 
 const metricButtons = [
-  { id: 'livesSaved', label: 'Lives Saved', icon: Users, color: 'text-green-600' },
-  { id: 'casualties', label: 'Casualties', icon: Skull, color: 'text-red-600' },
-  { id: 'resources', label: 'Resources', icon: Droplets, color: 'text-blue-600' },
-  { id: 'infrastructure', label: 'Infrastructure', icon: Building, color: 'text-gray-600' },
-  { id: 'biodiversity', label: 'Biodiversity', icon: Tree, color: 'text-green-600' },
-  { id: 'properties', label: 'Properties', icon: Building, color: 'text-blue-600' },
-  { id: 'nuclear', label: 'Nuclear', icon: Factory, color: 'text-purple-600' }
+  { id: 'livesSaved', label: 'Lives Saved', icon: Users, color: 'text-green-600', higherIsBetter: true },
+  { id: 'casualties', label: 'Casualties', icon: Skull, color: 'text-red-600', higherIsBetter: false },
+  { id: 'resources', label: 'Resources', icon: Droplets, color: 'text-blue-600', higherIsBetter: false },
+  { id: 'infrastructure', label: 'Infrastructure', icon: Building, color: 'text-gray-600', higherIsBetter: false },
+  { id: 'biodiversity', label: 'Biodiversity', icon: Tree, color: 'text-green-600', higherIsBetter: false },
+  { id: 'properties', label: 'Properties', icon: Building, color: 'text-blue-600', higherIsBetter: false },
+  { id: 'nuclear', label: 'Nuclear', icon: Factory, color: 'text-purple-600', higherIsBetter: false }
 ];
 
 const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
@@ -58,10 +58,47 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
 
     const sortedOptions = [...scenario.options].sort((a, b) => {
       if (preferenceType === 'true') {
-        const aScore = calculateMetricsScore(a, rankings);
-        const bScore = calculateMetricsScore(b, rankings);
-        return bScore - aScore;
+        // For metrics-based sorting
+        const metricConfig = metricButtons.find(m => m.id === rankings[0]?.id);
+        if (!metricConfig) return 0;
+
+        let aValue = 0;
+        let bValue = 0;
+
+        switch (rankings[0]?.id) {
+          case 'livesSaved':
+            aValue = a.impact.livesSaved;
+            bValue = b.impact.livesSaved;
+            break;
+          case 'casualties':
+            aValue = a.impact.humanCasualties;
+            bValue = b.impact.humanCasualties;
+            break;
+          case 'resources':
+            aValue = Math.abs(a.impact.firefightingResource);
+            bValue = Math.abs(b.impact.firefightingResource);
+            break;
+          case 'infrastructure':
+            aValue = Math.abs(a.impact.infrastructureCondition);
+            bValue = Math.abs(b.impact.infrastructureCondition);
+            break;
+          case 'biodiversity':
+            aValue = Math.abs(a.impact.biodiversityCondition);
+            bValue = Math.abs(b.impact.biodiversityCondition);
+            break;
+          case 'properties':
+            aValue = Math.abs(a.impact.propertiesCondition);
+            bValue = Math.abs(b.impact.propertiesCondition);
+            break;
+          case 'nuclear':
+            aValue = Math.abs(a.impact.nuclearPowerStation);
+            bValue = Math.abs(b.impact.nuclearPowerStation);
+            break;
+        }
+
+        return metricConfig.higherIsBetter ? bValue - aValue : aValue - bValue;
       } else {
+        // For values-based sorting
         const aScore = calculateValuesScore(a, rankings);
         const bScore = calculateValuesScore(b, rankings);
         return bScore - aScore;
@@ -70,40 +107,6 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
 
     setRankedOptions(sortedOptions);
   }, [scenario]);
-
-  const calculateMetricsScore = (option: DecisionOption, rankings: any[]) => {
-    let score = 0;
-    const weights = rankings.map((_, index) => rankings.length - index);
-    
-    rankings.forEach((metric, index) => {
-      const weight = weights[index];
-      
-      switch (metric.id) {
-        case 'livesSaved':
-          score += option.impact.livesSaved * weight;
-          break;
-        case 'casualties':
-          score += (2000 - option.impact.humanCasualties) * weight;
-          break;
-        case 'resources':
-          score += (100 + option.impact.firefightingResource) * weight;
-          break;
-        case 'infrastructure':
-          score += (100 + option.impact.infrastructureCondition) * weight;
-          break;
-        case 'biodiversity':
-          score += (100 + option.impact.biodiversityCondition) * weight;
-          break;
-        case 'properties':
-          score += (100 + option.impact.propertiesCondition) * weight;
-          break;
-        case 'nuclear':
-          score += (100 + option.impact.nuclearPowerStation) * weight;
-          break;
-      }
-    });
-    return score;
-  };
 
   const calculateValuesScore = (option: DecisionOption, rankings: any[]) => {
     let score = 0;
