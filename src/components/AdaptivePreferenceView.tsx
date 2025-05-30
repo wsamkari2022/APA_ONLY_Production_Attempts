@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, MoveVertical, AlertCircle, Scale, Zap, Leaf, Shield, Ban, Calculator, Brain, ArrowRight } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DecisionOption, MainScenario } from '../types';
+import RankedOptionsView from './RankedOptionsView';
 
 interface ComparisonTableProps {
   firstColumn: {
