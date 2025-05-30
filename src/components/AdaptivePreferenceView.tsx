@@ -176,7 +176,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
           Preference Alignment Focus
         </h3>
         <p className="text-gray-600 mb-6">
-          After comparing both scenarios, what matters more to you when making decisions?
+          Choose whether Simulation Metrics or Moral Values matter more in your decision-making process. Your selection will influence the options presented in current and future scenarios. Don't worry - you can always adjust your preference later if your priorities change.
         </p>
         
         <div className="grid grid-cols-2 gap-4 mb-6">
