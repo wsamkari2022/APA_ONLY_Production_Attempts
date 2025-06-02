@@ -221,17 +221,6 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, animatingMetri
           </div>
         </div>
       </div>
-
-      {/* Progress Bar */}
-      <div className="mt-4 pt-4 border-t border-gray-200">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm font-medium text-gray-700">Scenario Progress</span>
-          <span className="text-sm text-gray-600">1/2 Completed</span>
-        </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div className="h-full bg-blue-600 rounded-full" style={{ width: '50%' }}></div>
-        </div>
-      </div>
     </div>
   );
 };
