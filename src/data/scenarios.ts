@@ -478,5 +478,445 @@ export const scenarios: Scenario[] = [
         }
       }
     ]
+  },
+  
+  {
+    id: 2,
+    title: 'Nuclear Facility Under Threat',
+    description:
+      'A wildfire is spreading rapidly toward a nuclear power plant located near a residential area. If the facility is breached, the resulting radioactive fallout could endanger hundreds of thousands. You must prioritize decisions that balance local evacuation, plant protection, and firefighter safety.',
+    options: [
+      {
+        id: 'nuclear-safety-priority',
+        title: 'Shield the Reactor at All Costs ☢️',
+        label: 'safety',
+        description:
+          'Deploy all firefighting forces to fortify the nuclear facility perimeter. This prevents catastrophic radiation release but leaves most of the population unprotected, leading to severe civilian casualties.',
+        impact: {
+          livesSaved: 400,
+          humanCasualties: 1600,
+          firefightingResource: -50,
+          infrastructureCondition: -30,
+          biodiversityCondition: -35,
+          propertiesCondition: -25,
+          nuclearPowerStation: -5
+        },
+        riskInfo: [
+          'Reactor secured and meltdown prevented',
+          '1,600 residents perish due to lack of evacuation resources',
+          'Firefighters suffer minimal casualties',
+          'Long-term regional fallout avoided',
+          'Severe public backlash and ethical scrutiny'
+        ],
+        comparisonTableColumnContent: {
+          firstColumnTitle: 'Nuclear Facility Under Threat',
+          firstColumnSelectedPreference: 'Shield the Reactor at All Costs',
+          firstValue: 'Safety',
+          firstColumnAffected: 2000,
+          firstColumnRisk: '1600 residents dead, minor firefighter casualties',
+          firstColumnuserChoice: 'Accepted',
+          secondColumnTitle: 'Critical Infrastructure Dilemma',
+          secondColumnSelectedPreference: 'Protect the chemical weapons base, sacrificing residential evacuation',
+          secondValue: 'Safety',
+          secondColumnaffected: 2000,
+          secondColumnRisk: '1600 residents lost, strategic military site preserved',
+          secondColumnuserChoice: 'Rejected'
+        },
+        expertOpinions: {
+          safety: {
+            summary: 'Eliminates the highest-risk global hazard, but sacrifices local population safety.',
+            recommendation: 'Accept',
+            comparison: 'Best long-term safety outcome, worst immediate human cost.',
+            confidence: 'High confidence based on reactor shielding precedent (≈ 85%–100%)'
+          },
+          efficiency: {
+            summary: 'Heavy resource usage on a single target with poor civilian ROI.',
+            recommendation: 'Reject',
+            comparison: 'Most resource-intensive with lowest lives saved per unit.',
+            confidence: 'Moderate confidence from facility defense efficiency models (≈ 65%–80%)'
+          },
+          sustainability: {
+            summary: 'Protects reactor but ignores biodiversity corridors and burns vast land.',
+            recommendation: 'Reject',
+            comparison: 'Third worst outcome in biodiversity loss.',
+            confidence: 'High confidence from environmental spread simulations (≈ 85%–100%)'
+          },
+          fairness: {
+            summary: 'Neglects vulnerable residential areas in favor of infrastructure.',
+            recommendation: 'Reject',
+            comparison: 'Fails basic equity standards.',
+            confidence: 'High confidence from response ethics research (≈ 85%–100%)'
+          },
+          nonmaleficence: {
+            summary: 'Avoids global harm but causes extreme localized suffering.',
+            recommendation: 'Reject',
+            comparison: 'Most ethically controversial trade-off.',
+            confidence: 'Moderate confidence from trade-off harm matrix (≈ 65%–80%)'
+          }
+        },
+        radarData: {
+          fireContainment: 80,
+          firefighterRisk: 15,
+          resourceUse: 85,
+          infrastructureDamage: 30,
+          biodiversityImpact: 60,
+          ethicalFairness: 25,
+          populationSafety: 20
+        },
+        cvrQuestion: {
+          descriptionTile: '🔥 Critical Infrastructure Dilemma',
+          description:
+            'A fire approaches a military base holding chemical weapons. You can stop the base from exploding, but this means not evacuating the nearby residential zone, leading to over 1,600 civilian deaths.',
+          question:
+            'Would you prioritize shielding the hazardous military base and accept the loss of most civilians to avoid long-term national catastrophe?',
+          value: 'Safety'
+        }
+      },
+      {
+        id: 'evacuation-priority',
+        title: 'Evacuate Every Civilian 🏃',
+        label: 'fairness',
+        description:
+          'Redirect all resources to evacuate residents as quickly as possible. While this saves the majority of the population, the nuclear plant is left vulnerable, increasing the risk of partial radioactive leakage and infrastructure collapse.',
+        impact: {
+          livesSaved: 1800,
+          humanCasualties: 200,
+          firefightingResource: -40,
+          infrastructureCondition: -55,
+          biodiversityCondition: -60,
+          propertiesCondition: -50,
+          nuclearPowerStation: -20
+        },
+        riskInfo: [
+          '1,800 residents saved via urgent coordinated effort',
+          '200 total casualties including vulnerable individuals and 3 firefighters in distant zones',
+          'Radiation leaks contained to local zones, potential long-term effects',
+          'Minimal firefighter risk, public morale high',
+          'Severe damage to the nuclear site may require years of cleanup'
+        ],
+        comparisonTableColumnContent: {
+          firstColumnTitle: 'Nuclear Facility Under Threat',
+          firstColumnSelectedPreference: 'Evacuate Every Civilian',
+          firstValue: 'Fairness',
+          firstColumnAffected: 2000,
+          firstColumnRisk: '200 residents and responders lost, nuclear damage ongoing',
+          firstColumnuserChoice: 'Accepted',
+          secondColumnTitle: ' Evacuate or Shield?',
+          secondColumnSelectedPreference: 'Evacuate population, let laboratory site burn',
+          secondValue: 'Fairness',
+          secondColumnaffected: 2000,
+          secondColumnRisk: '200 residents lost, environmental damage extended',
+          secondColumnuserChoice: 'Rejected'
+        },
+        expertOpinions: {
+          safety: {
+            summary: 'Protects population but elevates nuclear contamination risk.',
+            recommendation: 'Reject',
+            comparison: 'Lower immediate death toll, higher infrastructure hazard.',
+            confidence: 'High confidence from emergency evac modeling (≈ 85%–100%)'
+          },
+          efficiency: {
+            summary: 'Saves maximum lives per resource unit.',
+            recommendation: 'Accept',
+            comparison: 'Best cost-benefit in life preservation.',
+            confidence: 'High confidence from rescue efficiency simulations (≈ 85%–100%)'
+          },
+          sustainability: {
+            summary: 'Long-term radiation containment becomes costly.',
+            recommendation: 'Reject',
+            comparison: 'Worsens environmental recovery timelines.',
+            confidence: 'Moderate confidence from environmental toxicity projection (≈ 65%–80%)'
+          },
+          fairness: {
+            summary: 'Favors population-wide equity regardless of cost.',
+            recommendation: 'Accept',
+            comparison: 'Most equitable outcome.',
+            confidence: 'High confidence from ethical distribution models (≈ 85%–100%)'
+          },
+          nonmaleficence: {
+            summary: 'Minimizes harm to people, defers ecological damage.',
+            recommendation: 'Accept',
+            comparison: 'Second most morally favorable option.',
+            confidence: 'Moderate confidence from risk-aversion studies (≈ 65%–80%)'
+          }
+        },
+        radarData: {
+          fireContainment: 60,
+          firefighterRisk: 20,
+          resourceUse: 65,
+          infrastructureDamage: 70,
+          biodiversityImpact: 75,
+          ethicalFairness: 95,
+          populationSafety: 85
+        },
+        cvrQuestion: {
+          descriptionTile: '🏚️ Evacuate or Shield?',
+          description:
+            'A laboratory site holding viral pathogens is threatened by a wildfire. You can evacuate the surrounding community in time, but the lab will be consumed, releasing environmental hazards.',
+          question:
+            'Would you prioritize evacuating all civilians and let the laboratory facility burn, risking pathogen exposure?',
+          value: 'Fairness'
+        }
+      },
+      {
+        id: 'divided-response-strategy',
+        title: 'Split Response Strategy 🔄',
+        label: 'efficiency',
+        description:
+          'Divide firefighting units between civilian evacuation and securing the nuclear facility. This approach aims to minimize both civilian and infrastructure loss, but spreading resources may reduce overall effectiveness and increase complexity.',
+        impact: {
+          livesSaved: 1500,
+          humanCasualties: 500,
+          firefightingResource: -45,
+          infrastructureCondition: -40,
+          biodiversityCondition: -45,
+          propertiesCondition: -35,
+          nuclearPowerStation: -10
+        },
+        riskInfo: [
+          '1500 residents successfully evacuated',
+          '500 total casualties including 10 firefighters due to spread-thin response',
+          'Radiation contained but minor breach occurred',
+          'Moderate infrastructure damage near facility',
+          'Balanced short-term and long-term impact, but resource planning remains controversial'
+        ],
+        comparisonTableColumnContent: {
+          firstColumnTitle: 'Nuclear Facility Under Threat',
+          firstColumnSelectedPreference: 'Split Response Strategy',
+          firstValue: 'Efficiency',
+          firstColumnAffected: 2000,
+          firstColumnRisk: '500 deaths, minor radiation breach, reduced firefighter readiness',
+          firstColumnuserChoice: 'Accepted',
+          secondColumnTitle: ' Hurricane Shelter & Reactor Fire',
+          secondColumnSelectedPreference: 'Split resources between flooding town and reactor fire',
+          secondValue: 'Efficiency',
+          secondColumnaffected: 2000,
+          secondColumnRisk: '500 lives lost, mild nuclear damage',
+          secondColumnuserChoice: 'Rejected'
+        },
+        expertOpinions: {
+          safety: {
+            summary: 'Balanced protection plan, mitigates both civilian and infrastructure risk.',
+            recommendation: 'Accept',
+            comparison: 'Second-best for reducing total harm.',
+            confidence: 'High confidence from hybrid emergency strategies (≈ 85%–100%)'
+          },
+          efficiency: {
+            summary: 'High cost-effectiveness in saving lives and infrastructure.',
+            recommendation: 'Accept',
+            comparison: 'Strongest compromise across multiple domains.',
+            confidence: 'High confidence from multi-variable allocation models (≈ 85%–100%)'
+          },
+          sustainability: {
+            summary: 'Reduces environmental damage moderately by preventing nuclear spread.',
+            recommendation: 'Accept',
+            comparison: 'Better than reactor sacrifice, worse than full eco-prioritization.',
+            confidence: 'Moderate confidence based on terrain control data (≈ 65%–80%)'
+          },
+          fairness: {
+            summary: 'Attempts equal distribution of aid, but sacrifices depth for breadth.',
+            recommendation: 'Accept',
+            comparison: 'Ethically viable under emergency triage frameworks.',
+            confidence: 'Moderate confidence from equity studies (≈ 65%–80%)'
+          },
+          nonmaleficence: {
+            summary: 'Minimizes overall harm but includes risk of partial failure in both sectors.',
+            recommendation: 'Accept',
+            comparison: 'Moral middle ground, with risks acknowledged.',
+            confidence: 'Moderate confidence from harm minimization research (≈ 65%–80%)'
+          }
+        },
+        radarData: {
+          fireContainment: 70,
+          firefighterRisk: 30,
+          resourceUse: 75,
+          infrastructureDamage: 45,
+          biodiversityImpact: 55,
+          ethicalFairness: 70,
+          populationSafety: 75
+        },
+        cvrQuestion: {
+          descriptionTile: '🌀 Hurricane Shelter & Reactor Fire',
+          description:
+            'A reactor fire erupts as a hurricane approaches. You must split limited emergency responders between sheltering citizens and containing the reactor.',
+          question:
+            'Would you divide your emergency teams to partially assist both missions, knowing each will suffer slight consequences but no full collapse?',
+          value: 'Efficiency'
+        }
+      },
+ {
+        id: 'ecosystem-defense-priority',
+        title: 'Protect Ecosystems First 🌿',
+        label: 'sustainability',
+        description:
+          'Redirect major resources toward halting wildfire spread through key biodiversity corridors. This protects sensitive ecosystems and prevents long-term environmental collapse but limits evacuation and increases casualties among both civilians and responders.',
+        impact: {
+          livesSaved: 800,
+          humanCasualties: 1200,
+          firefightingResource: -40,
+          infrastructureCondition: -50,
+          biodiversityCondition: -10,
+          propertiesCondition: -45,
+          nuclearPowerStation: -20
+        },
+        riskInfo: [
+          '800 civilians rescued before route closures',
+          '1,200 casualties including 80 firefighters overwhelmed by terrain fires',
+          'Critical wildlife corridors preserved',
+          'Moderate nuclear facility damage due to diverted response',
+          'Significant long-term gains in ecological resilience'
+        ],
+        comparisonTableColumnContent: {
+          firstColumnTitle: 'Nuclear Facility Under Threat',
+          firstColumnSelectedPreference: 'Protect Ecosystems First',
+          firstValue: 'Sustainability',
+          firstColumnAffected: 2000,
+          firstColumnRisk: '1,200 deaths including firefighters, minimal biodiversity loss',
+          firstColumnuserChoice: 'Accepted',
+          secondColumnTitle: ' Preserve Rainforest Routes',
+          secondColumnSelectedPreference: 'Protect old-growth corridors while cities burn',
+          secondValue: 'Sustainability',
+          secondColumnaffected: 2000,
+          secondColumnRisk: '1,200 casualties, rainforest and endemic species saved',
+          secondColumnuserChoice: 'Rejected'
+        },
+        expertOpinions: {
+          safety: {
+            summary: 'Neglects large-scale human safety in favor of long-term gains.',
+            recommendation: 'Reject',
+            comparison: 'Highest loss of life trade-off.',
+            confidence: 'High confidence based on emergency triage outcome (≈ 85%–100%)'
+          },
+          efficiency: {
+            summary: 'Moderate resource allocation efficiency with heavy trade-offs.',
+            recommendation: 'Reject',
+            comparison: 'Weakest efficiency-to-impact ratio.',
+            confidence: 'Moderate confidence from logistic stress models (≈ 65%–75%)'
+          },
+          sustainability: {
+            summary: 'Preserves high-value ecosystems and prevents irreversible damage.',
+            recommendation: 'Accept',
+            comparison: 'Best option for biodiversity and ecological continuity.',
+            confidence: 'High confidence from conservation risk metrics (≈ 85%–95%)'
+          },
+          fairness: {
+            summary: 'Prioritizes environment over people, ethically contested.',
+            recommendation: 'Reject',
+            comparison: 'Uneven distribution of aid favors future generations.',
+            confidence: 'Moderate confidence from ethical impact modeling (≈ 65%–75%)'
+          },
+          nonmaleficence: {
+            summary: 'High immediate harm for low present benefit, deferred long-term gain.',
+            recommendation: 'Reject',
+            comparison: 'Violates do-no-harm principle under human loss.',
+            confidence: 'High confidence from applied bioethics studies (≈ 85%–95%)'
+          }
+        },
+        radarData: {
+          fireContainment: 60,
+          firefighterRisk: 70,
+          resourceUse: 70,
+          infrastructureDamage: 55,
+          biodiversityImpact: 10,
+          ethicalFairness: 45,
+          populationSafety: 35
+        },
+        cvrQuestion: {
+          descriptionTile: '🌲 Preserve Rainforest Routes',
+          description:
+            'A remote jungle ecosystem faces destruction from fire. Redirecting resources here will save thousands of endemic species but leaves communities at risk.',
+          question:
+            'Would you focus your entire response on preventing ecosystem collapse, accepting that many people may not be saved in time?',
+          value: 'Sustainability'
+        }
+      },
+   {
+        id: 'nonmaleficence-response',
+        title: 'Minimize Harm, Avoid Irreversible Fallout ⚖️',
+        label: 'nonmaleficence',
+        description:
+          'Choose a restrained approach that avoids high-risk maneuvers and minimizes irreversible harm. Firefighters will only secure defensible zones and allow natural containment. This reduces unnecessary loss of life among responders but increases the risk of radiation release and major regional damage.',
+        impact: {
+          livesSaved: 1000,
+          humanCasualties: 1000,
+          firefightingResource: -25,
+          infrastructureCondition: -65,
+          biodiversityCondition: -55,
+          propertiesCondition: -60,
+          nuclearPowerStation: -30
+        },
+        riskInfo: [
+          '1,000 residents evacuated with minimal firefighter exposure',
+          '1,000 total deaths including residents left in inaccessible zones',
+          'Nuclear breach causes long-term contamination in surrounding region',
+          'Infrastructure collapse in unprotected urban areas',
+          'Low immediate harm to responders but high deferred civilian impact'
+        ],
+        comparisonTableColumnContent: {
+          firstColumnTitle: 'Nuclear Facility Under Threat',
+          firstColumnSelectedPreference: 'Minimize Harm, Avoid Irreversible Fallout',
+          firstValue: 'Nonmaleficence',
+          firstColumnAffected: 2000,
+          firstColumnRisk: '1,000 deaths, reactor partially breached, firefighter safety preserved',
+          firstColumnuserChoice: 'Accepted',
+          secondColumnTitle: ' Minimalist Emergency Doctrine',
+          secondColumnSelectedPreference: 'Avoid dangerous missions, focus on low-risk containment',
+          secondValue: 'Nonmaleficence',
+          secondColumnaffected: 2000,
+          secondColumnRisk: '1,000 deaths, radioactive spread likely, rescuers unharmed',
+          secondColumnuserChoice: 'Rejected'
+        },
+        expertOpinions: {
+          safety: {
+            summary: 'Fails to secure high-risk zones, putting population at serious risk.',
+            recommendation: 'Reject',
+            comparison: 'Sacrifices lives for responder safety.',
+            confidence: 'High confidence from crisis escalation modeling (≈ 85%–95%)'
+          },
+          efficiency: {
+            summary: 'Efficient in preserving firefighter capacity but ineffective overall.',
+            recommendation: 'Reject',
+            comparison: 'Poor cost-benefit outcome for population protection.',
+            confidence: 'Moderate confidence from operational strategy benchmarks (≈ 65%–75%)'
+          },
+          sustainability: {
+            summary: 'Long-term fallout undermines environmental recovery.',
+            recommendation: 'Reject',
+            comparison: 'Poor ecological outcome despite low active harm.',
+            confidence: 'High confidence from disaster aftermath projections (≈ 85%–95%)'
+          },
+          fairness: {
+            summary: 'Favors responder safety over civilian lives, morally imbalanced.',
+            recommendation: 'Reject',
+            comparison: 'Unjust distribution of protection.',
+            confidence: 'High confidence from harm distribution models (≈ 85%–95%)'
+          },
+          nonmaleficence: {
+            summary: 'Reduces direct harm to agents but leads to higher indirect harm.',
+            recommendation: 'Accept',
+            comparison: 'Best at reducing immediate interventions causing loss of life.',
+            confidence: 'Moderate confidence from ethical harm-mitigation models (≈ 65%–75%)'
+          }
+        },
+        radarData: {
+          fireContainment: 55,
+          firefighterRisk: 10,
+          resourceUse: 50,
+          infrastructureDamage: 70,
+          biodiversityImpact: 65,
+          ethicalFairness: 40,
+          populationSafety: 50
+        },
+        cvrQuestion: {
+          descriptionTile: '🧪 Minimalist Emergency Doctrine',
+          description:
+            'In a wildfire scenario with unstable terrain, responders are instructed to avoid all risk-prone areas and only defend retreat zones. This prevents responder casualties but allows major fire spread.',
+          question:
+            'Would you adopt a fully defensive strategy that avoids all danger to responders, even if it results in widespread destruction and community loss?',
+          value: 'Nonmaleficence'
+        }
+      }
+  
+    ]
   }
 ];
