@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Zap, Leaf, Scale, Ban, ThumbsUp, ThumbsDown, MessageCircle } from 'lucide-react';
+import { Shield, Zap, Leaf, Scale, Ban, ThumbsUp, ThumbsDown, MessageCircle, Minus } from 'lucide-react';
 import { DecisionOption } from '../types';
 
 interface ExpertAnalysisProps {
@@ -7,10 +7,30 @@ interface ExpertAnalysisProps {
 }
 
 const ExpertAnalysis: React.FC<ExpertAnalysisProps> = ({ decision }) => {
-  const getRecommendationIcon = (recommendation: "Accept" | "Reject") => {
-    return recommendation === "Accept" ? 
-      <ThumbsUp className="text-green-500" size={14} /> : 
-      <ThumbsDown className="text-red-500" size={14} />;
+  const getRecommendationIcon = (recommendation: "Accept" | "Reject" | "Neutral") => {
+    switch (recommendation) {
+      case "Accept":
+        return <ThumbsUp className="text-green-500" size={14} />;
+      case "Reject":
+        return <ThumbsDown className="text-red-500" size={14} />;
+      case "Neutral":
+        return <Minus className="text-gray-500" size={14} />;
+      default:
+        return null;
+    }
+  };
+
+  const getRecommendationStyle = (recommendation: "Accept" | "Reject" | "Neutral") => {
+    switch (recommendation) {
+      case "Accept":
+        return "bg-green-100 text-green-800";
+      case "Reject":
+        return "bg-red-100 text-red-800";
+      case "Neutral":
+        return "bg-gray-100 text-gray-800";
+      default:
+        return "";
+    }
   };
 
   const getExpertIcon = (expertType: string) => {
@@ -44,11 +64,7 @@ const ExpertAnalysis: React.FC<ExpertAnalysisProps> = ({ decision }) => {
               <h5 className="text-sm font-semibold text-gray-700">{getExpertTitle(expertType)}</h5>
             </div>
             <div className="flex items-center gap-2">
-              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                opinion.recommendation === "Accept" 
-                  ? "bg-green-100 text-green-800" 
-                  : "bg-red-100 text-red-800"
-              }`}>
+              <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${getRecommendationStyle(opinion.recommendation)}`}>
                 {opinion.recommendation}
               </span>
               {getRecommendationIcon(opinion.recommendation)}
