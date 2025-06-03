@@ -24,8 +24,18 @@ const defaultMetrics: SimulationMetrics = {
   nuclearPowerStation: 100,
 };
 
+// Metric configuration for sorting options
+const metricButtons = [
+  { id: 'livesSaved', label: 'Lives Saved', higherIsBetter: true },
+  { id: 'casualties', label: 'Casualties', higherIsBetter: false },
+  { id: 'resources', label: 'Resources', higherIsBetter: false },
+  { id: 'infrastructure', label: 'Infrastructure', higherIsBetter: false },
+  { id: 'biodiversity', label: 'Biodiversity', higherIsBetter: false },
+  { id: 'properties', label: 'Properties', higherIsBetter: false },
+  { id: 'nuclear', label: 'Nuclear', higherIsBetter: false }
+];
+
 const SimulationMainPage: React.FC = () => {
-  // Core simulation metrics
   const [metrics, setMetrics] = useState<SimulationMetrics>(defaultMetrics);
   const [topStableValues, setTopStableValues] = useState<string[]>([]);
   const [animatingMetrics, setAnimatingMetrics] = useState<string[]>([]);
@@ -43,21 +53,23 @@ const SimulationMainPage: React.FC = () => {
 
   useEffect(() => {
     const preferenceType = localStorage.getItem('preferenceTypeFlag');
-    const metricsRanking = JSON.parse(localStorage.getItem('simulationMetricsRanking') || '[]');
-    const valuesRanking = JSON.parse(localStorage.getItem('moralValuesRanking') || '[]');
-
-    if (currentScenarioIndex > 0) {
-      if (preferenceType === 'true') {
+    
+    if (currentScenarioIndex > 0 && preferenceType) {
+      if (preferenceType === '1') {
+        const metricsRanking = JSON.parse(localStorage.getItem('simulationMetricsRanking') || '[]');
         const topMetric = metricsRanking[0]?.label;
         setPriorityMessage(
           `Because you selected '${topMetric}' as your highest priority in the previous simulation, the top two options are ranked accordingly.`
         );
-      } else {
+      } else if (preferenceType === '2') {
+        const valuesRanking = JSON.parse(localStorage.getItem('moralValuesRanking') || '[]');
         const value1 = valuesRanking[0]?.label;
         const value2 = valuesRanking[1]?.label;
         setPriorityMessage(
           `Because you selected '${value1}' and '${value2}' as your highest moral priorities in the previous simulation, the top two options are ranked accordingly.`
         );
+      } else {
+        setPriorityMessage(null);
       }
     } else {
       setPriorityMessage(null);
@@ -65,7 +77,6 @@ const SimulationMainPage: React.FC = () => {
   }, [currentScenarioIndex]);
 
   useEffect(() => {
-    // Clear any previously stored metrics
     localStorage.removeItem('currentMetrics');
     
     const savedValues = localStorage.getItem('finalValues');
@@ -75,7 +86,6 @@ const SimulationMainPage: React.FC = () => {
         const stableValues = values
           .slice(0, 2)
           .map((v: { name: string }) => v.name.toLowerCase());
-        
         setTopStableValues(stableValues);
       } catch (error) {
         console.error('Error parsing matched stable values:', error);
@@ -88,8 +98,8 @@ const SimulationMainPage: React.FC = () => {
   const getInitialOptions = useCallback(() => {
     if (!currentScenario) return [];
     
-    // For Scenario 1, use original logic
-    if (currentScenarioIndex === 0) {
+    // For Scenario 1 or when preferenceType is '0'/null/undefined
+    if (currentScenarioIndex === 0 || !localStorage.getItem('preferenceTypeFlag')) {
       if (!topStableValues.length) return currentScenario.options.slice(0, 2);
       const matchingOptions = currentScenario.options.filter(option => 
         topStableValues.includes(option.label.toLowerCase())
@@ -97,16 +107,15 @@ const SimulationMainPage: React.FC = () => {
       return matchingOptions.length >= 2 ? matchingOptions.slice(0, 2) : currentScenario.options.slice(0, 2);
     }
 
-    // For Scenarios 2 & 3
     const preferenceType = localStorage.getItem('preferenceTypeFlag');
-    const metricsRanking = JSON.parse(localStorage.getItem('simulationMetricsRanking') || '[]');
-    const valuesRanking = JSON.parse(localStorage.getItem('moralValuesRanking') || '[]');
 
-    if (preferenceType === 'true') {
-      // Simulation Metrics Priority
+    // Simulation Metrics Priority
+    if (preferenceType === '1') {
+      const metricsRanking = JSON.parse(localStorage.getItem('simulationMetricsRanking') || '[]');
       const topMetric = metricsRanking[0]?.id;
       if (!topMetric) return currentScenario.options.slice(0, 2);
 
+      const metricConfig = metricButtons.find(m => m.id === topMetric);
       const sortedOptions = [...currentScenario.options].sort((a, b) => {
         const getMetricValue = (option: DecisionOptionType) => {
           switch (topMetric) {
@@ -121,19 +130,26 @@ const SimulationMainPage: React.FC = () => {
           }
         };
 
-        return getMetricValue(a) - getMetricValue(b);
+        const aValue = getMetricValue(a);
+        const bValue = getMetricValue(b);
+        return metricConfig?.higherIsBetter ? bValue - aValue : aValue - bValue;
       });
 
       return sortedOptions.slice(0, 2);
-    } else {
-      // Moral Values Priority
+    }
+    
+    // Moral Values Priority
+    if (preferenceType === '2') {
+      const valuesRanking = JSON.parse(localStorage.getItem('moralValuesRanking') || '[]');
       const topValues = valuesRanking.slice(0, 2).map(v => v.id.toLowerCase());
       const matchingOptions = currentScenario.options.filter(option => 
         topValues.includes(option.label.toLowerCase())
       );
-
       return matchingOptions.length >= 2 ? matchingOptions.slice(0, 2) : currentScenario.options.slice(0, 2);
     }
+
+    // Fallback to default behavior
+    return currentScenario.options.slice(0, 2);
   }, [currentScenario, currentScenarioIndex, topStableValues]);
 
   const getAlternativeOptions = useCallback(() => {
