@@ -206,30 +206,42 @@ const FinalAnalysisPage: React.FC = () => {
   };
 
   const prepareConsistencyTrendData = () => {
-    const scenarios = valueMatches.map(match => `Scenario ${match.scenarioId}`);
-    
-    return {
-      labels: scenarios,
-      datasets: MORAL_VALUES.map((value, index) => {
-        const colors = [
-          { line: 'rgb(239, 68, 68)', fill: 'rgba(239, 68, 68, 0.1)' },   // red
-          { line: 'rgb(59, 130, 246)', fill: 'rgba(59, 130, 246, 0.1)' }, // blue
-          { line: 'rgb(16, 185, 129)', fill: 'rgba(16, 185, 129, 0.1)' }, // green
-          { line: 'rgb(245, 158, 11)', fill: 'rgba(245, 158, 11, 0.1)' }, // amber
-          { line: 'rgb(139, 92, 246)', fill: 'rgba(139, 92, 246, 0.1)' }  // purple
-        ];
+  return {
+    labels: ['Explicit Choices', 'Implicit Choices', 'Scenario 1', 'Scenario 2', 'Scenario 3'],
+    datasets: MORAL_VALUES.map((value, index) => {
+      const colors = [
+        { line: 'rgb(239, 68, 68)', fill: 'rgba(239, 68, 68, 0.1)' },   // red - Safety
+        { line: 'rgb(59, 130, 246)', fill: 'rgba(59, 130, 246, 0.1)' }, // blue - Efficiency
+        { line: 'rgb(16, 185, 129)', fill: 'rgba(16, 185, 129, 0.1)' }, // green - Sustainability
+        { line: 'rgb(245, 158, 11)', fill: 'rgba(245, 158, 11, 0.1)' }, // amber - Fairness
+        { line: 'rgb(139, 92, 246)', fill: 'rgba(139, 92, 246, 0.1)' }  // purple - Nonmaleficence
+      ];
 
-        return {
-          label: value,
-          data: valueTrends[value.toLowerCase()],
-          borderColor: colors[index].line,
-          backgroundColor: colors[index].fill,
-          tension: 0.1,
-          fill: true
-        };
-      })
-    };
+      const normalizedValue = value.toLowerCase();
+      
+      // Calculate scores for explicit and implicit choices
+      const explicitScore = explicitValueCounts[normalizedValue] ? 100 : 0;
+      const implicitScore = implicitValueCounts[normalizedValue] ? 100 : 0;
+
+      // Get scenario scores from trends
+      const scenarioScores = valueTrends[normalizedValue];
+
+      return {
+        label: value,
+        data: [
+          explicitScore,
+          implicitScore,
+          ...scenarioScores
+        ],
+        borderColor: colors[index].line,
+        backgroundColor: colors[index].fill,
+        tension: 0.1,
+        fill: true
+      };
+    })
   };
+};
+
 
   if (showError) {
     return (
