@@ -41,8 +41,8 @@ interface ValueMatch {
   scenarioId: number;
   selectedValue: string;
   matchesExplicit: boolean;
-  matchesStable: boolean;
-  matchesContext: boolean;
+  matchesImplicit: boolean;
+  matchesSimulation: boolean;
   stabilityScore: number;
 }
 
@@ -53,6 +53,7 @@ interface ValueCount {
 const FinalAnalysisPage: React.FC = () => {
   const navigate = useNavigate();
   const [explicitValueCounts, setExplicitValueCounts] = useState<ValueCount>({});
+  const [implicitValueCounts, setImplicitValueCounts] = useState<ValueCount>({});
   const [valueMatches, setValueMatches] = useState<ValueMatch[]>([]);
   const [finalMetrics, setFinalMetrics] = useState<SimulationMetrics | null>(null);
   const [overallStabilityScore, setOverallStabilityScore] = useState<number>(0);
@@ -72,7 +73,7 @@ const FinalAnalysisPage: React.FC = () => {
         return;
       }
 
-      // Process explicit values (convert to lowercase for comparison)
+      // Process explicit values
       const explicitCounts: ValueCount = {};
       explicitValues.forEach((value: any) => {
         const normalizedValue = value.value_selected.toLowerCase();
@@ -80,34 +81,33 @@ const FinalAnalysisPage: React.FC = () => {
       });
       setExplicitValueCounts(explicitCounts);
 
-      // Extract stable and context-dependent values (normalized to lowercase)
-      const stableValues = deepValues
-        .filter((value: any) => value.type === 'Stable')
-        .map((value: any) => value.name.toLowerCase());
-      
-      const contextValues = deepValues
-        .filter((value: any) => value.type === 'Context-Dependent')
-        .map((value: any) => value.name.toLowerCase());
+      // Process implicit values
+      const implicitCounts: ValueCount = {};
+      deepValues.forEach((value: any) => {
+        const normalizedValue = value.name.toLowerCase();
+        implicitCounts[normalizedValue] = (implicitCounts[normalizedValue] || 0) + 1;
+      });
+      setImplicitValueCounts(implicitCounts);
 
       // Process simulation outcomes and calculate matches
       const matches: ValueMatch[] = simulationOutcomes.map((outcome: any) => {
         const selectedValue = outcome.decision.label.toLowerCase();
         const matchesExplicit = Object.keys(explicitCounts).includes(selectedValue);
-        const matchesStable = stableValues.includes(selectedValue);
-        const matchesContext = contextValues.includes(selectedValue);
+        const matchesImplicit = Object.keys(implicitCounts).includes(selectedValue);
+        const matchesSimulation = true; // Since this is from simulation outcomes
         
         // Calculate stability score for this decision
         const stabilityScore = (
           (matchesExplicit ? 40 : 0) +
-          (matchesStable ? 60 : 0)
+          (matchesImplicit ? 60 : 0)
         );
 
         return {
           scenarioId: outcome.scenarioId,
           selectedValue: outcome.decision.label,
           matchesExplicit,
-          matchesStable,
-          matchesContext,
+          matchesImplicit,
+          matchesSimulation,
           stabilityScore
         };
       });
@@ -150,6 +150,13 @@ const FinalAnalysisPage: React.FC = () => {
           data: values.map(value => explicitValueCounts[value.toLowerCase()] || 0),
           backgroundColor: 'rgba(54, 162, 235, 0.5)',
           borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        },
+        {
+          label: 'Implicit Choices',
+          data: values.map(value => implicitValueCounts[value.toLowerCase()] || 0),
+          backgroundColor: 'rgba(75, 192, 192, 0.5)',
+          borderColor: 'rgba(75, 192, 192, 1)',
           borderWidth: 1
         },
         {
@@ -275,7 +282,7 @@ const FinalAnalysisPage: React.FC = () => {
                 </div>
                 <p className="text-gray-600">Overall Value Stability Score</p>
                 <p className="text-sm text-gray-500 mt-1">
-                  (Weighted: 40% Explicit, 60% Stable Values)
+                  (Weighted: 40% Explicit, 60% Implicit Values)
                 </p>
               </div>
 
