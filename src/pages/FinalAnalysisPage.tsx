@@ -11,7 +11,8 @@ import {
   XCircle,
   Scale,
   Brain,
-  Flame
+  Flame,
+  Target
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -21,9 +22,11 @@ import {
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
+  PointElement,
+  ScatterController
 } from 'chart.js';
-import { Bar, Pie } from 'react-chartjs-2';
+import { Bar, Pie, Scatter } from 'react-chartjs-2';
 import { SimulationMetrics, DecisionOption } from '../types';
 
 // Register Chart.js components
@@ -34,7 +37,9 @@ ChartJS.register(
   Title,
   Tooltip,
   Legend,
-  ArcElement
+  ArcElement,
+  PointElement,
+  ScatterController
 );
 
 interface ValueCount {
@@ -64,6 +69,7 @@ const FinalAnalysisPage: React.FC = () => {
   const [finalMetrics, setFinalMetrics] = useState<SimulationMetrics | null>(null);
   const [stabilityScore, setStabilityScore] = useState<number>(0);
   const [showError, setShowError] = useState(false);
+  const [valueConsistencyData, setValueConsistencyData] = useState<Array<{x: number, y: number}>>([]);
 
   useEffect(() => {
     try {
@@ -100,6 +106,32 @@ const FinalAnalysisPage: React.FC = () => {
       const simValues = simulationOutcomes.map((outcome: SimulationOutcome) => outcome.decision.label);
       setSimulationValues(simValues);
 
+      // Calculate value consistency data for scatter plot
+      const consistencyData = simulationOutcomes.map((outcome: SimulationOutcome, index: number) => {
+        const selectedValue = outcome.decision.label;
+        const matchesExplicit = Object.keys(explicitCounts).includes(selectedValue);
+        const matchesStable = stableValues.includes(selectedValue);
+        
+        return {
+          x: index + 1, // Scenario number
+          y: (matchesExplicit ? 50 : 0) + (matchesStable ? 50 : 0) // Consistency score
+        };
+      });
+      
+      setValueConsistencyData(consistencyData);
+
+      // Calculate stability score with weighted components
+      const explicitMatch = simulationValues.filter(value => 
+        Object.keys(explicitCounts).includes(value)
+      ).length / simulationValues.length;
+      
+      const stableMatch = simulationValues.filter(value =>
+        stableValues.includes(value)
+      ).length / simulationValues.length;
+      
+      const score = ((explicitMatch * 40) + (stableMatch * 60));
+      setStabilityScore(score);
+
       // Analyze value stability
       const stabilityAnalysis = simulationOutcomes.map((outcome: SimulationOutcome) => {
         const selectedValue = outcome.decision.label;
@@ -115,11 +147,6 @@ const FinalAnalysisPage: React.FC = () => {
       });
 
       setValueStability(stabilityAnalysis);
-
-      // Calculate stability score
-      const matchCount = stabilityAnalysis.filter(analysis => analysis.matchesStableValue).length;
-      const score = (matchCount / stabilityAnalysis.length) * 100;
-      setStabilityScore(score);
 
       // Set final metrics
       setFinalMetrics(metrics);
@@ -167,15 +194,29 @@ const FinalAnalysisPage: React.FC = () => {
   };
 
   const prepareStabilityData = () => {
+    const explicitMatch = simulationValues.filter(value => 
+      Object.keys(explicitValueCounts).includes(value)
+    ).length / simulationValues.length * 100;
+
+    const stableMatch = simulationValues.filter(value =>
+      implicitStableValues.includes(value)
+    ).length / simulationValues.length * 100;
+
+    const contextMatch = simulationValues.filter(value =>
+      implicitContextValues.includes(value)
+    ).length / simulationValues.length * 100;
+
     return {
-      labels: ['Stable', 'Context-Dependent'],
+      labels: ['Matches Explicit Values', 'Matches Stable Values', 'Matches Context-Dependent Values'],
       datasets: [{
-        data: [stabilityScore, 100 - stabilityScore],
+        data: [explicitMatch, stableMatch, contextMatch],
         backgroundColor: [
+          'rgba(54, 162, 235, 0.5)',
           'rgba(75, 192, 192, 0.5)',
           'rgba(255, 206, 86, 0.5)'
         ],
         borderColor: [
+          'rgba(54, 162, 235, 1)',
           'rgba(75, 192, 192, 1)',
           'rgba(255, 206, 86, 1)'
         ],
@@ -184,11 +225,33 @@ const FinalAnalysisPage: React.FC = () => {
     };
   };
 
+  const prepareConsistencyData = () => {
+    return {
+      datasets: [{
+        label: 'Value Consistency',
+        data: valueConsistencyData,
+        backgroundColor: valueConsistencyData.map(point => 
+          point.y >= 75 ? 'rgba(75, 192, 192, 0.5)' :
+          point.y >= 50 ? 'rgba(255, 206, 86, 0.5)' :
+          'rgba(255, 99, 132, 0.5)'
+        ),
+        borderColor: valueConsistencyData.map(point =>
+          point.y >= 75 ? 'rgba(75, 192, 192, 1)' :
+          point.y >= 50 ? 'rgba(255, 206, 86, 1)' :
+          'rgba(255, 99, 132, 1)'
+        ),
+        borderWidth: 1,
+        pointRadius: 8,
+        pointHoverRadius: 10
+      }]
+    };
+  };
+
   if (showError) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
-          <AlertTriangle className="mx-auto text-red-500 mb-4\" size={48} />
+          <AlertTriangle className="mx-auto text-red-500 mb-4" size={48} />
           <h2 className="text-2xl font-bold text-gray-900 mb-2 text-center">Data Not Found</h2>
           <p className="text-gray-600 text-center mb-6">
             Please complete the simulation before accessing the final analysis.
@@ -279,6 +342,13 @@ const FinalAnalysisPage: React.FC = () => {
                     plugins: {
                       legend: {
                         position: 'bottom' as const
+                      },
+                      tooltip: {
+                        callbacks: {
+                          label: function(context) {
+                            return `${context.label}: ${context.raw.toFixed(1)}%`;
+                          }
+                        }
                       }
                     }
                   }}
@@ -286,7 +356,10 @@ const FinalAnalysisPage: React.FC = () => {
               </div>
               <div className="text-center mt-4">
                 <p className="text-2xl font-bold text-gray-900">{stabilityScore.toFixed(1)}%</p>
-                <p className="text-gray-600">Value Stability Score</p>
+                <p className="text-gray-600">Overall Value Stability Score</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  (Weighted: 40% Explicit, 60% Stable Values)
+                </p>
               </div>
             </div>
             <div className="space-y-3">
@@ -314,91 +387,156 @@ const FinalAnalysisPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Final Metrics Section */}
+          {/* Value Consistency Scatter Plot */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <div className="flex items-center gap-2 mb-4">
-              <Flame className="h-6 w-6 text-orange-600" />
-              <h2 className="text-xl font-bold text-gray-900">Final Simulation Metrics</h2>
+              <Target className="h-6 w-6 text-indigo-600" />
+              <h2 className="text-xl font-bold text-gray-900">Value Consistency Trend</h2>
             </div>
-            {finalMetrics && (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-green-50 p-4 rounded-lg">
-                    <p className="text-sm text-green-600 mb-1">Lives Saved</p>
-                    <p className="text-2xl font-bold text-green-700">
-                      {finalMetrics.livesSaved}
-                    </p>
-                  </div>
-                  <div className="bg-red-50 p-4 rounded-lg">
-                    <p className="text-sm text-red-600 mb-1">Casualties</p>
-                    <p className="text-2xl font-bold text-red-700">
-                      {finalMetrics.humanCasualties}
-                    </p>
-                  </div>
+            <div className="h-[400px]">
+              <Scatter
+                data={prepareConsistencyData()}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  scales: {
+                    x: {
+                      title: {
+                        display: true,
+                        text: 'Scenario Number'
+                      },
+                      ticks: {
+                        stepSize: 1
+                      }
+                    },
+                    y: {
+                      title: {
+                        display: true,
+                        text: 'Consistency Score'
+                      },
+                      min: 0,
+                      max: 100,
+                      ticks: {
+                        stepSize: 25
+                      }
+                    }
+                  },
+                  plugins: {
+                    tooltip: {
+                      callbacks: {
+                        label: function(context: any) {
+                          return `Scenario ${context.parsed.x}: ${context.parsed.y}% consistent`;
+                        }
+                      }
+                    },
+                    legend: {
+                      display: false
+                    }
+                  }
+                }}
+              />
+            </div>
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[rgba(75,192,192,0.5)] border border-[rgba(75,192,192,1)]"></div>
+                <span className="text-sm text-gray-600">High Consistency (75-100%)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[rgba(255,206,86,0.5)] border border-[rgba(255,206,86,1)]"></div>
+                <span className="text-sm text-gray-600">Medium Consistency (50-74%)</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-[rgba(255,99,132,0.5)] border border-[rgba(255,99,132,1)]"></div>
+                <span className="text-sm text-gray-600">Low Consistency (0-49%)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Final Metrics Section */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Flame className="h-6 w-6 text-orange-600" />
+            <h2 className="text-xl font-bold text-gray-900">Final Simulation Metrics</h2>
+          </div>
+          {finalMetrics && (
+            <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <p className="text-sm text-green-600 mb-1">Lives Saved</p>
+                  <p className="text-2xl font-bold text-green-700">
+                    {finalMetrics.livesSaved}
+                  </p>
                 </div>
-                
-                <div className="space-y-3">
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">Resources Remaining</p>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div 
-                        className="bg-blue-600 h-2.5 rounded-full"
-                        style={{ width: `${finalMetrics.firefightingResource}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-right text-sm text-gray-600 mt-1">
-                      {finalMetrics.firefightingResource}%
-                    </p>
-                  </div>
-
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">Infrastructure Condition</p>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div 
-                        className="bg-yellow-600 h-2.5 rounded-full"
-                        style={{ width: `${finalMetrics.infrastructureCondition}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-right text-sm text-gray-600 mt-1">
-                      {finalMetrics.infrastructureCondition}%
-                    </p>
-                  </div>
-
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">Biodiversity Condition</p>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div 
-                        className="bg-green-600 h-2.5 rounded-full"
-                        style={{ width: `${finalMetrics.biodiversityCondition}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-right text-sm text-gray-600 mt-1">
-                      {finalMetrics.biodiversityCondition}%
-                    </p>
-                  </div>
-
-                  <div className="bg-gray-50 p-3 rounded-lg">
-                    <p className="text-sm text-gray-600 mb-1">Nuclear Power Station</p>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div 
-                        className={`h-2.5 rounded-full ${
-                          finalMetrics.nuclearPowerStation < 30 
-                            ? 'bg-red-600' 
-                            : finalMetrics.nuclearPowerStation < 70 
-                              ? 'bg-yellow-600' 
-                              : 'bg-green-600'
-                        }`}
-                        style={{ width: `${finalMetrics.nuclearPowerStation}%` }}
-                      ></div>
-                    </div>
-                    <p className="text-right text-sm text-gray-600 mt-1">
-                      {finalMetrics.nuclearPowerStation}%
-                    </p>
-                  </div>
+                <div className="bg-red-50 p-4 rounded-lg">
+                  <p className="text-sm text-red-600 mb-1">Casualties</p>
+                  <p className="text-2xl font-bold text-red-700">
+                    {finalMetrics.humanCasualties}
+                  </p>
                 </div>
               </div>
-            )}
-          </div>
+              
+              <div className="space-y-3">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Resources Remaining</p>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-blue-600 h-2.5 rounded-full"
+                      style={{ width: `${finalMetrics.firefightingResource}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-right text-sm text-gray-600 mt-1">
+                    {finalMetrics.firefightingResource}%
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Infrastructure Condition</p>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-yellow-600 h-2.5 rounded-full"
+                      style={{ width: `${finalMetrics.infrastructureCondition}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-right text-sm text-gray-600 mt-1">
+                    {finalMetrics.infrastructureCondition}%
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Biodiversity Condition</p>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-green-600 h-2.5 rounded-full"
+                      style={{ width: `${finalMetrics.biodiversityCondition}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-right text-sm text-gray-600 mt-1">
+                    {finalMetrics.biodiversityCondition}%
+                  </p>
+                </div>
+
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <p className="text-sm text-gray-600 mb-1">Nuclear Power Station</p>
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div 
+                      className={`h-2.5 rounded-full ${
+                        finalMetrics.nuclearPowerStation < 30 
+                          ? 'bg-red-600' 
+                          : finalMetrics.nuclearPowerStation < 70 
+                            ? 'bg-yellow-600' 
+                            : 'bg-green-600'
+                      }`}
+                      style={{ width: `${finalMetrics.nuclearPowerStation}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-right text-sm text-gray-600 mt-1">
+                    {finalMetrics.nuclearPowerStation}%
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </main>
     </div>
