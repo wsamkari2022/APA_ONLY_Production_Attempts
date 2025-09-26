@@ -47,6 +47,7 @@ const SimulationMainPage: React.FC = () => {
     scenarioId: number;
     decision: DecisionOptionType;
   }>>([]);
+  const [matchedStableValues, setMatchedStableValues] = useState<string[]>([]);
 
   const currentScenario = scenarios[currentScenarioIndex];
 
@@ -78,6 +79,19 @@ const SimulationMainPage: React.FC = () => {
     // Check if user has accessed RankedOptionsView
     const rankedViewAccessed = localStorage.getItem('rankedViewAccessed') === 'true';
     setHasAccessedRankedView(rankedViewAccessed);
+
+    // Load matched stable values from localStorage
+    const savedMatchedValues = localStorage.getItem('finalValues');
+    if (savedMatchedValues) {
+      try {
+        const parsedValues = JSON.parse(savedMatchedValues);
+        const valueNames = parsedValues.map((v: any) => v.name.toLowerCase());
+        setMatchedStableValues(valueNames);
+      } catch (error) {
+        console.error('Error parsing matched stable values:', error);
+        setMatchedStableValues([]);
+      }
+    }
 
     const preferenceType = localStorage.getItem('preferenceTypeFlag');
     const metricsRanking = JSON.parse(localStorage.getItem('simulationMetricsRanking') || '[]');
@@ -258,7 +272,11 @@ const SimulationMainPage: React.FC = () => {
   }, [currentScenarioIndex, getInitialOptions, addedAlternatives, scenario1InitialOptions]);
 
   const handleDecisionSelect = (decision: DecisionOptionType) => {
-    if (decision.isAlternative && decision.cvrQuestion) {
+    // Check if the selected option's value doesn't match user's stable values
+    const optionValue = decision.label.toLowerCase();
+    const doesNotMatchStableValues = !matchedStableValues.includes(optionValue);
+    
+    if (doesNotMatchStableValues && decision.cvrQuestion) {
       setSelectedDecision(decision);
       setShowCVRModal(true);
     } else {
