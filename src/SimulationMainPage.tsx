@@ -124,26 +124,11 @@ const SimulationMainPage: React.FC = () => {
   const getInitialOptions = useCallback(() => {
     if (!currentScenario) return [];
     
-    // For Scenario 1, use original logic with fallback to most frequent explicit values
+    // For Scenario 1, use random selection of 2 options
     if (currentScenarioIndex === 0) {
-      if (!topStableValues.length) {
-        // Get most frequent explicit values as fallback
-        const frequentValues = getMostFrequentExplicitValues();
-        if (frequentValues.length > 0) {
-          const matchingOptions = currentScenario.options.filter(option => 
-            frequentValues.includes(option.label.toLowerCase())
-          );
-          if (matchingOptions.length >= 2) {
-            return matchingOptions.slice(0, 2);
-          }
-        }
-        return currentScenario.options.slice(0, 2);
-      }
-      
-      const matchingOptions = currentScenario.options.filter(option => 
-        topStableValues.includes(option.label.toLowerCase())
-      );
-      return matchingOptions.length >= 2 ? matchingOptions.slice(0, 2) : currentScenario.options.slice(0, 2);
+      // Randomly select 2 options from all available options
+      const shuffledOptions = [...currentScenario.options].sort(() => Math.random() - 0.5);
+      return shuffledOptions.slice(0, 2);
     }
 
     // For Scenario 2, check if RankedOptionsView was accessed
@@ -227,6 +212,14 @@ const SimulationMainPage: React.FC = () => {
     const initialOptionIds = getInitialOptions().map(opt => opt.id);
     const addedOptionIds = addedAlternatives.map(opt => opt.id);
     
+    // For Scenario 1, all non-initial options go to alternatives
+    if (currentScenarioIndex === 0) {
+      return currentScenario.options
+        .filter(option => !initialOptionIds.includes(option.id) && !addedOptionIds.includes(option.id))
+        .map(option => ({ ...option, isAlternative: true }));
+    }
+    
+    // For other scenarios, keep existing behavior
     return currentScenario.options
       .filter(option => !initialOptionIds.includes(option.id) && !addedOptionIds.includes(option.id))
       .map(option => ({ ...option, isAlternative: true }));
