@@ -84,7 +84,29 @@ const SimulationMainPage: React.FC = () => {
 
     // Load matched stable values from localStorage
     const savedMatchedValues = localStorage.getItem('finalValues');
-    if (savedMatchedValues) {
+    const moralValuesReorder = localStorage.getItem('MoralValuesReorderList');
+    
+    // If user has reordered moral values, use those instead of original matched values
+    if (moralValuesReorder && currentScenarioIndex > 0) {
+      try {
+        const reorderedValues = JSON.parse(moralValuesReorder);
+        const topValues = reorderedValues.slice(0, 2).map((v: any) => v.id.toLowerCase());
+        setMatchedStableValues(topValues);
+      } catch (error) {
+        console.error('Error parsing MoralValuesReorderList:', error);
+        // Fallback to original matched values
+        if (savedMatchedValues) {
+          try {
+            const parsedValues = JSON.parse(savedMatchedValues);
+            const valueNames = parsedValues.map((v: any) => v.name.toLowerCase());
+            setMatchedStableValues(valueNames);
+          } catch (error) {
+            console.error('Error parsing matched stable values:', error);
+            setMatchedStableValues([]);
+          }
+        }
+      }
+    } else if (savedMatchedValues) {
       try {
         const parsedValues = JSON.parse(savedMatchedValues);
         const valueNames = parsedValues.map((v: any) => v.name.toLowerCase());
@@ -203,9 +225,13 @@ const SimulationMainPage: React.FC = () => {
           );
           
           if (matchingOptions.length >= 2) {
-            // Update matchedStableValues to reflect the new reordered preferences
-            setMatchedStableValues(topValues);
             return matchingOptions.slice(0, 2);
+          } else if (matchingOptions.length === 1) {
+            // If only one matching option, add the best remaining option
+            const remainingOptions = currentScenario.options.filter(option => 
+              !topValues.includes(option.label.toLowerCase())
+            );
+            return [matchingOptions[0], remainingOptions[0]];
           }
         } catch (error) {
           console.error('Error parsing MoralValuesReorderList:', error);
