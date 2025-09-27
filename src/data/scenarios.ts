@@ -1,3 +1,4 @@
+
 import { Scenario } from '../types';
 
 export const scenarios: Scenario[] = [
@@ -80,26 +81,27 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 75,
           populationSafety: 100
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-            descriptionTile: "🏥 Hospital Explosion Response",
-            description: "A chemical explosion at a large city hospital endangers 2,000 people. Emergency responders must act immediately to extract patients and staff, but this exposes the rescue team to severe toxic exposure, resulting in 12 deaths.",
-            question: "Would you authorize immediate full deployment of the emergency team, despite the risk of losing 12 responders, to ensure all 2,000 people inside are rescued?",
-            value: "Safety"
-          },
+          descriptionTile: "🏥 Forced Medical Sacrifice",
+          description: "A chemical plant explosion has filled a city hospital with toxic fumes. To save 2,000 trapped patients, you can order a small team of 12 medical staff to enter the most contaminated zone to open sealed exits. Those 12 will certainly die, but everyone else will be evacuated safely.",
+          question: "Would you order 12 medical staff to certain death so that 2,000 patients can be rescued?",
+          value: "Safety"
+        },
         comparisonTableColumnContent: {
-            firstColumnTitle: "Wildfire Approaching a Town",
-            firstColumnSelectedPreference: "Deploy all available firefighters immediately to form defensive lines and evacuate population centers",
-            firstValue: "Safety",
-            firstColumnAffected: 2000,
-            firstColumnRisk: "12 firefighter casualties",
-            firstColumnuserChoice: "Accepted",
-            secondColumnTitle: "Hospital Explosion Response",
-            secondColumnSelectedPreference: "Emergency responders must act immediately to extract patients and staff",
-            secondValue: "Safety",
-            secondColumnaffected: 2000,
-            secondColumnRisk: "12 responder deaths",
-            secondColumnuserChoice: "Rejected"
-          }
+          firstColumnTitle: "Wildfire Approaching a Town",
+          firstColumnSelectedPreference: "Deploy all available firefighters immediately to form defensive lines and evacuate population centers",
+          firstValue: "Safety",
+          firstColumnAffected: 2000,
+          firstColumnRisk: "12 firefighter casualties",
+          firstColumnuserChoice: "Accepted",
+          secondColumnTitle: "Forced Medical Sacrifice",
+          secondColumnSelectedPreference: "Order 12 medical staff into a lethal zone to unlock exits and save 2,000 patients",
+          secondValue: "Safety",
+          secondColumnaffected: 2000,
+          secondColumnRisk: "12 medical staff deaths",
+          secondColumnuserChoice: "Rejected"
+        }
       },
       {
         id: "efficiency-focused",
@@ -174,12 +176,13 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 45,
           populationSafety: 70
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-            descriptionTile: "🚢 Sinking Cruise Ship Crisis",
-            description: "A cruise ship with 2,000 people is sinking. You have limited lifeboats and supplies. By using an optimized strategy, 1,400 passengers can be saved using only 25% of total rescue resources. The remaining 600 will not survive.",
-            question: "Would you choose to deploy only the most efficient rescue operations to save 1,400 people while preserving most resources, knowing that 600 lives will be lost?",
-            value: "Efficiency"
-          },
+          descriptionTile: "🛳️ Lifeboat Bulkhead Order",
+          description: "A cruise ship with 2,000 people is taking on water. To keep the ship afloat long enough to save 1,400 people using only 25% of rescue resources, you must order the sealing of six lower-deck bulkheads, deliberately trapping 600 passengers below.",
+          question: "Would you seal the bulkheads—condemning 600 people—so that 1,400 can be saved with minimal resources?",
+          value: "Efficiency"
+        },
         comparisonTableColumnContent: {
           firstColumnTitle: "Wildfire Approaching a Town",
           firstColumnSelectedPreference: "Deploy firefighter teams only to the most critical zones",
@@ -187,8 +190,8 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: "600 civilian deaths",
           firstColumnuserChoice: "Accepted",
-          secondColumnTitle: "Sinking Cruise Ship Crisis",
-          secondColumnSelectedPreference: "Use optimized rescue strategy to save 1,400 passengers with limited lifeboats",
+          secondColumnTitle: "Lifeboat Bulkhead Order",
+          secondColumnSelectedPreference: "Seal lower-deck bulkheads to preserve buoyancy and save 1,400 with limited resources",
           secondValue: "Efficiency",
           secondColumnaffected: 2000,
           secondColumnRisk: "600 passenger deaths",
@@ -268,12 +271,13 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 55,
           populationSafety: 45
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-            descriptionTile: "🏞️ Dam Collapse Near Wildlife Sanctuary",
-            description: "A collapsing dam near a small town of 2,000 residents threatens both human lives and a rare ecosystem. You can act to preserve the wildlife corridors and reduce ecological damage, but this results in 1,100 civilian deaths and 20 rescue worker fatalities.",
-            question: "Would you prioritize preserving the endangered ecosystem and wildlife corridors, even if it means losing over half the town's residents and 20 responders?",
-            value: "Sustainability"
-          },
+          descriptionTile: "💧 Operate the Floodgates",
+          description: "A collapsing dam threatens a rare wetland. To save the ecosystem, you can detonate a levee that will divert the torrent into low-lying neighborhoods. This will preserve the habitat but will kill 1,100 people, including 20 responders positioned to execute the operation, while 900 are rescued via low-impact routes.",
+          question: "Would you deliberately breach the levee—knowing 1,100 people including 20 responders will die—to preserve the ecosystem?",
+          value: "Sustainability"
+        },
         comparisonTableColumnContent: {
           firstColumnTitle: "Wildfire Approaching a Town",
           firstColumnSelectedPreference: "Limit intervention to protect natural ecosystems and endangered species",
@@ -281,11 +285,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: "1,100 civilian deaths + 20 firefighters",
           firstColumnuserChoice: "Accepted",
-          secondColumnTitle: "Dam Collapse Near Wildlife Sanctuary",
-          secondColumnSelectedPreference: "Preserve wildlife corridors over immediate full-scale human evacuation",
+          secondColumnTitle: "Operate the Floodgates",
+          secondColumnSelectedPreference: "Breach a levee to save the wetland, sacrificing 1,100 people (incl. 20 responders)",
           secondValue: "Sustainability",
           secondColumnaffected: 2000,
-          secondColumnRisk: "1,100 civilian deaths + 20 responders",
+          secondColumnRisk: "1,100 civilian deaths + 20 responder deaths",
           secondColumnuserChoice: "Rejected"
         }
       },
@@ -362,12 +366,13 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 90,
           populationSafety: 80
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-            descriptionTile: "🚨 Earthquake Across Divided Districts",
-            description: "A 2,000-person metro region struck by an earthquake includes both wealthy and underserved districts. You can evenly divide rescue teams across all neighborhoods, saving 1,600 people but resulting in 400 deaths, including 30 rescuers.",
-            question: "Would you equally distribute emergency aid across all districts, regardless of population density or risk, knowing this causes 400 deaths including responders due to slower response in all zones?",
-            value: "Fairness"
-          },
+          descriptionTile: "🏚️ Hold the Beams",
+          description: "After a major earthquake, rescue teams face collapsing corridors across rich and poor districts alike. To ensure equal access, you order teams to advance in lockstep across all districts. In several buildings, 30 rescuers must physically brace failing beams so that 1,600 people can pass—those 30 will certainly die, and 370 residents still perish due to system-wide delays.",
+          question: "Would you enforce perfectly equal deployment even if it requires 30 rescuers to accept certain death and results in 370 resident deaths due to slower aid?",
+          value: "Fairness"
+        },
         comparisonTableColumnContent: {
           firstColumnTitle: "Wildfire Approaching a Town",
           firstColumnSelectedPreference: "Distribute protection equally across all neighborhoods",
@@ -375,11 +380,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: "400 deaths including 30 firefighters",
           firstColumnuserChoice: "Accepted",
-          secondColumnTitle: "Earthquake Across Divided Districts",
-          secondColumnSelectedPreference: "Evenly divide rescue teams across all districts",
+          secondColumnTitle: "Hold the Beams",
+          secondColumnSelectedPreference: "Maintain equal deployment; 30 rescuers brace failing structures to let 1,600 pass",
           secondValue: "Fairness",
           secondColumnaffected: 2000,
-          secondColumnRisk: "400 deaths including 30 rescuers",
+          secondColumnRisk: "370 civilian deaths + 30 rescuer deaths",
           secondColumnuserChoice: "Rejected"
         }
       },
@@ -456,10 +461,11 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 80,
           populationSafety: 100
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: "🧪 Bioterror Attack on University Campus",
-          description: "A bioterror attack releases a gas on a campus with 2,000 people. You can launch a comprehensive evacuation and shielding operation that saves everyone but results in 8 first responder deaths and serious infrastructure damage.",
-          question: "Would you initiate the operation that ensures zero civilian deaths while accepting the loss of 8 responders and severe infrastructure destruction as a trade-off?",
+          descriptionTile: "🧪 Manual Valve Shutdown",
+          description: "A bioterror gas release spreads through a university complex. To guarantee the rescue of all 2,000 civilians, you must order an 8‑person hazmat team to enter a saturated zone and manually shut the final valves. The team will certainly die; everyone else survives, and infrastructure suffers heavy damage.",
+          question: "Would you order 8 hazmat responders to certain death to ensure zero civilian fatalities (2,000 saved) despite severe infrastructure loss?",
           value: "Nonmaleficence"
         },
         comparisonTableColumnContent: {
@@ -469,11 +475,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: "8 firefighter deaths",
           firstColumnuserChoice: "Accepted",
-          secondColumnTitle: "Bioterror Attack on University Campus",
-          secondColumnSelectedPreference: "Comprehensive shielding and evacuation strategy to save everyone",
+          secondColumnTitle: "Manual Valve Shutdown",
+          secondColumnSelectedPreference: "Order 8 hazmat responders into a lethal zone to save 2,000 civilians",
           secondValue: "Nonmaleficence",
           secondColumnaffected: 2000,
-          secondColumnRisk: "8 responder deaths + infrastructure damage",
+          secondColumnRisk: "8 responder deaths + severe infrastructure damage",
           secondColumnuserChoice: "Rejected"
         }
       }
@@ -514,11 +520,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '1600 residents dead, minor firefighter casualties',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: 'Critical Infrastructure Dilemma',
-          secondColumnSelectedPreference: 'Protect the chemical weapons base, sacrificing residential evacuation',
+          secondColumnTitle: 'Seal the Community Gates',
+          secondColumnSelectedPreference: 'Close flood/contamination gates to protect reactor, trapping residents inside',
           secondValue: 'Safety',
           secondColumnaffected: 2000,
-          secondColumnRisk: '1600 residents lost, strategic military site preserved',
+          secondColumnRisk: '1600 residents lost, reactor secured',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -562,12 +568,13 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 25,
           populationSafety: 20
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '🔥 Critical Infrastructure Dilemma',
+          descriptionTile: '🧱 Seal the Community Gates',
           description:
-            'A fire approaches a military base holding chemical weapons. You can stop the base from exploding, but this means not evacuating the nearby residential zone, leading to over 1,600 civilian deaths.',
+            'A toxic plume is advancing toward a nuclear facility and nearby town. To prevent a reactor breach, you can shut the community flood/contamination gates, sealing neighborhoods in place. This will save the facility but condemn 1,600 residents while 400 are evacuated.',
           question:
-            'Would you prioritize shielding the hazardous military base and accept the loss of most civilians to avoid long-term national catastrophe?',
+            'Would you deliberately seal the neighborhood gates—condemning 1,600 people—to prevent a catastrophic reactor failure?',
           value: 'Safety'
         }
       },
@@ -600,11 +607,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '200 residents and responders lost, nuclear damage ongoing',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: ' Evacuate or Shield?',
-          secondColumnSelectedPreference: 'Evacuate population, let laboratory site burn',
+          secondColumnTitle: 'Controlled Vent for Evacuation',
+          secondColumnSelectedPreference: 'Order a controlled vent to the atmosphere to buy evacuation time',
           secondValue: 'Fairness',
           secondColumnaffected: 2000,
-          secondColumnRisk: '200 residents lost, environmental damage extended',
+          secondColumnRisk: '200 deaths from acute exposure (incl. 3 responders)',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -648,12 +655,13 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 95,
           populationSafety: 85
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '🏚️ Evacuate or Shield?',
+          descriptionTile: '🌬️ Controlled Vent for Evacuation',
           description:
-            'A laboratory site holding viral pathogens is threatened by a wildfire. You can evacuate the surrounding community in time, but the lab will be consumed, releasing environmental hazards.',
+            'To clear evacuation routes for 1,800 civilians, engineers can perform a controlled venting of radioactive steam. This action will directly cause 200 deaths from acute exposure, including 3 responders, while preventing a wider catastrophe.',
           question:
-            'Would you prioritize evacuating all civilians and let the laboratory facility burn, risking pathogen exposure?',
+            'Would you order a controlled vent—causing 200 deaths (incl. 3 responders)—to evacuate 1,800 civilians in time?',
           value: 'Fairness'
         }
       },
@@ -686,11 +694,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '500 deaths, minor radiation breach, reduced firefighter readiness',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: ' Hurricane Shelter & Reactor Fire',
-          secondColumnSelectedPreference: 'Split resources between flooding town and reactor fire',
+          secondColumnTitle: 'Dual Mission with Sacrifice',
+          secondColumnSelectedPreference: 'Assign 10 responders to manual core venting while evacuations proceed',
           secondValue: 'Efficiency',
           secondColumnaffected: 2000,
-          secondColumnRisk: '500 lives lost, mild nuclear damage',
+          secondColumnRisk: '500 deaths total (incl. 10 responders)',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -734,16 +742,17 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 70,
           populationSafety: 75
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '🌀 Hurricane Shelter & Reactor Fire',
+          descriptionTile: '🔧 Dual Mission with Sacrifice',
           description:
-            'A reactor fire erupts as a hurricane approaches. You must split limited emergency responders between sheltering citizens and containing the reactor.',
+            'To both evacuate civilians and stabilize the reactor, 10 technicians must enter a breached chamber to manually vent pressure. Those 10 will certainly die; 1,500 civilians are evacuated and the reactor holds with only a minor breach.',
           question:
-            'Would you divide your emergency teams to partially assist both missions, knowing each will suffer slight consequences but no full collapse?',
+            'Would you order 10 technicians to certain death so you can split teams and still prevent a major reactor failure?',
           value: 'Efficiency'
         }
       },
- {
+      {
         id: 'ecosystem-defense-priority',
         title: 'Protect Ecosystems First 🌿',
         label: 'sustainability',
@@ -772,11 +781,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '1,200 deaths including firefighters, minimal biodiversity loss',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: ' Preserve Rainforest Routes',
-          secondColumnSelectedPreference: 'Protect old-growth corridors while cities burn',
+          secondColumnTitle: 'Last Stand Firebreak',
+          secondColumnSelectedPreference: 'Ignite barrier fires and order 80 rangers to hold lines so corridors survive',
           secondValue: 'Sustainability',
           secondColumnaffected: 2000,
-          secondColumnRisk: '1,200 casualties, rainforest and endemic species saved',
+          secondColumnRisk: '1,200 deaths total (incl. 80 responders)',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -820,16 +829,17 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 45,
           populationSafety: 35
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '🌲 Preserve Rainforest Routes',
+          descriptionTile: '🔥 Last Stand Firebreak',
           description:
-            'A remote jungle ecosystem faces destruction from fire. Redirecting resources here will save thousands of endemic species but leaves communities at risk.',
+            'To keep ancient biodiversity corridors alive, commanders can ignite barrier fires and order 80 rangers to hold the lines until overrun. Their deaths will buy time to save the ecosystems, but only 800 civilians will be rescued; 1,120 others will perish.',
           question:
-            'Would you focus your entire response on preventing ecosystem collapse, accepting that many people may not be saved in time?',
+            'Would you order 80 rangers to certain death and accept 1,120 civilian deaths to prevent ecosystem collapse?',
           value: 'Sustainability'
         }
       },
-   {
+      {
         id: 'nonmaleficence-response',
         title: 'Minimize Harm, Avoid Irreversible Fallout ⚖️',
         label: 'nonmaleficence',
@@ -858,11 +868,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '1,000 deaths, reactor partially breached, firefighter safety preserved',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: ' Minimalist Emergency Doctrine',
-          secondColumnSelectedPreference: 'Avoid dangerous missions, focus on low-risk containment',
+          secondColumnTitle: 'Lockdown Doctrine',
+          secondColumnSelectedPreference: 'Lock down red zones to avoid responder risk, barring rescue attempts',
           secondValue: 'Nonmaleficence',
           secondColumnaffected: 2000,
-          secondColumnRisk: '1,000 deaths, radioactive spread likely, rescuers unharmed',
+          secondColumnRisk: '1,000 deaths, responders unharmed',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -906,25 +916,25 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 40,
           populationSafety: 50
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '🧪 Minimalist Emergency Doctrine',
+          descriptionTile: '🚫 Lockdown Doctrine',
           description:
-            'In a wildfire scenario with unstable terrain, responders are instructed to avoid all risk-prone areas and only defend retreat zones. This prevents responder casualties but allows major fire spread.',
+            'To avoid risking responders, command can order hard lockdowns of unstable zones, physically preventing rescue attempts. This action directly condemns 1,000 people who cannot be reached, while responders remain unharmed.',
           question:
-            'Would you adopt a fully defensive strategy that avoids all danger to responders, even if it results in widespread destruction and community loss?',
+            'Would you impose a hard lockdown that bars rescue attempts—knowingly condemning 1,000 people—to avoid responder deaths and escalation?',
           value: 'Nonmaleficence'
         }
-      },
-  
+      }
     ]
   },
-{
+  {
     id: 3,
     title: 'Wildfire Threatens Biodiversity Reserve',
     description:
       'A massive wildfire is advancing toward one of the world’s most diverse ecosystems, home to countless endangered species. Nearby, small villages and critical infrastructure are also in the fire’s path. Responders must weigh saving human lives, critical services, and biodiversity.',
     options: [
-{
+      {
         id: 'evacuate-residents-priority',
         title: 'Evacuate All Nearby Villages 🚨',
         label: 'safety',
@@ -953,11 +963,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '100 deaths, firefighters exposed, reserve destroyed',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: 'Emergency Civilian Relocation',
-          secondColumnSelectedPreference: 'Focus entirely on saving human lives, even at environmental cost',
+          secondColumnTitle: 'Bridge Bracing Line',
+          secondColumnSelectedPreference: 'Order 20 firefighters to hold a collapsing fire-bridge so 1,900 villagers can pass',
           secondValue: 'Safety',
           secondColumnaffected: 2000,
-          secondColumnRisk: '100 deaths, irreversible ecological loss',
+          secondColumnRisk: '100 deaths total (incl. 20 firefighters)',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -1001,16 +1011,17 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 55,
           populationSafety: 90
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '🚐 Emergency Civilian Relocation',
+          descriptionTile: '🌉 Bridge Bracing Line',
           description:
-            'Villages surrounding the reserve are evacuated in full force, but this diverts resources away from the fire’s edge, leading to ecological devastation.',
+            'Smoke and fire trap villagers at a narrow canyon bridge. To allow 1,900 people to pass, 20 firefighters must physically brace failing beams in lethal heat until evacuations are complete. Those 20 will certainly die; the reserve will burn.',
           question:
-            'Would you prioritize the safe relocation of all people near the biodiversity zone, accepting the irreversible loss of endangered species and habitats?',
+            'Would you order 20 firefighters to hold the bridge—accepting their certain deaths—to evacuate 1,900 people?',
           value: 'Safety'
         }
       },
-{
+      {
         id: 'logistics-balance-deployment',
         title: 'Balance Fire Suppression with Evacuation 🚒',
         label: 'efficiency',
@@ -1039,11 +1050,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '600 deaths, reserve partially protected, infrastructure moderately damaged',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: ' Dual-Zone Containment Plan',
-          secondColumnSelectedPreference: 'Divide resources to control fire and save some lives',
+          secondColumnTitle: 'Cut Line in the Flames',
+          secondColumnSelectedPreference: 'Order 30 dozer crews to cut a fireline in lethal conditions to buy time for split ops',
           secondValue: 'Efficiency',
           secondColumnaffected: 2000,
-          secondColumnRisk: '600 casualties, strategic but not optimal outcome',
+          secondColumnRisk: '600 deaths total (incl. 30 responders)',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -1087,16 +1098,17 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 65,
           populationSafety: 70
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '⚖️ Dual-Zone Containment Plan',
+          descriptionTile: '🪓 Cut Line in the Flames',
           description:
-            'A strategy to split firefighting forces across the biodiversity edge and village paths reduces major loss but sacrifices some civilians and ecological zones.',
+            'To run a split operation, 30 dozer crews must cut a critical fireline through a flashover zone. They will not survive, but the line buys time to evacuate 1,400 people and hold parts of the reserve.',
           question:
-            'Would you divide your response between saving lives and nature, knowing neither effort will be fully successful?',
+            'Would you order 30 responders to cut a lethal fireline so that 1,400 can be saved and habitats partially preserved?',
           value: 'Efficiency'
         }
       },
- {
+      {
         id: 'preserve-ecological-integrity',
         title: 'Prioritize Ecological Defense 🌲',
         label: 'sustainability',
@@ -1125,11 +1137,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '1200 deaths, reserve intact, poor response timing',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: ' Biodiversity Shielding Protocol',
-          secondColumnSelectedPreference: 'Defend natural habitats, risking delayed evacuation',
+          secondColumnTitle: 'Backburn the Villages',
+          secondColumnSelectedPreference: 'Ignite backburns to save the reserve, overrunning villages',
           secondValue: 'Sustainability',
           secondColumnaffected: 2000,
-          secondColumnRisk: '1200 casualties, habitat conservation success',
+          secondColumnRisk: '1200 casualties (incl. 45 responders)',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -1173,16 +1185,17 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 40,
           populationSafety: 40
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '🌿 Biodiversity Shielding Protocol',
+          descriptionTile: '🔥 Backburn the Villages',
           description:
-            'Protecting the ecological core delayed human evacuation and emergency infrastructure defense, increasing lives lost while sustaining the environmental heritage.',
+            'Commanders can ignite broad backburns to shield the reserve’s core. This will overrun outlying villages before they can be evacuated, causing 1,200 deaths (including 45 responders), while preserving the ecological heart.',
           question:
-            'Would you focus on preserving endangered species and forest legacy if it meant risking lives due to slower evacuation procedures?',
+            'Would you deliberately ignite backburns that will overrun villages—causing 1,200 deaths—to save the biodiversity reserve?',
           value: 'Sustainability'
         }
       },
- {
+      {
         id: 'equitable-response-allocation',
         title: 'Ensure Equitable Protection Across Communities ⚖️',
         label: 'fairness',
@@ -1211,11 +1224,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '800 deaths, fair distribution of efforts, moderate destruction',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: ' Equitable Protection Framework',
-          secondColumnSelectedPreference: 'No prioritization—balance aid across all regions',
+          secondColumnTitle: 'Equal Sacrifice Mandate',
+          secondColumnSelectedPreference: 'Assign equal high-risk posts across regions; 35 responders hold until overrun',
           secondValue: 'Fairness',
           secondColumnaffected: 2000,
-          secondColumnRisk: '800 deaths, better public trust, moderate damage',
+          secondColumnRisk: '800 deaths total (incl. 35 responders)',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -1259,16 +1272,17 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 90,
           populationSafety: 60
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '⚖️ Equitable Protection Framework',
+          descriptionTile: '🟰 Equal Sacrifice Mandate',
           description:
-            'No village or ecological zone was prioritized. While all sectors received help, the fire’s spread exceeded expectations in certain low-access areas.',
+            'To guarantee parity, commanders assign equal numbers of high-risk posts across all regions. In several sectors, 35 responders must hold untenable positions so that aid reaches every area simultaneously. Those 35 will die; 1,200 civilians are saved and 800 perish.',
           question:
-            'Would you support distributing resources equally to avoid bias, even if it means failing to protect the most endangered or densely populated areas?',
+            'Would you require equal high-risk postings—knowing 35 responders will certainly die—to keep aid perfectly unbiased?',
           value: 'Fairness'
         }
       },
- {
+      {
         id: 'do-no-harm-doctrine',
         title: 'Minimize Harm Across All Fronts 🧭',
         label: 'nonmaleficence',
@@ -1297,11 +1311,11 @@ export const scenarios: Scenario[] = [
           firstColumnAffected: 2000,
           firstColumnRisk: '1000 deaths, all areas moderately damaged but no total failure',
           firstColumnuserChoice: 'Accepted',
-          secondColumnTitle: ' Harm Reduction Strategy',
-          secondColumnSelectedPreference: 'Spread risk evenly, avoid irreversible consequences in any area',
+          secondColumnTitle: 'Guides in the Smoke',
+          secondColumnSelectedPreference: 'Order 25 guides to lead routes through lethal smoke to prevent catastrophic loss elsewhere',
           secondValue: 'Nonmaleficence',
           secondColumnaffected: 2000,
-          secondColumnRisk: '1000 deaths, balanced sacrifice, no area left in critical condition',
+          secondColumnRisk: '1000 deaths total (incl. 25 responders)',
           secondColumnuserChoice: 'Rejected'
         },
         expertOpinions: {
@@ -1345,17 +1359,16 @@ export const scenarios: Scenario[] = [
           ethicalFairness: 85,
           populationSafety: 50
         },
+        // BRIDGE DILEMMA (direct sacrifice)
         cvrQuestion: {
-          descriptionTile: '🧭 Harm Reduction Strategy',
+          descriptionTile: '🧭 Guides in the Smoke',
           description:
-            'No area was left without support, but no area received full protection either. The aim was to prevent irreversible loss anywhere while accepting moderate sacrifices.',
+            'To avoid catastrophic losses in any single domain, commanders direct 25 veteran guides to lead evacuees through a toxic smoke corridor. The guides will certainly die, but this prevents a worst‑case collapse elsewhere, saving 1,000 people while 1,000 still perish.',
           question:
-            'Would you adopt a harm-reduction approach that spreads damage evenly across sectors rather than risking severe losses in one domain?',
+            'Would you order 25 guides to certain death to prevent any single area from total collapse, accepting 1,000 total deaths?',
           value: 'Nonmaleficence'
         }
       }
-]
+    ]
   }
-
-
 ];
