@@ -142,24 +142,26 @@ const SimulationMainPage: React.FC = () => {
   }, [currentScenarioIndex]);
 
   useEffect(() => {
-    // Set initial options for current scenario only once when scenario changes
-    if (currentScenario && currentScenarioInitialOptions.length === 0) {
-      // Check if user has accessed AdaptivePreferenceView (MoralValuesReorderList exists)
-      const moralValuesReorder = localStorage.getItem('MoralValuesReorderList');
-      const simulationMetricsReorder = localStorage.getItem('SimulationMetricsReorderList');
-      
-      let initialOptions: DecisionOptionType[] = [];
-      
-      // If no reordering has occurred, use random selection for all scenarios
-      if (!moralValuesReorder && !simulationMetricsReorder) {
-        const shuffledOptions = [...currentScenario.options].sort(() => Math.random() - 0.5);
-        initialOptions = shuffledOptions.slice(0, 2);
-      } else {
-        // Use preference-based selection (existing logic)
-        initialOptions = calculatePreferenceBasedOptions();
+    // Set initial options for current scenario only once when scenario changes or when first loading
+    if (currentScenario) {
+      if (currentScenarioInitialOptions.length === 0) {
+        // Check if user has accessed AdaptivePreferenceView (MoralValuesReorderList exists)
+        const moralValuesReorder = localStorage.getItem('MoralValuesReorderList');
+        const simulationMetricsReorder = localStorage.getItem('SimulationMetricsReorderList');
+        
+        let initialOptions: DecisionOptionType[] = [];
+        
+        // If no reordering has occurred, use random selection for all scenarios
+        if (!moralValuesReorder && !simulationMetricsReorder) {
+          const shuffledOptions = [...currentScenario.options].sort(() => Math.random() - 0.5);
+          initialOptions = shuffledOptions.slice(0, 2);
+        } else {
+          // Use preference-based selection (existing logic)
+          initialOptions = calculatePreferenceBasedOptions();
+        }
+        
+        setCurrentScenarioInitialOptions(initialOptions);
       }
-      
-      setCurrentScenarioInitialOptions(initialOptions);
     }
     
     // Clear any previously stored metrics
@@ -182,8 +184,10 @@ const SimulationMainPage: React.FC = () => {
 
   // Reset initial options when scenario changes
   useEffect(() => {
-    setCurrentScenarioInitialOptions([]);
-    setAddedAlternatives([]);
+    if (currentScenarioIndex > 0) {
+      setCurrentScenarioInitialOptions([]);
+      setAddedAlternatives([]);
+    }
   }, [currentScenarioIndex]);
   const calculatePreferenceBasedOptions = useCallback((): DecisionOptionType[] => {
     if (!currentScenario) return [];
