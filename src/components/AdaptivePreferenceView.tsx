@@ -145,8 +145,10 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
 
     if (preferenceType === 'metrics') {
       localStorage.setItem('simulationMetricsRanking', JSON.stringify(rankingItems));
+      localStorage.setItem('SimulationMetricsReorderList', JSON.stringify(rankingItems));
     } else {
       localStorage.setItem('moralValuesRanking', JSON.stringify(rankingItems));
+      localStorage.setItem('MoralValuesReorderList', JSON.stringify(rankingItems));
     }
 
     setShowRankedOptions(true);

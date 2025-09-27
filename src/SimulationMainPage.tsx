@@ -158,6 +158,58 @@ const SimulationMainPage: React.FC = () => {
 
     // For other scenarios, use original logic with fallback to most frequent explicit values
     if (currentScenarioIndex > 0) {
+      // Check if user has reordered preferences in AdaptivePreferenceView
+      const simulationMetricsReorder = localStorage.getItem('SimulationMetricsReorderList');
+      const moralValuesReorder = localStorage.getItem('MoralValuesReorderList');
+      
+      if (simulationMetricsReorder) {
+        try {
+          const reorderedMetrics = JSON.parse(simulationMetricsReorder);
+          const topMetric = reorderedMetrics[0]?.id;
+          
+          if (topMetric) {
+            const sortedOptions = [...currentScenario.options].sort((a, b) => {
+              const getMetricValue = (option: DecisionOptionType) => {
+                switch (topMetric) {
+                  case 'livesSaved': return option.impact.livesSaved;
+                  case 'casualties': return option.impact.humanCasualties;
+                  case 'resources': return Math.abs(option.impact.firefightingResource);
+                  case 'infrastructure': return Math.abs(option.impact.infrastructureCondition);
+                  case 'biodiversity': return Math.abs(option.impact.biodiversityCondition);
+                  case 'properties': return Math.abs(option.impact.propertiesCondition);
+                  case 'nuclear': return Math.abs(option.impact.nuclearPowerStation);
+                  default: return 0;
+                }
+              };
+
+              const isHigherBetter = topMetric === 'livesSaved';
+              return isHigherBetter ? getMetricValue(b) - getMetricValue(a) : getMetricValue(a) - getMetricValue(b);
+            });
+            
+            return sortedOptions.slice(0, 2);
+          }
+        } catch (error) {
+          console.error('Error parsing SimulationMetricsReorderList:', error);
+        }
+      }
+      
+      if (moralValuesReorder) {
+        try {
+          const reorderedValues = JSON.parse(moralValuesReorder);
+          const topValues = reorderedValues.slice(0, 2).map((v: any) => v.id.toLowerCase());
+          
+          const matchingOptions = currentScenario.options.filter(option => 
+            topValues.includes(option.label.toLowerCase())
+          );
+          
+          if (matchingOptions.length >= 2) {
+            return matchingOptions.slice(0, 2);
+          }
+        } catch (error) {
+          console.error('Error parsing MoralValuesReorderList:', error);
+        }
+      }
+      
       if (!topStableValues.length) {
         // Get most frequent explicit values as fallback
         const frequentValues = getMostFrequentExplicitValues();
