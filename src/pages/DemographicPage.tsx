@@ -11,8 +11,8 @@ const DemographicPage: React.FC = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // Reset rankedViewAccessed flag when demographics page loads
-    localStorage.setItem('rankedViewAccessed', 'false');
+    // Clear all localStorage data when demographics page loads to ensure fresh start
+    localStorage.clear();
   }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
