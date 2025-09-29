@@ -389,6 +389,54 @@ const SimulationMainPage: React.FC = () => {
     const optionValue = tempSelectedOption.label.toLowerCase();
     const isAligned = matchedStableValues.includes(optionValue);
     
+    // If the option is aligned with user's values, update the MoralValuesReorderList
+    if (isAligned) {
+      // Get current matched stable values and moral values reorder list
+      const savedMatchedValues = localStorage.getItem('finalValues');
+      const existingMoralValuesReorder = localStorage.getItem('MoralValuesReorderList');
+      let allAvailableValues: Array<{id: string, label: string}> = [];
+      
+      // First, try to get from existing reorder list
+      if (existingMoralValuesReorder) {
+        try {
+          allAvailableValues = JSON.parse(existingMoralValuesReorder);
+        } catch (error) {
+          console.error('Error parsing existing MoralValuesReorderList:', error);
+        }
+      }
+      
+      // If no existing reorder list, get from matched stable values
+      if (savedMatchedValues && allAvailableValues.length === 0) {
+        try {
+          const parsedValues = JSON.parse(savedMatchedValues);
+          allAvailableValues = parsedValues.map((v: any) => ({
+            id: v.name.toLowerCase(),
+            label: v.name
+          }));
+        } catch (error) {
+          console.error('Error parsing matched stable values:', error);
+        }
+      }
+      
+      // Remove the selected value from its current position and add it to the top
+      const filteredValues = allAvailableValues.filter(v => v.id !== optionValue);
+      const newMoralValuesReorderList = [
+        { id: optionValue, label: tempSelectedOption.label },
+        ...filteredValues
+      ];
+      
+      // Save to localStorage
+      localStorage.setItem('MoralValuesReorderList', JSON.stringify(newMoralValuesReorderList));
+      
+      // Update the matched stable values to reflect the new priority
+      setMatchedStableValues(prev => {
+        const updated = [optionValue, ...prev.filter(v => v !== optionValue)];
+        return updated;
+      });
+      
+      console.log('Updated MoralValuesReorderList for aligned choice:', newMoralValuesReorderList);
+    }
+    
     if (!isAligned && tempSelectedOption.cvrQuestion) {
       setSelectedDecision(tempSelectedOption);
       setShowCVRModal(true);
