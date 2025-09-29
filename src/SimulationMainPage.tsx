@@ -765,7 +765,6 @@ const SimulationMainPage: React.FC = () => {
                     <Lightbulb size={16} className="mr-1.5" />
                     {sessionState.hasExploredAlts ? 'Alternatives Explored' : 'Explore Alternatives'}
                     {sessionState.hasExploredAlts && <Check size={14} className="ml-1" />}
-                    }
                   </button>
                   <button 
                     onClick={() => setShowRadarChart(true)}
