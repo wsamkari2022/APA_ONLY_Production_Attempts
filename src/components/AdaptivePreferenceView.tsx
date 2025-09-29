@@ -151,7 +151,8 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
       localStorage.setItem('MoralValuesReorderList', JSON.stringify(rankingItems));
     }
 
-    setShowRankedOptions(true);
+    // Instead of showing ranked options, directly confirm the selected option
+    onConfirm(selectedOption);
   };
 
   if (showRankedOptions) {

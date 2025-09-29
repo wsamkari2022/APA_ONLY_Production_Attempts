@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Flame, Check, BarChart2, Lightbulb, X, AlertTriangle } from 'lucide-react';
+import { Flame, Check, BarChart2, Lightbulb, X, AlertTriangle, RefreshCcw } from 'lucide-react';
 import { Chart as ChartJS, RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend } from 'chart.js';
 import MetricsDisplay from './components/MetricsDisplay';
 import DecisionOption from './components/DecisionOption';
@@ -9,7 +9,10 @@ import RadarChart from './components/RadarChart';
 import AlternativeDecisionModal from './components/AlternativeDecisionModal';
 import CVRQuestionModal from './components/CVRQuestionModal';
 import AdaptivePreferenceView from './components/AdaptivePreferenceView';
-import { SimulationMetrics, DecisionOption as DecisionOptionType, ExplicitValue } from './types';
+import ExpertReviewModal from './components/ExpertReviewModal';
+import DecisionSummaryModal from './components/DecisionSummaryModal';
+import StateToast from './components/StateToast';
+import { SimulationMetrics, DecisionOption as DecisionOptionType, ExplicitValue, ScenarioSessionState } from './types';
 import { scenarios } from './data/scenarios';
 
 // Register Chart.js components
@@ -48,8 +51,21 @@ const SimulationMainPage: React.FC = () => {
     decision: DecisionOptionType;
   }>>([]);
   const [matchedStableValues, setMatchedStableValues] = useState<string[]>([]);
-  const [hasExploredAlternatives, setHasExploredAlternatives] = useState(false);
-  const [showAlternativesHint, setShowAlternativesHint] = useState(false);
+
+  // New finite-state flow state
+  const [sessionState, setSessionState] = useState<ScenarioSessionState>({
+    hasExploredAlts: false,
+    enteredCVR: false,
+    enteredAPA: false,
+    pathLock: "none",
+    valueChangeType: "none",
+    scenarioInstanceId: '',
+    timeSpent: { start: Date.now() }
+  });
+  const [showExpertReview, setShowExpertReview] = useState(false);
+  const [showDecisionSummary, setShowDecisionSummary] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{message: string; type: 'warning' | 'info' | 'error'} | null>(null);
+  const [breadcrumbPath, setBreadcrumbPath] = useState<string>('');
 
   const currentScenario = scenarios[currentScenarioIndex];
 
@@ -78,6 +94,23 @@ const SimulationMainPage: React.FC = () => {
   };
 
   useEffect(() => {
+    // Initialize session state for new scenario
+    const newInstanceId = `scenario_${currentScenarioIndex}_${Date.now()}`;
+    setSessionState({
+      hasExploredAlts: false,
+      enteredCVR: false,
+      enteredAPA: false,
+      pathLock: "none",
+      valueChangeType: "none",
+      scenarioInstanceId: newInstanceId,
+      timeSpent: { start: Date.now() }
+    });
+    setBreadcrumbPath('');
+    setSelectedDecision(null);
+    setShowExpertReview(false);
+    setShowDecisionSummary(false);
+    setToastMessage(null);
+
     // Check if user has accessed RankedOptionsView
     const rankedViewAccessed = localStorage.getItem('rankedViewAccessed') === 'true';
     setHasAccessedRankedView(rankedViewAccessed);
@@ -144,22 +177,14 @@ const SimulationMainPage: React.FC = () => {
   useEffect(() => {
     // Set initial options for current scenario only once when scenario changes or when first loading
     if (currentScenario) {
-      // Check if user has accessed AdaptivePreferenceView (MoralValuesReorderList exists)
-      const moralValuesReorder = localStorage.getItem('MoralValuesReorderList');
-      const simulationMetricsReorder = localStorage.getItem('SimulationMetricsReorderList');
-      
-      let initialOptions: DecisionOptionType[] = [];
-      
-      // If no reordering has occurred, use random selection for all scenarios
-      if (!moralValuesReorder && !simulationMetricsReorder) {
+      if (currentScenarioIndex === 0) {
+        // First scenario: randomize placement
         const shuffledOptions = [...currentScenario.options].sort(() => Math.random() - 0.5);
-        initialOptions = shuffledOptions.slice(0, 2);
+        setCurrentScenarioInitialOptions(shuffledOptions.slice(0, 2));
       } else {
-        // Use preference-based selection (existing logic)
-        initialOptions = calculatePreferenceBasedOptions();
+        // Subsequent scenarios: use preference-based selection
+        setCurrentScenarioInitialOptions(calculatePreferenceBasedOptions());
       }
-      
-      setCurrentScenarioInitialOptions(initialOptions);
     }
     
     // Clear any previously stored metrics
@@ -186,6 +211,7 @@ const SimulationMainPage: React.FC = () => {
       setAddedAlternatives([]);
     }
   }, [currentScenarioIndex]);
+
   const calculatePreferenceBasedOptions = useCallback((): DecisionOptionType[] => {
     if (!currentScenario) return [];
     
@@ -365,29 +391,54 @@ const SimulationMainPage: React.FC = () => {
   }, [currentScenarioIndex, getInitialOptions, addedAlternatives]);
 
   const handleDecisionSelect = (decision: DecisionOptionType) => {
-    // Check if the selected option's value doesn't match user's stable values
-    const optionValue = decision.label.toLowerCase();
-    const doesNotMatchStableValues = !matchedStableValues.includes(optionValue);
+    setSelectedDecision(decision);
+    setShowExpertReview(true);
+    setBreadcrumbPath('IE-HAN');
+  };
+
+  const handleKeepChoice = () => {
+    setShowExpertReview(false);
     
-    if (doesNotMatchStableValues && decision.cvrQuestion) {
-      setSelectedDecision(decision);
+    if (!selectedDecision) return;
+    
+    const optionValue = selectedDecision.label.toLowerCase();
+    const isAligned = matchedStableValues.includes(optionValue);
+    
+    if (!isAligned && selectedDecision.cvrQuestion && sessionState.pathLock !== "APA") {
+      // Route to CVR
       setShowCVRModal(true);
+      setSessionState(prev => ({ ...prev, enteredCVR: true }));
+      setBreadcrumbPath('IE-HAN → CVR');
     } else {
-      setSelectedDecision(decision);
+      // Skip CVR, go to Decision Summary
+      setShowDecisionSummary(true);
     }
+  };
+
+  const handleReviewAlternatives = () => {
+    setShowExpertReview(false);
+    setShowAlternativesModal(true);
+    setSessionState(prev => ({ ...prev, hasExploredAlts: true }));
   };
 
   const handleCVRAnswer = (answer: boolean) => {
     setShowCVRModal(false);
     
+    if (sessionState.pathLock === "APA") {
+      setToastMessage({
+        message: "This path is locked after APA to preserve decision integrity.",
+        type: 'warning'
+      });
+      return;
+    }
+    
     if (answer) {
-      // User confirmed their choice, update moral values reorder list
+      // CVR Yes - commit and update values
       if (selectedDecision) {
         const selectedValue = selectedDecision.label.toLowerCase();
         
-        // Get current matched stable values
         const savedMatchedValues = localStorage.getItem('finalValues');
-        let matchedStableValuesList: string[] = [];
+        let matchedStableValuesList: Array<{id: string; label: string}> = [];
         
         if (savedMatchedValues) {
           try {
@@ -401,22 +452,31 @@ const SimulationMainPage: React.FC = () => {
           }
         }
         
-        // Create new moral values reorder list with selected value at top
         const newMoralValuesReorderList = [
           { id: selectedValue, label: selectedDecision.label },
           ...matchedStableValuesList.filter(v => v.id !== selectedValue)
         ];
         
-        // Save to localStorage
         localStorage.setItem('MoralValuesReorderList', JSON.stringify(newMoralValuesReorderList));
-        
-        console.log('Updated MoralValuesReorderList:', newMoralValuesReorderList);
+        setSessionState(prev => ({ 
+          ...prev, 
+          valueChangeType: "CVR_commit", 
+          pathLock: "CVR",
+          timeSpent: { ...prev.timeSpent, cvr: Date.now() }
+        }));
+        setBreadcrumbPath('IE-HAN → CVR (Yes)');
       }
-      
-      // Proceed with the decision - the selected decision is already set
+      setShowDecisionSummary(true);
     } else {
-      // User rejected their choice, show adaptive preference view
+      // CVR No - route to APA
       setShowAdaptivePreference(true);
+      setSessionState(prev => ({ 
+        ...prev, 
+        enteredAPA: true, 
+        pathLock: "APA",
+        timeSpent: { ...prev.timeSpent, cvr: Date.now() }
+      }));
+      setBreadcrumbPath('IE-HAN → CVR (No) → APA');
     }
   };
 
@@ -426,21 +486,20 @@ const SimulationMainPage: React.FC = () => {
   };
 
   const handleExploreAlternatives = () => {
-    setHasExploredAlternatives(true);
+    setSessionState(prev => ({ ...prev, hasExploredAlts: true }));
     setShowAlternativesModal(true);
-  };
-
-  const handleConfirmAttempt = () => {
-    if (!hasExploredAlternatives) {
-      setShowAlternativesHint(true);
-      setTimeout(() => setShowAlternativesHint(false), 3000);
-      return;
-    }
-    handleConfirmDecision();
   };
 
   const handleConfirmDecision = () => {
     if (!selectedDecision) return;
+    
+    if (!sessionState.hasExploredAlts) {
+      setToastMessage({
+        message: "Review alternatives to enable confirmation.",
+        type: 'info'
+      });
+      return;
+    }
 
     const newMetrics = {
       livesSaved: metrics.livesSaved + selectedDecision.impact.livesSaved,
@@ -461,6 +520,20 @@ const SimulationMainPage: React.FC = () => {
     const updatedOutcomes = [...simulationScenarioOutcomes, outcome];
     setSimulationScenarioOutcomes(updatedOutcomes);
     localStorage.setItem('simulationScenarioOutcomes', JSON.stringify(updatedOutcomes));
+    
+    // Log analytics data
+    const analyticsData = {
+      ...sessionState,
+      selectedOptionId: selectedDecision.id,
+      preValueList: localStorage.getItem('finalValues'),
+      postValueList: localStorage.getItem('MoralValuesReorderList'),
+      timeSpent: {
+        ...sessionState.timeSpent,
+        confirmed: Date.now(),
+        total: Date.now() - sessionState.timeSpent.start
+      }
+    };
+    console.log('Scenario Analytics:', analyticsData);
 
     const changing = Object.keys(metrics).filter(
       (key) => metrics[key as keyof SimulationMetrics] !== newMetrics[key as keyof SimulationMetrics]
@@ -474,6 +547,7 @@ const SimulationMainPage: React.FC = () => {
     }, 1000);
     
     setSelectedDecision(null);
+    setShowDecisionSummary(false);
     
     if (currentScenarioIndex < scenarios.length - 1) {
       setIsTransitioning(true);
@@ -493,7 +567,6 @@ const SimulationMainPage: React.FC = () => {
         setTransitionMessage(null);
         setCurrentScenarioIndex(prev => prev + 1);
       }, 3000);
-      setHasExploredAlternatives(false); // Reset for next scenario
     } else {
       // Final scenario completed
       localStorage.setItem('finalSimulationMetrics', JSON.stringify(newMetrics));
@@ -504,6 +577,32 @@ const SimulationMainPage: React.FC = () => {
   const handleRankedOptionSelect = (option: DecisionOptionType) => {
     setShowAdaptivePreference(false);
     setSelectedDecision(option);
+    setSessionState(prev => ({ 
+      ...prev, 
+      valueChangeType: "APA_commit",
+      timeSpent: { ...prev.timeSpent, apa: Date.now() }
+    }));
+    setShowDecisionSummary(true);
+  };
+
+  const handleResetScenario = () => {
+    const newInstanceId = `scenario_${currentScenarioIndex}_${Date.now()}`;
+    setSessionState({
+      hasExploredAlts: false,
+      enteredCVR: false,
+      enteredAPA: false,
+      pathLock: "none",
+      valueChangeType: "none",
+      scenarioInstanceId: newInstanceId,
+      timeSpent: { start: Date.now() }
+    });
+    setBreadcrumbPath('');
+    setSelectedDecision(null);
+    setShowExpertReview(false);
+    setShowDecisionSummary(false);
+    setShowCVRModal(false);
+    setShowAdaptivePreference(false);
+    setToastMessage(null);
   };
 
   const handleToggleOption = useCallback((optionId: string) => {
@@ -615,8 +714,22 @@ const SimulationMainPage: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-800">
             Wildfire Crisis Simulation
           </h1>
-          <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-            Scenario {currentScenario.id} of {scenarios.length}
+          <div className="flex items-center gap-2">
+            {breadcrumbPath && (
+              <div className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
+                {breadcrumbPath}
+              </div>
+            )}
+            <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+              Scenario {currentScenario.id} of {scenarios.length}
+            </div>
+            <button
+              onClick={handleResetScenario}
+              className="text-gray-500 hover:text-gray-700 p-1"
+              title="Reset Scenario"
+            >
+              <RefreshCcw size={16} />
+            </button>
           </div>
         </div>
         
@@ -643,16 +756,15 @@ const SimulationMainPage: React.FC = () => {
                     className={`flex items-center text-center text-sm px-3 py-1.5 rounded-md transition-colors duration-200 ${
                       availableAlternatives.length === 0
                         ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                        : addedAlternatives.length > 0
+                        : sessionState.hasExploredAlts
                         ? 'bg-purple-100 text-purple-800 hover:bg-purple-200'
                         : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
                     }`}
                     disabled={availableAlternatives.length === 0}
                   >
                     <Lightbulb size={16} className="mr-1.5" />
-                    {addedAlternatives.length > 0 
-                      ? `Alternative Options (${addedAlternatives.length})` 
-                      : 'Explore Alternatives'
+                    {sessionState.hasExploredAlts ? 'Alternatives Explored' : 'Explore Alternatives'}
+                    {sessionState.hasExploredAlts && <Check size={14} className="ml-1" />}
                     }
                   </button>
                   <button 
@@ -675,51 +787,6 @@ const SimulationMainPage: React.FC = () => {
                 ))}
               </div>
             </>
-          ) : (
-            <div className="flex-1 flex flex-col">
-              <div className="flex items-center mb-3">
-                <h3 className="text-base font-medium text-gray-800 mr-2">Selected Decision:</h3>
-                <span className={`px-2 py-1 rounded-md text-sm font-medium ${
-                  selectedDecision.isAlternative 
-                    ? 'bg-blue-100 text-blue-800' 
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {selectedDecision.title}
-                </span>
-                <button 
-                  onClick={() => setSelectedDecision(null)}
-                  className="ml-auto flex items-center text-gray-500 hover:text-gray-700 text-sm"
-                >
-                  <X size={14} className="mr-1" />
-                  Change Selection
-                </button>
-              </div>
-              
-              <div className="bg-gray-50 p-3 rounded-lg mb-3 flex-1 overflow-hidden">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Expert Analysis</h4>
-                <ExpertAnalysis decision={selectedDecision} />
-              </div>
-              
-              {showAlternativesHint && (
-                <div className="mb-3 bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg">
-                  <p className="text-sm text-yellow-800">
-                    Reviewing alternatives is required before confirmation.
-                  </p>
-                </div>
-              )}
-              
-              <button
-                onClick={handleConfirmAttempt}
-                className={`mt-auto font-medium py-2 px-4 rounded-lg flex items-center justify-center transition-colors duration-200 ${
-                  hasExploredAlternatives
-                    ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                    : 'bg-gray-400 text-gray-200 cursor-not-allowed'
-                }`}
-              >
-                <Check size={16} className="mr-1" />
-                Confirm Decision
-              </button>
-            </div>
           )}
         </div>
       </div>
@@ -744,17 +811,45 @@ const SimulationMainPage: React.FC = () => {
         onAddAlternative={handleAddAlternative}
       />
 
+      <ExpertReviewModal
+        isOpen={showExpertReview}
+        onClose={() => setShowExpertReview(false)}
+        option={selectedDecision!}
+        isAligned={selectedDecision ? matchedStableValues.includes(selectedDecision.label.toLowerCase()) : false}
+        onKeepChoice={handleKeepChoice}
+        onReviewAlternatives={handleReviewAlternatives}
+      />
+
+      <DecisionSummaryModal
+        isOpen={showDecisionSummary}
+        onClose={() => setShowDecisionSummary(false)}
+        option={selectedDecision!}
+        onConfirm={handleConfirmDecision}
+        canConfirm={sessionState.hasExploredAlts}
+        showCVRDisabled={sessionState.pathLock === "APA"}
+        pathType={sessionState.valueChangeType === "CVR_commit" ? "CVR" : sessionState.valueChangeType === "APA_commit" ? "APA" : "direct"}
+      />
+
       {selectedDecision?.cvrQuestion && (
         <CVRQuestionModal
           isOpen={showCVRModal}
           onClose={() => {
             setShowCVRModal(false);
-            setSelectedDecision(null);
+            if (sessionState.pathLock !== "APA") {
+              setSelectedDecision(null);
+            }
           }}
           question={selectedDecision.cvrQuestion}
           onAnswer={handleCVRAnswer}
         />
       )}
+
+      <StateToast
+        message={toastMessage?.message || ''}
+        type={toastMessage?.type || 'info'}
+        isVisible={!!toastMessage}
+        onClose={() => setToastMessage(null)}
+      />
 
       {isTransitioning && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
