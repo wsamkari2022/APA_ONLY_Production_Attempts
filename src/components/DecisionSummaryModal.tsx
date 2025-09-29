@@ -177,7 +177,10 @@ const DecisionSummaryModal: React.FC<DecisionSummaryModalProps> = ({
             {!canConfirm && (
               <div className="relative">
                 <button
-                  onClick={onReviewAlternatives}
+                  onClick={() => {
+                    onClose();
+                    onReviewAlternatives();
+                  }}
                   className="flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl animate-pulse border-2 border-purple-300"
                 >
                   <span className="relative">
@@ -210,10 +213,7 @@ const DecisionSummaryModal: React.FC<DecisionSummaryModalProps> = ({
             )}
             
             <button
-              onClick={() => {
-                onClose();
-                onReviewAlternatives();
-              }}
+              onClick={onConfirmDecision}
               disabled={!canConfirm}
               className={`flex items-center gap-2 px-6 py-2 rounded-lg transition-colors duration-200 ${
                 canConfirm
