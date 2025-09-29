@@ -703,7 +703,7 @@ const SimulationMainPage: React.FC = () => {
                 ))}
               </div>
             </>
-          )}
+          ) : null}
         </div>
       </div>
 
