@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, MoveVertical, AlertCircle, Scale, Zap, Leaf, Shield, Ban, Calculator, Brain, ArrowRight } from 'lucide-react';
+import { ArrowLeft, MoveVertical, AlertCircle, Scale, Zap, Leaf, Shield, Ban, Calculator, Brain, ArrowRight, Sparkles } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DecisionOption, MainScenario } from '../types';
 import RankedOptionsView from './RankedOptionsView';
@@ -127,6 +127,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
   const [preferenceType, setPreferenceType] = useState<'metrics' | 'values' | null>(null);
   const [rankingItems, setRankingItems] = useState<Array<{ id: string; label: string }>>(simulationMetrics);
   const [showRankedOptions, setShowRankedOptions] = useState(false);
+  const [showMetricTooltip, setShowMetricTooltip] = useState(true);
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
