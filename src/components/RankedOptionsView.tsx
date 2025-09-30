@@ -42,6 +42,8 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
   const [preferenceMessage, setPreferenceMessage] = useState('');
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
   const [previewMetrics, setPreviewMetrics] = useState(currentMetrics);
+  const [showMetricTooltip, setShowMetricTooltip] = useState(true);
+  const [hasClickedMetric, setHasClickedMetric] = useState(false);
 
   useEffect(() => {
     // Mark that the user has accessed the RankedOptionsView
