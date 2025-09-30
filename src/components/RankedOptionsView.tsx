@@ -42,7 +42,7 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
   const [preferenceMessage, setPreferenceMessage] = useState('');
   const [selectedMetric, setSelectedMetric] = useState<string | null>(null);
   const [previewMetrics, setPreviewMetrics] = useState(currentMetrics);
-  const [showMetricTooltip, setShowMetricTooltip] = useState(true);
+  const [showBubbleTooltip, setShowBubbleTooltip] = useState(true);
   const [hasClickedMetric, setHasClickedMetric] = useState(false);
 
   useEffect(() => {
@@ -190,8 +190,8 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
         </div>
 
         {/* Success message when user clicks a metric */}
-        {hasClickedMetric && !showMetricTooltip && (
-          <div className="mb-4 p-3 bg-green-50 border-l-4 border-green-400 rounded-r-lg">
+        {hasClickedMetric && !showBubbleTooltip && (
+          <div className="mb-4 p-3 bg-green-50 border-l-4 border-green-400 rounded-r-lg animate-fade-in">
             <p className="text-sm text-green-800">
               🎉 <strong>Great!</strong> Now you can see how each option impacts this metric. Try clicking other metrics to compare!
             </p>
@@ -206,22 +206,36 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
             <p className="text-blue-800">{preferenceMessage}</p>
           </div>
 
-          <div className="flex flex-wrap gap-2 mb-6">
-            {metricButtons.map((metric) => {
+          <div className="relative flex flex-wrap gap-2 mb-6">
+            {showBubbleTooltip && (
+              <div className="absolute -top-12 left-0 z-20 animate-bounce">
+                <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap font-medium">
+                  ✨ Click any metric to see impact numbers!
+                  <div className="absolute top-full left-8 transform -translate-x-1/2 w-0 h-0 border-t-8 border-purple-500 border-x-8 border-x-transparent"></div>
+                </div>
+              </div>
+            )}
+            {metricButtons.map((metric, index) => {
               const Icon = metric.icon;
               return (
-                <button
-                  key={metric.id}
-                  onClick={() => handleMetricClick(metric.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors duration-200 ${
-                    selectedMetric === metric.id
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  <Icon size={16} className={metric.color} />
-                  {metric.label}
-                </button>
+                <div key={metric.id} className="relative">
+                  <button
+                    onClick={() => handleMetricClick(metric.id)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm transition-all duration-200 ${
+                      selectedMetric === metric.id
+                        ? 'bg-blue-500 text-white shadow-lg scale-105'
+                        : showBubbleTooltip && index === 0
+                        ? 'bg-purple-100 text-purple-700 hover:bg-purple-200 ring-2 ring-purple-300 ring-offset-2'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    <Icon size={16} className={selectedMetric === metric.id ? 'text-white' : metric.color} />
+                    {metric.label}
+                  </button>
+                  {showBubbleTooltip && index === 0 && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-pink-400 rounded-full animate-ping"></span>
+                  )}
+                </div>
               );
             })}
           </div>
