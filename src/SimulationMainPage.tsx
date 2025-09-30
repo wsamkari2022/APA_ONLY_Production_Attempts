@@ -604,6 +604,8 @@ const SimulationMainPage: React.FC = () => {
 
   const handleRankedOptionSelect = (option: DecisionOptionType) => {
     setShowAdaptivePreference(false);
+    // Reset the selected decision state to null to show the main simulation UI
+    setSelectedDecision(null);
     setSelectedDecision(option);
     setShowDecisionSummary(true);
   };

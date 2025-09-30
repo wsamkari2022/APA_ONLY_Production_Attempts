@@ -255,6 +255,12 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
               Rank from 1 (most important) to {rankingItems.length} (least important)
             </h4>
             
+            {showMetricTooltip && (
+              <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+                <p className="text-sm text-blue-800">💡 <strong>Tip:</strong> Drag and drop items to reorder them by importance</p>
+              </div>
+            )}
+            
             <DragDropContext onDragEnd={handleDragEnd}>
               <Droppable droppableId="rankingList">
                 {(provided) => (
