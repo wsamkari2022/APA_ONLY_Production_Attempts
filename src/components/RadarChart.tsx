@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart2, Flame, AlertTriangle, Droplets, Building, Trees as Tree, Scale, X, Eye, EyeOff, Star, BarChart, GitCompare, RadarIcon, Shield } from 'lucide-react';
+import { BarChart2, Flame, AlertTriangle, Droplets, Building, Trees as Tree, Scale, X, Eye, EyeOff, Star, BarChart, GitCompare, Radar as RadarIcon, Shield } from 'lucide-react';
 import { DecisionOption } from '../types';
 import {
   Chart as ChartJS,
@@ -67,7 +67,13 @@ const RadarChart: React.FC<RadarChartProps> = ({
 }) => {
   const [selectedMetric, setSelectedMetric] = useState<string>('Fire Containment');
   const [comparisonView, setComparisonView] = useState<ComparisonView>('radar');
-  
+  const [showViewTooltip, setShowViewTooltip] = useState(true);
+  const [hasClickedView, setHasClickedView] = useState(false);
+  const [showMetricTooltip, setShowMetricTooltip] = useState(false);
+  const [hasClickedMetric, setHasClickedMetric] = useState(false);
+  const [showToggleTooltip, setShowToggleTooltip] = useState(false);
+  const [hasClickedToggle, setHasClickedToggle] = useState(false);
+
   if (!showRadarChart) return null;
 
   const allOptions = [...currentScenario.options];
@@ -201,6 +207,35 @@ const RadarChart: React.FC<RadarChartProps> = ({
     return differences.sort((a, b) => b.difference - a.difference);
   };
 
+  const handleViewChange = (view: ComparisonView) => {
+    setComparisonView(view);
+    if (!hasClickedView) {
+      setHasClickedView(true);
+      setShowViewTooltip(false);
+      if (view !== 'radar') {
+        setTimeout(() => setShowMetricTooltip(true), 500);
+      } else {
+        setTimeout(() => setShowToggleTooltip(true), 500);
+      }
+    }
+  };
+
+  const handleMetricClick = (metric: string) => {
+    setSelectedMetric(metric);
+    if (!hasClickedMetric) {
+      setHasClickedMetric(true);
+      setShowMetricTooltip(false);
+    }
+  };
+
+  const handleToggleClick = (optionId: string) => {
+    toggleOption(optionId);
+    if (!hasClickedToggle) {
+      setHasClickedToggle(true);
+      setShowToggleTooltip(false);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
@@ -209,29 +244,58 @@ const RadarChart: React.FC<RadarChartProps> = ({
             <BarChart2 className="mr-2 text-blue-600" size={20} />
             Decision Trade-Off Comparison
           </h3>
-          <div className="flex items-center gap-2">
+          <div className="relative flex items-center gap-2">
+            {showViewTooltip && (
+              <div className="absolute -bottom-14 right-0 z-30 animate-bounce">
+                <div className="bg-gradient-to-r from-blue-500 to-green-500 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap font-medium">
+                  🔍 Try different views!
+                  <div className="absolute bottom-full right-8 transform w-0 h-0 border-b-8 border-blue-500 border-x-8 border-x-transparent"></div>
+                </div>
+              </div>
+            )}
+            {hasClickedView && !hasClickedMetric && !hasClickedToggle && (
+              <div className="absolute -bottom-14 right-0 z-30">
+                <div className="bg-green-50 border border-green-400 text-green-800 text-xs px-3 py-1.5 rounded-lg shadow-md whitespace-nowrap">
+                  Great! Now explore the options below
+                  <div className="absolute bottom-full right-8 transform w-0 h-0 border-b-8 border-green-400 border-x-8 border-x-transparent"></div>
+                </div>
+              </div>
+            )}
+            <div className="relative">
+              <button
+                onClick={() => handleViewChange('radar')}
+                className={`px-3 py-1.5 rounded-md text-sm transition-all duration-200 ${
+                  comparisonView === 'radar'
+                    ? 'bg-blue-500 text-white shadow-lg scale-105'
+                    : showViewTooltip
+                    ? 'bg-blue-100 text-blue-700 hover:bg-blue-200 ring-2 ring-blue-300 ring-offset-2'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                <RadarIcon size={16} className="inline mr-1" />
+                Radar
+              </button>
+              {showViewTooltip && (
+                <span className="absolute -top-1 -right-1 w-3 h-3 bg-pink-400 rounded-full animate-ping"></span>
+              )}
+            </div>
             <button
-              onClick={() => setComparisonView('radar')}
-              className={`px-3 py-1.5 rounded-md text-sm ${
-                comparisonView === 'radar' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-600'
-              }`}
-            >
-              <RadarIcon size={16} className="inline mr-1" />
-              Radar
-            </button>
-            <button
-              onClick={() => setComparisonView('bar')}
-              className={`px-3 py-1.5 rounded-md text-sm ${
-                comparisonView === 'bar' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'
+              onClick={() => handleViewChange('bar')}
+              className={`px-3 py-1.5 rounded-md text-sm transition-all duration-200 ${
+                comparisonView === 'bar'
+                  ? 'bg-green-500 text-white shadow-lg scale-105'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
               <BarChart size={16} className="inline mr-1" />
               Bar
             </button>
             <button
-              onClick={() => setComparisonView('differences')}
-              className={`px-3 py-1.5 rounded-md text-sm ${
-                comparisonView === 'differences' ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'
+              onClick={() => handleViewChange('differences')}
+              className={`px-3 py-1.5 rounded-md text-sm transition-all duration-200 ${
+                comparisonView === 'differences'
+                  ? 'bg-purple-500 text-white shadow-lg scale-105'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
               <GitCompare size={16} className="inline mr-1" />
@@ -246,19 +310,33 @@ const RadarChart: React.FC<RadarChartProps> = ({
         <div className="p-4 flex-1 overflow-auto">
           {/* Metric Selection */}
           {comparisonView !== 'radar' && (
-            <div className="mb-4 flex flex-wrap gap-2">
-              {metrics.map(metric => (
-                <button
-                  key={metric}
-                  onClick={() => setSelectedMetric(metric)}
-                  className={`px-3 py-1.5 rounded-md text-sm ${
-                    selectedMetric === metric
-                      ? 'bg-blue-100 text-blue-800'
-                      : 'bg-gray-100 text-gray-600'
-                  }`}
-                >
-                  {metric}
-                </button>
+            <div className="relative mb-4 flex flex-wrap gap-2">
+              {showMetricTooltip && (
+                <div className="absolute -top-12 left-0 z-20 animate-bounce">
+                  <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap font-medium">
+                    📊 Select metrics to compare!
+                    <div className="absolute top-full left-8 transform -translate-x-1/2 w-0 h-0 border-t-8 border-orange-500 border-x-8 border-x-transparent"></div>
+                  </div>
+                </div>
+              )}
+              {metrics.map((metric, index) => (
+                <div key={metric} className="relative">
+                  <button
+                    onClick={() => handleMetricClick(metric)}
+                    className={`px-3 py-1.5 rounded-md text-sm transition-all duration-200 ${
+                      selectedMetric === metric
+                        ? 'bg-blue-500 text-white shadow-lg scale-105'
+                        : showMetricTooltip && index === 0
+                        ? 'bg-orange-100 text-orange-700 hover:bg-orange-200 ring-2 ring-orange-300 ring-offset-2'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                  >
+                    {metric}
+                  </button>
+                  {showMetricTooltip && index === 0 && (
+                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></span>
+                  )}
+                </div>
               ))}
             </div>
           )}
@@ -267,45 +345,57 @@ const RadarChart: React.FC<RadarChartProps> = ({
           {comparisonView === 'radar' && (
             <>
               {/* Decision Option Toggle Buttons */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
-                {allOptions.map((option) => (
-                  <button
-                    key={option.id}
-                    onClick={() => toggleOption(option.id)}
-                    className={`p-2 rounded-lg flex items-center justify-between transition-all duration-200 ${
-                      toggledOptions[option.id] 
-                        ? option.isAlternative 
-                          ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-                          : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                        : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
-                    }`}
-                  >
-                    <div className="flex items-center">
-                      <span className={`w-3 h-3 rounded-full mr-2 ${
-                        toggledOptions[option.id] 
-                          ? option.isAlternative ? 'bg-blue-500' : 'bg-gray-500'
-                          : 'bg-gray-300'
-                      }`}></span>
-                      <span className="text-sm font-medium">{option.title}</span>
-                      {option.isAlternative && (
-                        <span className="ml-2 text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">
-                          Alternative
-                        </span>
-                      )}
+              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                {showToggleTooltip && (
+                  <div className="absolute -top-12 left-0 z-20 animate-bounce">
+                    <div className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap font-medium">
+                      👁️ Toggle options to compare!
+                      <div className="absolute top-full left-8 transform -translate-x-1/2 w-0 h-0 border-t-8 border-purple-500 border-x-8 border-x-transparent"></div>
                     </div>
-                    {toggledOptions[option.id] ? (
-                      <Eye size={16} className="text-current" />
-                    ) : (
-                      <EyeOff size={16} className="text-current" />
+                  </div>
+                )}
+                {allOptions.map((option, index) => (
+                  <div key={option.id} className="relative">
+                    <button
+                      onClick={() => handleToggleClick(option.id)}
+                      className={`w-full p-2 rounded-lg flex items-center justify-between transition-all duration-200 ${
+                        toggledOptions[option.id]
+                          ? option.isAlternative
+                            ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                            : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                          : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                      } ${showToggleTooltip && index === 0 ? 'ring-2 ring-purple-300 ring-offset-2' : ''}`}
+                    >
+                      <div className="flex items-center">
+                        <span className={`w-3 h-3 rounded-full mr-2 ${
+                          toggledOptions[option.id]
+                            ? option.isAlternative ? 'bg-blue-500' : 'bg-gray-500'
+                            : 'bg-gray-300'
+                        }`}></span>
+                        <span className="text-sm font-medium">{option.title}</span>
+                        {option.isAlternative && (
+                          <span className="ml-2 text-xs bg-blue-200 text-blue-800 px-2 py-0.5 rounded-full">
+                            Alternative
+                          </span>
+                        )}
+                      </div>
+                      {toggledOptions[option.id] ? (
+                        <Eye size={16} className="text-current" />
+                      ) : (
+                        <EyeOff size={16} className="text-current" />
+                      )}
+                    </button>
+                    {showToggleTooltip && index === 0 && (
+                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-indigo-400 rounded-full animate-ping"></span>
                     )}
-                  </button>
+                  </div>
                 ))}
               </div>
 
               {/* Ideal Outcome Toggle */}
               <button
-                onClick={() => toggleOption('ideal-outcome')}
-                className={`w-full p-3 rounded-lg flex items-center justify-between mb-4 ${
+                onClick={() => handleToggleClick('ideal-outcome')}
+                className={`w-full p-3 rounded-lg flex items-center justify-between mb-4 transition-all duration-200 ${
                   toggledOptions['ideal-outcome']
                     ? 'bg-purple-100 text-purple-800'
                     : 'bg-gray-50 text-gray-600'
