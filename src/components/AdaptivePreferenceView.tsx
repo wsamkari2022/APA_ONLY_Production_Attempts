@@ -159,7 +159,10 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
     return (
       <RankedOptionsView
         scenario={mainScenario}
-        onBack={() => setShowRankedOptions(false)}
+        onBack={() => {
+          setShowRankedOptions(false);
+          onBack(); // This will properly go back to simulation
+        }}
         onConfirm={onConfirm}
         currentMetrics={{
           livesSaved: 0,
