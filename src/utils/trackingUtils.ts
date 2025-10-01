@@ -9,7 +9,11 @@ export class TrackingManager {
       startTime: Date.now(),
       optionSelections: [],
       cvrVisited: false,
+      cvrVisitCount: 0,
+      cvrYesAnswers: 0,
+      cvrNoAnswers: 0,
       apaReordered: false,
+      apaReorderCount: 0,
       alternativesExplored: false,
       switchCount: 0
     };
@@ -99,6 +103,7 @@ export class TrackingManager {
   static recordCVRVisit(scenarioId: number, optionId: string) {
     if (this.currentScenarioTracking) {
       this.currentScenarioTracking.cvrVisited = true;
+      this.currentScenarioTracking.cvrVisitCount++;
     }
 
     this.emitEvent({
@@ -114,7 +119,11 @@ export class TrackingManager {
 
   static recordCVRAnswer(scenarioId: number, answer: boolean) {
     if (this.currentScenarioTracking) {
-      this.currentScenarioTracking.cvrAnswer = answer;
+      if (answer) {
+        this.currentScenarioTracking.cvrYesAnswers++;
+      } else {
+        this.currentScenarioTracking.cvrNoAnswers++;
+      }
     }
 
     this.emitEvent({
@@ -128,9 +137,10 @@ export class TrackingManager {
     });
   }
 
-  static recordAPAReordering(scenarioId: number, valuesBefore: string[], valuesAfter: string[]) {
+  static recordAPAReordering(scenarioId: number, valuesBefore: string[], valuesAfter: string[], preferenceType: 'metrics' | 'values') {
     if (this.currentScenarioTracking) {
       this.currentScenarioTracking.apaReordered = true;
+      this.currentScenarioTracking.apaReorderCount++;
     }
 
     this.emitEvent({
@@ -139,6 +149,7 @@ export class TrackingManager {
       scenarioId,
       valuesBefore,
       valuesAfter,
+      preferenceType,
       timeSinceScenarioOpen: this.currentScenarioTracking
         ? Date.now() - this.currentScenarioTracking.startTime
         : 0

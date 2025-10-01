@@ -13,6 +13,8 @@ export interface TelemetryEvent {
   valuesBefore?: string[];
   valuesAfter?: string[];
   cvrAnswer?: boolean;
+  preferenceType?: 'metrics' | 'values';
+  question?: string;
 }
 
 export interface ScenarioTracking {
@@ -31,14 +33,19 @@ export interface ScenarioTracking {
     aligned: boolean;
   };
   cvrVisited: boolean;
-  cvrAnswer?: boolean;
+  cvrVisitCount: number;
+  cvrYesAnswers: number;
+  cvrNoAnswers: number;
   apaReordered: boolean;
+  apaReorderCount: number;
   alternativesExplored: boolean;
   switchCount: number;
 }
 
 export interface SessionDVs {
   cvrArrivals: number;
+  cvrYesCount: number;
+  cvrNoCount: number;
   apaReorderings: number;
   misalignAfterCvrApaCount: number;
   realignAfterCvrApaCount: number;
@@ -49,7 +56,7 @@ export interface SessionDVs {
   performanceComposite: number;
   balanceIndex: number;
   finalAlignmentByScenario: boolean[];
-  valueOrderTrajectories: Array<{scenarioId: number, values: string[]}>;
+  valueOrderTrajectories: Array<{scenarioId: number, values: string[], preferenceType: string}>;
   scenarioDetails: Array<{
     scenarioId: number;
     finalChoice: string;
@@ -57,7 +64,10 @@ export interface SessionDVs {
     switches: number;
     timeSeconds: number;
     cvrVisited: boolean;
+    cvrVisitCount: number;
+    cvrYesAnswers: number;
     apaReordered: boolean;
+    apaReorderCount: number;
   }>;
   decisionSatisfaction?: number;
   processSatisfaction?: number;

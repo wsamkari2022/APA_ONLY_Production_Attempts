@@ -12,10 +12,12 @@ import {
   Eye,
   MessageSquare,
   RefreshCcw,
-  Activity
+  Activity,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react';
 import { SimulationMetrics } from '../types';
-import { SessionDVs } from '../types/tracking';
+import { SessionDVs, TelemetryEvent } from '../types/tracking';
 import { TrackingManager } from '../utils/trackingUtils';
 
 interface FeedbackData {
@@ -48,7 +50,7 @@ const ResultsFeedbackPage: React.FC = () => {
       const matchedValues = JSON.parse(localStorage.getItem('finalValues') || '[]');
       const moralValuesReorder = localStorage.getItem('MoralValuesReorderList');
       const scenarioHistory = TrackingManager.getScenarioTrackingHistory();
-      const allEvents = TrackingManager.getAllEvents();
+      const allEvents: TelemetryEvent[] = TrackingManager.getAllEvents();
 
       if (!simulationOutcomes.length || !finalMetrics) {
         console.error('Missing required data for metrics calculation');
@@ -60,86 +62,162 @@ const ResultsFeedbackPage: React.FC = () => {
       if (moralValuesReorder) {
         try {
           const reorderedValues = JSON.parse(moralValuesReorder);
-          currentMatchedValues = reorderedValues.map((v: any) => v.id || v.name).map((s: string) => s.toLowerCase());
+          currentMatchedValues = reorderedValues.map((v: any) => (v.id || v.name || v).toString().toLowerCase());
         } catch (e) {
-          currentMatchedValues = matchedValues.map((v: any) => v.name.toLowerCase());
+          currentMatchedValues = matchedValues.map((v: any) => (v.name || v).toString().toLowerCase());
         }
       } else {
-        currentMatchedValues = matchedValues.map((v: any) => v.name.toLowerCase());
+        currentMatchedValues = matchedValues.map((v: any) => (v.name || v).toString().toLowerCase());
       }
 
-      // 1. CVR Arrivals - count unique CVR visits
-      const cvrArrivals = allEvents.filter(e => e.event === 'cvr_opened').length;
+      // 1. CVR Arrivals - count all CVR opens from events
+      const cvrOpenEvents = allEvents.filter(e => e.event === 'cvr_opened');
+      const cvrArrivals = cvrOpenEvents.length;
 
-      // 2. APA Reorderings - count times user reordered values
-      const apaReorderings = allEvents.filter(e => e.event === 'apa_reordered').length;
+      // 2. CVR Yes/No Answers - count from cvr_answered events
+      const cvrAnswerEvents = allEvents.filter(e => e.event === 'cvr_answered');
+      const cvrYesCount = cvrAnswerEvents.filter(e => e.cvrAnswer === true).length;
+      const cvrNoCount = cvrAnswerEvents.filter(e => e.cvrAnswer === false).length;
 
-      // 3. Decision Times - calculate from scenario history
+      // 3. APA Reorderings - count from apa_reordered events
+      const apaEvents = allEvents.filter(e => e.event === 'apa_reordered');
+      const apaReorderings = apaEvents.length;
+
+      // 4. Decision Times - calculate from scenario history with actual timestamps
       const decisionTimes: number[] = [];
+      const scenarioDetailsMap = new Map<number, any>();
+
       scenarioHistory.forEach(scenario => {
         if (scenario.endTime && scenario.startTime) {
           const timeSeconds = (scenario.endTime - scenario.startTime) / 1000;
           decisionTimes.push(timeSeconds);
+
+          scenarioDetailsMap.set(scenario.scenarioId, {
+            timeSeconds: Math.round(timeSeconds),
+            switches: scenario.switchCount || 0,
+            cvrVisited: scenario.cvrVisited || false,
+            cvrVisitCount: scenario.cvrVisitCount || 0,
+            cvrYesAnswers: scenario.cvrYesAnswers || 0,
+            apaReordered: scenario.apaReordered || false,
+            apaReorderCount: scenario.apaReorderCount || 0
+          });
         }
       });
 
-      // If no scenario history, fallback to mock data
+      // Fallback: if no scenario history timing, estimate from events
       if (decisionTimes.length === 0) {
-        simulationOutcomes.forEach(() => {
-          decisionTimes.push(Math.random() * 90 + 30); // 30-120 seconds
+        const scenarioStarts = new Map<number, number>();
+        const scenarioEnds = new Map<number, number>();
+
+        allEvents.forEach(event => {
+          if (event.scenarioId !== undefined) {
+            const eventTime = new Date(event.timestamp).getTime();
+
+            if (event.event === 'scenario_started') {
+              scenarioStarts.set(event.scenarioId, eventTime);
+            } else if (event.event === 'option_confirmed' || event.event === 'scenario_completed') {
+              scenarioEnds.set(event.scenarioId, eventTime);
+            }
+          }
+        });
+
+        simulationOutcomes.forEach((outcome: any) => {
+          const startTime = scenarioStarts.get(outcome.scenarioId);
+          const endTime = scenarioEnds.get(outcome.scenarioId);
+
+          if (startTime && endTime) {
+            const timeSeconds = (endTime - startTime) / 1000;
+            decisionTimes.push(timeSeconds);
+          } else {
+            // Final fallback
+            decisionTimes.push(75);
+          }
         });
       }
 
-      const avgDecisionTime = decisionTimes.reduce((a, b) => a + b, 0) / decisionTimes.length;
+      const avgDecisionTime = decisionTimes.length > 0
+        ? decisionTimes.reduce((a, b) => a + b, 0) / decisionTimes.length
+        : 0;
 
-      // 4. Calculate alignment for each scenario
+      // 5. Calculate alignment for each scenario and create scenario details
       const finalAlignmentByScenario: boolean[] = [];
       const scenarioDetails: SessionDVs['scenarioDetails'] = [];
 
       simulationOutcomes.forEach((outcome: any, index: number) => {
-        const optionValue = outcome.decision.label.toLowerCase();
+        const optionValue = (outcome.decision.label || '').toLowerCase();
         const aligned = currentMatchedValues.includes(optionValue);
         finalAlignmentByScenario.push(aligned);
 
-        // Get tracking data for this scenario if available
-        const trackingData = scenarioHistory.find(s => s.scenarioId === outcome.scenarioId);
+        // Get detailed tracking data if available
+        const trackingData = scenarioDetailsMap.get(outcome.scenarioId) || {
+          timeSeconds: Math.round(decisionTimes[index] || 0),
+          switches: 0,
+          cvrVisited: false,
+          cvrVisitCount: 0,
+          cvrYesAnswers: 0,
+          apaReordered: false,
+          apaReorderCount: 0
+        };
+
+        // Count switches from option_selected events for this scenario
+        const scenarioOptionSelections = allEvents.filter(
+          e => e.event === 'option_selected' && e.scenarioId === outcome.scenarioId
+        );
+        const switchCount = Math.max(0, scenarioOptionSelections.length - 1);
+
+        // Count CVR visits for this scenario
+        const scenarioCvrVisits = cvrOpenEvents.filter(e => e.scenarioId === outcome.scenarioId);
+        const scenarioCvrYesAnswers = cvrAnswerEvents.filter(
+          e => e.scenarioId === outcome.scenarioId && e.cvrAnswer === true
+        );
+
+        // Count APA reorderings for this scenario
+        const scenarioApaEvents = apaEvents.filter(e => e.scenarioId === outcome.scenarioId);
 
         scenarioDetails.push({
           scenarioId: outcome.scenarioId,
-          finalChoice: outcome.decision.title,
+          finalChoice: outcome.decision.title || outcome.decision.label || 'Unknown',
           aligned,
-          switches: trackingData?.switchCount || 0,
-          timeSeconds: Math.round(decisionTimes[index] || 0),
-          cvrVisited: trackingData?.cvrVisited || false,
-          apaReordered: trackingData?.apaReordered || false
+          switches: trackingData.switches || switchCount,
+          timeSeconds: trackingData.timeSeconds,
+          cvrVisited: trackingData.cvrVisited || scenarioCvrVisits.length > 0,
+          cvrVisitCount: trackingData.cvrVisitCount || scenarioCvrVisits.length,
+          cvrYesAnswers: trackingData.cvrYesAnswers || scenarioCvrYesAnswers.length,
+          apaReordered: trackingData.apaReordered || scenarioApaEvents.length > 0,
+          apaReorderCount: trackingData.apaReorderCount || scenarioApaEvents.length
         });
       });
 
-      // 5. Total switch count
+      // 6. Total switch count - sum from all scenarios
       const switchCountTotal = scenarioDetails.reduce((sum, s) => sum + s.switches, 0);
 
-      // 6. Value consistency index (% of aligned decisions)
+      // 7. Value consistency index (% of aligned decisions)
       const alignedCount = finalAlignmentByScenario.filter(Boolean).length;
-      const valueConsistencyIndex = alignedCount / finalAlignmentByScenario.length;
+      const valueConsistencyIndex = finalAlignmentByScenario.length > 0
+        ? alignedCount / finalAlignmentByScenario.length
+        : 0;
 
-      // 7. Performance composite - normalized z-score average of objectives
+      // 8. Performance composite - normalized z-score average of objectives
       const performanceComposite = calculatePerformanceComposite(finalMetrics);
 
-      // 8. Balance index - 1 minus variance of normalized objectives
+      // 9. Balance index - 1 minus variance of normalized objectives
       const balanceIndex = calculateBalanceIndex(finalMetrics);
 
-      // 9. Misalignment and realignment counts after CVR/APA
+      // 10. Misalignment and realignment counts after CVR/APA
       let misalignAfterCvrApaCount = 0;
       let realignAfterCvrApaCount = 0;
 
       // Track alignment changes post-CVR/APA
       const alignmentChanges = allEvents.filter(e => e.event === 'alignment_state_changed');
 
-      alignmentChanges.forEach((event, idx) => {
+      alignmentChanges.forEach(event => {
+        if (event.scenarioId === undefined) return;
+
         // Check if this change happened after a CVR or APA event in the same scenario
-        const priorEvents = allEvents.slice(0, allEvents.indexOf(event));
+        const eventIndex = allEvents.indexOf(event);
+        const priorEvents = allEvents.slice(0, eventIndex);
         const scenarioEvents = priorEvents.filter(e => e.scenarioId === event.scenarioId);
-        const hadCvrOrApa = scenarioEvents.some(e => e.event === 'cvr_opened' || e.event === 'apa_reordered');
+        const hadCvrOrApa = scenarioEvents.some(e => e.event === 'cvr_opened' || e.event === 'cvr_answered' || e.event === 'apa_reordered');
 
         if (hadCvrOrApa) {
           if (event.alignedBefore === true && event.alignedAfter === false) {
@@ -150,21 +228,23 @@ const ResultsFeedbackPage: React.FC = () => {
         }
       });
 
-      // 10. Value order trajectories - track value ordering after each APA
-      const valueOrderTrajectories: Array<{scenarioId: number, values: string[]}> = [];
-      const apaEvents = allEvents.filter(e => e.event === 'apa_reordered');
+      // 11. Value order trajectories - track value ordering after each APA
+      const valueOrderTrajectories: Array<{scenarioId: number, values: string[], preferenceType: string}> = [];
 
       apaEvents.forEach(event => {
         if (event.valuesAfter && event.scenarioId !== undefined) {
           valueOrderTrajectories.push({
             scenarioId: event.scenarioId,
-            values: event.valuesAfter
+            values: event.valuesAfter,
+            preferenceType: event.preferenceType || 'unknown'
           });
         }
       });
 
       const calculatedMetrics: SessionDVs = {
         cvrArrivals,
+        cvrYesCount,
+        cvrNoCount,
         apaReorderings,
         misalignAfterCvrApaCount,
         realignAfterCvrApaCount,
@@ -187,7 +267,7 @@ const ResultsFeedbackPage: React.FC = () => {
 
   const calculatePerformanceComposite = (finalMetrics: SimulationMetrics): number => {
     const normalized = {
-      livesSaved: finalMetrics.livesSaved / 20000,
+      livesSaved: Math.min(finalMetrics.livesSaved / 20000, 1),
       casualties: 1 - Math.min(finalMetrics.humanCasualties / 1000, 1),
       firefightingResource: finalMetrics.firefightingResource / 100,
       infrastructureCondition: finalMetrics.infrastructureCondition / 100,
@@ -203,7 +283,7 @@ const ResultsFeedbackPage: React.FC = () => {
 
   const calculateBalanceIndex = (finalMetrics: SimulationMetrics): number => {
     const normalized = [
-      finalMetrics.livesSaved / 20000,
+      Math.min(finalMetrics.livesSaved / 20000, 1),
       1 - Math.min(finalMetrics.humanCasualties / 1000, 1),
       finalMetrics.firefightingResource / 100,
       finalMetrics.infrastructureCondition / 100,
@@ -252,7 +332,8 @@ const ResultsFeedbackPage: React.FC = () => {
       ...metrics,
       ...feedback,
       exportedAt: new Date().toISOString(),
-      userDemographics: JSON.parse(localStorage.getItem('userDemographics') || '{}')
+      userDemographics: JSON.parse(localStorage.getItem('userDemographics') || '{}'),
+      allEvents: TrackingManager.getAllEvents()
     };
 
     if (format === 'json') {
@@ -411,8 +492,31 @@ const ResultsFeedbackPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Alignment Changes & Performance Indices */}
+        {/* CVR Answers & Alignment Changes */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div className="bg-white rounded-lg shadow p-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+              <MessageSquare className="h-5 w-5 mr-2 text-blue-600" />
+              CVR Answers
+            </h3>
+            <div className="space-y-4">
+              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center">
+                  <ThumbsUp className="h-5 w-5 text-green-500 mr-3" />
+                  <span className="text-sm font-medium text-gray-700">"Yes, I would" Answers</span>
+                </div>
+                <span className="text-xl font-bold text-green-600">{metrics.cvrYesCount}</span>
+              </div>
+              <div className="flex items-center justify-between p-3 bg-red-50 rounded-lg">
+                <div className="flex items-center">
+                  <ThumbsDown className="h-5 w-5 text-red-500 mr-3" />
+                  <span className="text-sm font-medium text-gray-700">"No, I would not" Answers</span>
+                </div>
+                <span className="text-xl font-bold text-red-600">{metrics.cvrNoCount}</span>
+              </div>
+            </div>
+          </div>
+
           <div className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <Activity className="h-5 w-5 mr-2 text-red-600" />
@@ -435,22 +539,23 @@ const ResultsFeedbackPage: React.FC = () => {
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-4">Performance Indices</h3>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700">Value Consistency Index</span>
-                <span className="text-xl font-bold text-blue-600">{(metrics.valueConsistencyIndex * 100).toFixed(1)}%</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700">Performance Composite</span>
-                <span className="text-xl font-bold text-green-600">{metrics.performanceComposite.toFixed(2)}</span>
-              </div>
-              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                <span className="text-sm font-medium text-gray-700">Balance Index</span>
-                <span className="text-xl font-bold text-purple-600">{metrics.balanceIndex.toFixed(2)}</span>
-              </div>
+        {/* Performance Indices */}
+        <div className="bg-white rounded-lg shadow p-6 mb-8">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Performance Indices</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-700">Value Consistency Index</span>
+              <span className="text-xl font-bold text-blue-600">{(metrics.valueConsistencyIndex * 100).toFixed(1)}%</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-700">Performance Composite</span>
+              <span className="text-xl font-bold text-green-600">{metrics.performanceComposite.toFixed(2)}</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+              <span className="text-sm font-medium text-gray-700">Balance Index</span>
+              <span className="text-xl font-bold text-purple-600">{metrics.balanceIndex.toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -467,8 +572,9 @@ const ResultsFeedbackPage: React.FC = () => {
                   <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Aligned?</th>
                   <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Switches</th>
                   <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">Time (s)</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">CVR</th>
-                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">APA</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">CVR Visits</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">CVR "Yes"</th>
+                  <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">APA Count</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -493,19 +599,14 @@ const ResultsFeedbackPage: React.FC = () => {
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-center text-gray-700">
                       {scenario.timeSeconds}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-center">
-                      {scenario.cvrVisited ? (
-                        <CheckCircle2 className="h-5 w-5 text-blue-500 mx-auto" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-gray-300 mx-auto" />
-                      )}
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-semibold text-blue-700">
+                      {scenario.cvrVisitCount}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-center">
-                      {scenario.apaReordered ? (
-                        <CheckCircle2 className="h-5 w-5 text-purple-500 mx-auto" />
-                      ) : (
-                        <XCircle className="h-5 w-5 text-gray-300 mx-auto" />
-                      )}
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-semibold text-green-700">
+                      {scenario.cvrYesAnswers}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-center font-semibold text-purple-700">
+                      {scenario.apaReorderCount}
                     </td>
                   </tr>
                 ))}

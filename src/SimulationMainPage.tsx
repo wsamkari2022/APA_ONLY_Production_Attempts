@@ -469,7 +469,12 @@ const SimulationMainPage: React.FC = () => {
 
   const handleCVRAnswer = (answer: boolean) => {
     setShowCVRModal(false);
-    
+
+    // Track CVR answer
+    if (selectedDecision) {
+      TrackingManager.recordCVRAnswer(currentScenario.id, answer);
+    }
+
     if (answer) {
       // User confirmed their choice, update moral values reorder list to prioritize this value
       if (selectedDecision) {
