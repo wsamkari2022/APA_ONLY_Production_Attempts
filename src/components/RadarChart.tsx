@@ -73,6 +73,8 @@ const RadarChart: React.FC<RadarChartProps> = ({
   const [hasClickedMetric, setHasClickedMetric] = useState(false);
   const [showToggleTooltip, setShowToggleTooltip] = useState(false);
   const [hasClickedToggle, setHasClickedToggle] = useState(false);
+  const [showIdealTooltip, setShowIdealTooltip] = useState(false);
+  const [hasClickedIdeal, setHasClickedIdeal] = useState(false);
 
   if (!showRadarChart) return null;
 
@@ -230,9 +232,17 @@ const RadarChart: React.FC<RadarChartProps> = ({
 
   const handleToggleClick = (optionId: string) => {
     toggleOption(optionId);
-    if (!hasClickedToggle) {
-      setHasClickedToggle(true);
-      setShowToggleTooltip(false);
+    if (optionId === 'ideal-outcome') {
+      if (!hasClickedIdeal) {
+        setHasClickedIdeal(true);
+        setShowIdealTooltip(false);
+      }
+    } else {
+      if (!hasClickedToggle) {
+        setHasClickedToggle(true);
+        setShowToggleTooltip(false);
+        setTimeout(() => setShowIdealTooltip(true), 800);
+      }
     }
   };
 
@@ -393,20 +403,35 @@ const RadarChart: React.FC<RadarChartProps> = ({
               </div>
 
               {/* Ideal Outcome Toggle */}
-              <button
-                onClick={() => handleToggleClick('ideal-outcome')}
-                className={`w-full p-3 rounded-lg flex items-center justify-between mb-4 transition-all duration-200 ${
-                  toggledOptions['ideal-outcome']
-                    ? 'bg-purple-100 text-purple-800'
-                    : 'bg-gray-50 text-gray-600'
-                }`}
-              >
-                <div className="flex items-center">
-                  <Star size={16} className="mr-2" />
-                  <span className="font-medium">Show Ideal Outcome</span>
-                </div>
-                {toggledOptions['ideal-outcome'] ? <Eye size={16} /> : <EyeOff size={16} />}
-              </button>
+              <div className="relative mb-4">
+                {showIdealTooltip && (
+                  <div className="absolute -top-16 left-1/2 transform -translate-x-1/2 z-20 animate-bounce">
+                    <div className="bg-gradient-to-r from-yellow-400 via-pink-500 to-purple-500 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap font-medium">
+                      ⭐ See the perfect scenario!
+                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-t-8 border-pink-500 border-x-8 border-x-transparent"></div>
+                    </div>
+                  </div>
+                )}
+                <button
+                  onClick={() => handleToggleClick('ideal-outcome')}
+                  className={`w-full p-3 rounded-lg flex items-center justify-between transition-all duration-200 ${
+                    toggledOptions['ideal-outcome']
+                      ? 'bg-purple-200 text-purple-900 shadow-lg scale-105'
+                      : showIdealTooltip
+                      ? 'bg-purple-50 text-purple-700 hover:bg-purple-100 ring-2 ring-yellow-400 ring-offset-2'
+                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <div className="flex items-center">
+                    <Star size={16} className={`mr-2 ${showIdealTooltip ? 'text-yellow-500' : ''}`} />
+                    <span className="font-medium">Show Ideal Outcome</span>
+                  </div>
+                  {toggledOptions['ideal-outcome'] ? <Eye size={16} /> : <EyeOff size={16} />}
+                </button>
+                {showIdealTooltip && (
+                  <span className="absolute top-2 right-2 w-4 h-4 bg-yellow-400 rounded-full animate-ping"></span>
+                )}
+              </div>
 
               <div className="h-[500px]">
                 <Radar data={prepareRadarChartDataWithIdeal()} options={radarOptions} />
