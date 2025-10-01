@@ -154,17 +154,6 @@ const DemographicPage: React.FC = () => {
                     Your responses will be used for research purposes only
                   </p>
                 </div>
-
-                {/* Progress Indicator - Moved inside the card */}
-                <div className="mt-4 flex justify-center">
-                  <div className="inline-flex items-center space-x-2 bg-white/60 backdrop-blur-sm px-3 py-1.5 rounded-full shadow border border-white/50">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
-                    <span className="text-xs font-medium text-gray-700">Step 1 of 4</span>
-                    <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                    <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                    <div className="w-2 h-2 bg-gray-300 rounded-full"></div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
