@@ -256,18 +256,10 @@ const RadarChart: React.FC<RadarChartProps> = ({
           </h3>
           <div className="relative flex items-center gap-2">
             {showViewTooltip && (
-              <div className="absolute -bottom-14 right-0 z-30 animate-bounce">
+              <div className="absolute -bottom-16 right-0 z-30 animate-bounce">
                 <div className="bg-gradient-to-r from-blue-500 to-green-500 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap font-medium">
                   🔍 Try different views!
                   <div className="absolute bottom-full right-8 transform w-0 h-0 border-b-8 border-blue-500 border-x-8 border-x-transparent"></div>
-                </div>
-              </div>
-            )}
-            {hasClickedView && !hasClickedMetric && !hasClickedToggle && (
-              <div className="absolute -bottom-14 right-0 z-30">
-                <div className="bg-green-50 border border-green-400 text-green-800 text-xs px-3 py-1.5 rounded-lg shadow-md whitespace-nowrap">
-                  Great! Now explore the options below
-                  <div className="absolute bottom-full right-8 transform w-0 h-0 border-b-8 border-green-400 border-x-8 border-x-transparent"></div>
                 </div>
               </div>
             )}
@@ -320,9 +312,9 @@ const RadarChart: React.FC<RadarChartProps> = ({
         <div className="p-4 flex-1 overflow-auto">
           {/* Metric Selection */}
           {comparisonView !== 'radar' && (
-            <div className="relative mb-4 flex flex-wrap gap-2">
+            <div className="relative mb-6 flex flex-wrap gap-2">
               {showMetricTooltip && (
-                <div className="absolute -top-12 left-0 z-20 animate-bounce">
+                <div className="absolute -top-14 left-0 z-20 animate-bounce">
                   <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap font-medium">
                     📊 Select metrics to compare!
                     <div className="absolute top-full left-8 transform -translate-x-1/2 w-0 h-0 border-t-8 border-orange-500 border-x-8 border-x-transparent"></div>
@@ -355,9 +347,9 @@ const RadarChart: React.FC<RadarChartProps> = ({
           {comparisonView === 'radar' && (
             <>
               {/* Decision Option Toggle Buttons */}
-              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+              <div className="relative grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4 mt-4">
                 {showToggleTooltip && (
-                  <div className="absolute -top-12 left-0 z-20 animate-bounce">
+                  <div className="absolute -top-14 left-0 z-20 animate-bounce">
                     <div className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white text-sm px-4 py-2 rounded-lg shadow-lg whitespace-nowrap font-medium">
                       👁️ Toggle options to compare!
                       <div className="absolute top-full left-8 transform -translate-x-1/2 w-0 h-0 border-t-8 border-purple-500 border-x-8 border-x-transparent"></div>
