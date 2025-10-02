@@ -57,6 +57,34 @@ const SimulationMainPage: React.FC = () => {
 
   const currentScenario = scenarios[currentScenarioIndex];
 
+  // Helper function to check if an option is aligned based on scenario
+  const checkAlignment = (optionLabel: string, scenarioId: number): boolean => {
+    const optionValue = optionLabel.toLowerCase();
+
+    if (scenarioId === 1) {
+      // Scenario 1: Check against matchedStableValues (from explicit + implicit)
+      return matchedStableValues.includes(optionValue);
+    } else {
+      // Scenarios 2 & 3: Check against MoralValuesReorderList
+      const moralValuesReorder = localStorage.getItem('MoralValuesReorderList');
+      if (moralValuesReorder) {
+        try {
+          const reorderedValues = JSON.parse(moralValuesReorder);
+          const reorderedIds = reorderedValues.map((v: any) =>
+            (v.id || v.name || v).toString().toLowerCase()
+          );
+          return reorderedIds.includes(optionValue);
+        } catch (e) {
+          console.error('Error parsing MoralValuesReorderList:', e);
+          return matchedStableValues.includes(optionValue);
+        }
+      } else {
+        // Fallback to matchedStableValues if no reorder list exists yet
+        return matchedStableValues.includes(optionValue);
+      }
+    }
+  };
+
   // Reset hasExploredAlternatives when scenario changes
   useEffect(() => {
     setHasExploredAlternatives(false);
@@ -382,8 +410,7 @@ const SimulationMainPage: React.FC = () => {
   }, [currentScenarioIndex, getInitialOptions, addedAlternatives]);
 
   const handleDecisionSelect = (decision: DecisionOptionType) => {
-    const optionValue = decision.label.toLowerCase();
-    const isAligned = matchedStableValues.includes(optionValue);
+    const isAligned = checkAlignment(decision.label, currentScenario.id);
 
     // Track option selection
     TrackingManager.recordOptionSelection(decision.id, decision.label, isAligned);
@@ -396,10 +423,10 @@ const SimulationMainPage: React.FC = () => {
     if (!tempSelectedOption) return;
     
     setShowExpertModal(false);
-    
-    // Check if the selected option's value matches user's stable values
+
+    // Check if the selected option's value matches user's values based on scenario
+    const isAligned = checkAlignment(tempSelectedOption.label, currentScenario.id);
     const optionValue = tempSelectedOption.label.toLowerCase();
-    const isAligned = matchedStableValues.includes(optionValue);
     
     // If the option is aligned with user's values, update the MoralValuesReorderList
     if (isAligned) {
@@ -581,8 +608,7 @@ const SimulationMainPage: React.FC = () => {
     };
 
     // Track option confirmation
-    const optionValue = selectedDecision.label.toLowerCase();
-    const isAligned = matchedStableValues.includes(optionValue);
+    const isAligned = checkAlignment(selectedDecision.label, currentScenario.id);
     TrackingManager.confirmOption(selectedDecision.id, selectedDecision.label, isAligned, newMetrics);
 
     // Store the scenario outcome
@@ -866,7 +892,7 @@ const SimulationMainPage: React.FC = () => {
         option={tempSelectedOption!}
         onKeepChoice={handleKeepChoice}
         onReviewAlternatives={handleReviewAlternatives}
-        isAligned={tempSelectedOption ? matchedStableValues.includes(tempSelectedOption.label.toLowerCase()) : false}
+        isAligned={tempSelectedOption ? checkAlignment(tempSelectedOption.label, currentScenario.id) : false}
       />
 
       <DecisionSummaryModal
