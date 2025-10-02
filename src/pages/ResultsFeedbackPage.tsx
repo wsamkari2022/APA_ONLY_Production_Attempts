@@ -57,38 +57,18 @@ const ResultsFeedbackPage: React.FC = () => {
         return;
       }
 
-      // Get matched values from explicit + implicit (for Scenario 1)
-      const matchedStableValues: string[] = matchedValues.map((v: any) =>
-        (v.name || v).toString().toLowerCase()
-      );
-
-      // Get reordered moral values (for Scenarios 2 & 3)
-      let moralValuesReorderList: string[] = [];
+      // Get current matched values (prioritize reordered list)
+      let currentMatchedValues: string[] = [];
       if (moralValuesReorder) {
         try {
           const reorderedValues = JSON.parse(moralValuesReorder);
-          moralValuesReorderList = reorderedValues.map((v: any) =>
-            (v.id || v.name || v).toString().toLowerCase()
-          );
+          currentMatchedValues = reorderedValues.map((v: any) => (v.id || v.name || v).toString().toLowerCase());
         } catch (e) {
-          console.error('Error parsing MoralValuesReorderList:', e);
-          moralValuesReorderList = matchedStableValues;
+          currentMatchedValues = matchedValues.map((v: any) => (v.name || v).toString().toLowerCase());
         }
       } else {
-        moralValuesReorderList = matchedStableValues;
+        currentMatchedValues = matchedValues.map((v: any) => (v.name || v).toString().toLowerCase());
       }
-
-      // Helper function to check alignment based on scenario
-      const checkAlignment = (optionLabel: string, scenarioId: number): boolean => {
-        const optionValue = optionLabel.toLowerCase();
-        if (scenarioId === 1) {
-          // Scenario 1: Use matchedStableValues
-          return matchedStableValues.includes(optionValue);
-        } else {
-          // Scenarios 2 & 3: Use moralValuesReorderList
-          return moralValuesReorderList.includes(optionValue);
-        }
-      };
 
       // 1. CVR Arrivals - count all CVR opens from events
       const cvrOpenEvents = allEvents.filter(e => e.event === 'cvr_opened');
@@ -164,8 +144,8 @@ const ResultsFeedbackPage: React.FC = () => {
       const scenarioDetails: SessionDVs['scenarioDetails'] = [];
 
       simulationOutcomes.forEach((outcome: any, index: number) => {
-        // Use the checkAlignment helper to determine if this decision is aligned
-        const aligned = checkAlignment(outcome.decision.label || '', outcome.scenarioId);
+        const optionValue = (outcome.decision.label || '').toLowerCase();
+        const aligned = currentMatchedValues.includes(optionValue);
         finalAlignmentByScenario.push(aligned);
 
         // Get detailed tracking data if available
