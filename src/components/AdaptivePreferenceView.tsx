@@ -172,7 +172,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
         scenario={mainScenario}
         onBack={() => {
           setShowRankedOptions(false);
-          onBack(); // This will properly go back to simulation
+          onBack();
         }}
         onConfirm={onConfirm}
         currentMetrics={{
@@ -183,6 +183,9 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
           biodiversityCondition: 100,
           propertiesCondition: 100,
           nuclearPowerStation: 100,
+        }}
+        onReorderPriorities={() => {
+          setShowRankedOptions(false);
         }}
       />
     );

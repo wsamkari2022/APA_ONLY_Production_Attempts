@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Check, Users, Skull, Droplets, Building, Trees as Tree, Factory } from 'lucide-react';
+import { ArrowLeft, Check, Users, Skull, Droplets, Building, Trees as Tree, Factory, RefreshCw, Lock } from 'lucide-react';
 import { DecisionOption } from '../types';
 
 interface RankedOptionsViewProps {
@@ -19,6 +19,7 @@ interface RankedOptionsViewProps {
     propertiesCondition: number;
     nuclearPowerStation: number;
   };
+  onReorderPriorities?: () => void;
 }
 
 const metricButtons = [
@@ -35,7 +36,8 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
   scenario,
   onBack,
   onConfirm,
-  currentMetrics
+  currentMetrics,
+  onReorderPriorities
 }) => {
   const [selectedOption, setSelectedOption] = useState<DecisionOption | null>(null);
   const [rankedOptions, setRankedOptions] = useState<DecisionOption[]>([]);
@@ -180,12 +182,19 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
     <div className="h-screen bg-gray-50 p-4 flex flex-col">
       <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col">
         <div className="flex justify-between items-center mb-3">
-          <button 
+          <button
             onClick={onBack}
-            className="text-gray-600 hover:text-gray-800 flex items-center gap-2"
+            className="text-gray-600 hover:text-gray-800 flex items-center gap-2 transition-colors"
           >
             <ArrowLeft size={20} />
             Back to Preferences
+          </button>
+          <button
+            onClick={onReorderPriorities}
+            className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200"
+          >
+            <RefreshCw size={18} />
+            Re-order Priorities
           </button>
         </div>
 
@@ -204,6 +213,18 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
 
           <div className="bg-blue-50 p-4 rounded-lg mb-6">
             <p className="text-blue-800">{preferenceMessage}</p>
+          </div>
+
+          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mb-6">
+            <div className="flex items-start gap-2">
+              <Lock size={18} className="text-amber-600 mt-0.5 flex-shrink-0" />
+              <div>
+                <p className="text-amber-900 font-medium mb-1">Selection Limited to Top 2 Options</p>
+                <p className="text-amber-800 text-sm">
+                  Only the top two ranked options are available for selection based on your priorities. To choose from other options, use the "Re-order Priorities" button to adjust your rankings.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="relative flex flex-wrap gap-2 mb-6">
@@ -241,30 +262,55 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
           </div>
 
           <div className="space-y-4">
-            {rankedOptions.map((option, index) => (
-              <div
-                key={option.id}
-                onClick={() => setSelectedOption(option)}
-                className={`p-4 rounded-lg border transition-all duration-200 cursor-pointer ${
-                  selectedOption?.id === option.id
-                    ? 'border-blue-500 bg-blue-50'
-                    : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                }`}
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <span className="w-8 h-8 flex items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold">
-                    {index + 1}
-                  </span>
-                  <h3 className="font-medium text-gray-900">{option.title}</h3>
-                  {selectedMetric && (
-                    <span className={`ml-auto font-medium ${metricButtons.find(m => m.id === selectedMetric)?.color}`}>
-                      {getMetricValue(option, selectedMetric)}
-                    </span>
+            {rankedOptions.map((option, index) => {
+              const isDisabled = index >= 2;
+              return (
+                <div
+                  key={option.id}
+                  onClick={() => !isDisabled && setSelectedOption(option)}
+                  className={`p-4 rounded-lg border transition-all duration-200 relative ${
+                    isDisabled
+                      ? 'border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed'
+                      : selectedOption?.id === option.id
+                      ? 'border-blue-500 bg-blue-50 cursor-pointer'
+                      : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50 cursor-pointer'
+                  }`}
+                >
+                  {isDisabled && (
+                    <div className="absolute top-3 right-3">
+                      <div className="flex items-center gap-1.5 px-3 py-1 bg-gray-600 text-white text-xs font-medium rounded-full">
+                        <Lock size={12} />
+                        Locked
+                      </div>
+                    </div>
                   )}
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className={`w-8 h-8 flex items-center justify-center rounded-full font-semibold ${
+                      isDisabled
+                        ? 'bg-gray-200 text-gray-500'
+                        : 'bg-blue-100 text-blue-600'
+                    }`}>
+                      {index + 1}
+                    </span>
+                    <h3 className={`font-medium ${
+                      isDisabled ? 'text-gray-500' : 'text-gray-900'
+                    }`}>{option.title}</h3>
+                    {selectedMetric && (
+                      <span className={`ml-auto font-medium ${
+                        isDisabled
+                          ? 'text-gray-400'
+                          : metricButtons.find(m => m.id === selectedMetric)?.color
+                      }`}>
+                        {getMetricValue(option, selectedMetric)}
+                      </span>
+                    )}
+                  </div>
+                  <p className={`text-sm ${
+                    isDisabled ? 'text-gray-400' : 'text-gray-600'
+                  }`}>{option.description}</p>
                 </div>
-                <p className="text-gray-600 text-sm">{option.description}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {selectedOption && (
