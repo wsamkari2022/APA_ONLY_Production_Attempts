@@ -17,10 +17,10 @@ export const scenarios: Scenario[] = [
         impact: {
           livesSaved: 2000,
           humanCasualties: 12,
-          firefightingResource: -40,
-          infrastructureCondition: -30,
-          biodiversityCondition: -35,
-          propertiesCondition: -25,
+          firefightingResource: -25,
+          infrastructureCondition: -18,
+          biodiversityCondition: -20,
+          propertiesCondition: -15,
           nuclearPowerStation: 0
         },
         riskInfo: [
@@ -75,9 +75,9 @@ export const scenarios: Scenario[] = [
         radarData: {
           fireContainment: 90,
           firefighterRisk: 60,
-          resourceUse: 70,
-          infrastructureDamage: 30,
-          biodiversityImpact: 35,
+          resourceUse: 55,
+          infrastructureDamage: 25,
+          biodiversityImpact: 28,
           ethicalFairness: 75,
           populationSafety: 100
         },
@@ -112,10 +112,10 @@ export const scenarios: Scenario[] = [
         impact: {
           livesSaved: 1400,
           humanCasualties: 600,
-          firefightingResource: -15,
-          infrastructureCondition: -40,
-          biodiversityCondition: -45,
-          propertiesCondition: -35,
+          firefightingResource: -10,
+          infrastructureCondition: -22,
+          biodiversityCondition: -24,
+          propertiesCondition: -18,
           nuclearPowerStation: 0
         },
         riskInfo: [
@@ -170,9 +170,9 @@ export const scenarios: Scenario[] = [
         radarData: {
           fireContainment: 60,
           firefighterRisk: 20,
-          resourceUse: 25,
-          infrastructureDamage: 40,
-          biodiversityImpact: 45,
+          resourceUse: 22,
+          infrastructureDamage: 32,
+          biodiversityImpact: 35,
           ethicalFairness: 45,
           populationSafety: 70
         },
@@ -207,10 +207,10 @@ export const scenarios: Scenario[] = [
         impact: {
           livesSaved: 900,
           humanCasualties: 1100,
-          firefightingResource: -25,
-          infrastructureCondition: -20,
-          biodiversityCondition: -15,
-          propertiesCondition: -30,
+          firefightingResource: -14,
+          infrastructureCondition: -12,
+          biodiversityCondition: -9,
+          propertiesCondition: -16,
           nuclearPowerStation: 0
         },
         riskInfo: [
@@ -265,9 +265,9 @@ export const scenarios: Scenario[] = [
         radarData: {
           fireContainment: 40,
           firefighterRisk: 50,
-          resourceUse: 40,
-          infrastructureDamage: 20,
-          biodiversityImpact: 10,
+          resourceUse: 28,
+          infrastructureDamage: 18,
+          biodiversityImpact: 14,
           ethicalFairness: 55,
           populationSafety: 45
         },
@@ -302,10 +302,10 @@ export const scenarios: Scenario[] = [
         impact: {
           livesSaved: 1600,
           humanCasualties: 400,
-          firefightingResource: -30,
-          infrastructureCondition: -35,
-          biodiversityCondition: -40,
-          propertiesCondition: -30,
+          firefightingResource: -18,
+          infrastructureCondition: -20,
+          biodiversityCondition: -22,
+          propertiesCondition: -18,
           nuclearPowerStation: 0
         },
         riskInfo: [
@@ -360,9 +360,9 @@ export const scenarios: Scenario[] = [
         radarData: {
           fireContainment: 65,
           firefighterRisk: 55,
-          resourceUse: 50,
-          infrastructureDamage: 35,
-          biodiversityImpact: 40,
+          resourceUse: 40,
+          infrastructureDamage: 28,
+          biodiversityImpact: 30,
           ethicalFairness: 90,
           populationSafety: 80
         },
@@ -397,10 +397,10 @@ export const scenarios: Scenario[] = [
         impact: {
           livesSaved: 2000,
           humanCasualties: 8,
-          firefightingResource: -20,
-          infrastructureCondition: -45,
-          biodiversityCondition: -30,
-          propertiesCondition: -40,
+          firefightingResource: -16,
+          infrastructureCondition: -26,
+          biodiversityCondition: -18,
+          propertiesCondition: -24,
           nuclearPowerStation: 0
         },
         riskInfo: [
@@ -455,9 +455,9 @@ export const scenarios: Scenario[] = [
         radarData: {
           fireContainment: 80,
           firefighterRisk: 40,
-          resourceUse: 45,
-          infrastructureDamage: 45,
-          biodiversityImpact: 30,
+          resourceUse: 36,
+          infrastructureDamage: 32,
+          biodiversityImpact: 24,
           ethicalFairness: 80,
           populationSafety: 100
         },
