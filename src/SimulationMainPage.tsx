@@ -393,6 +393,9 @@ const SimulationMainPage: React.FC = () => {
     // Track option selection
     TrackingManager.recordOptionSelection(decision.id, decision.label, isAligned);
 
+    // Mark that this selection was NOT from the ranked top 2 (it's from main scenario)
+    localStorage.setItem('selectedFromTop2Previous', 'false');
+
     setTempSelectedOption(decision);
     setShowExpertModal(true);
   };
