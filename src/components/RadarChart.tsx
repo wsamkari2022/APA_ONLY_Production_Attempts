@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart2, Flame, AlertTriangle, Droplets, Building, Trees as Tree, Scale, X, Eye, EyeOff, Star, BarChart, GitCompare, Radar as RadarIcon, Shield } from 'lucide-react';
 import { DecisionOption } from '../types';
 import {
@@ -75,6 +75,20 @@ const RadarChart: React.FC<RadarChartProps> = ({
   const [hasClickedToggle, setHasClickedToggle] = useState(false);
   const [showIdealTooltip, setShowIdealTooltip] = useState(false);
   const [hasClickedIdeal, setHasClickedIdeal] = useState(false);
+
+  // Check if user has visited radar chart before
+  useEffect(() => {
+    if (showRadarChart) {
+      const hasVisitedBefore = localStorage.getItem('hasVisitedRadarChart');
+      if (!hasVisitedBefore) {
+        // First time visiting - show the ideal tooltip after a brief delay
+        localStorage.setItem('hasVisitedRadarChart', 'true');
+        setTimeout(() => {
+          setShowIdealTooltip(true);
+        }, 800);
+      }
+    }
+  }, [showRadarChart]);
 
   if (!showRadarChart) return null;
 
@@ -233,15 +247,15 @@ const RadarChart: React.FC<RadarChartProps> = ({
   const handleToggleClick = (optionId: string) => {
     toggleOption(optionId);
     if (optionId === 'ideal-outcome') {
+      // Hide the tooltip permanently once clicked
+      setShowIdealTooltip(false);
       if (!hasClickedIdeal) {
         setHasClickedIdeal(true);
-        setShowIdealTooltip(false);
       }
     } else {
       if (!hasClickedToggle) {
         setHasClickedToggle(true);
         setShowToggleTooltip(false);
-        setTimeout(() => setShowIdealTooltip(true), 800);
       }
     }
   };
