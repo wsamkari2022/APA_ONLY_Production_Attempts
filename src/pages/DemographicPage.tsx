@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CircleUser as UserCircle, ArrowRight, Flame, Shield, Users, Zap } from 'lucide-react';
+import { DatabaseService } from '../lib/databaseService';
 
 const DemographicPage: React.FC = () => {
   const navigate = useNavigate();
@@ -19,15 +20,24 @@ const DemographicPage: React.FC = () => {
     setTimeout(() => setIsLoaded(true), 100);
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.name.trim() || !formData.id.trim()) {
       setError('Please fill in all fields');
       return;
     }
 
     localStorage.setItem('userDemographics', JSON.stringify(formData));
+
+    const sessionId = DatabaseService.generateSessionId();
+    localStorage.setItem('currentSessionId', sessionId);
+
+    await DatabaseService.createUserSession({
+      session_id: sessionId,
+      demographics: formData
+    });
+
     navigate('/explicitvaluepage');
   };
 

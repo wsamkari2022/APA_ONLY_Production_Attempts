@@ -19,6 +19,7 @@ import {
 import { SimulationMetrics } from '../types';
 import { SessionDVs, TelemetryEvent } from '../types/tracking';
 import { TrackingManager } from '../utils/trackingUtils';
+import { DatabaseService } from '../lib/databaseService';
 
 interface FeedbackData {
   decisionSatisfaction: number;
@@ -330,7 +331,7 @@ const ResultsFeedbackPage: React.FC = () => {
     setFeedback(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleSubmitFeedback = () => {
+  const handleSubmitFeedback = async () => {
     if (!metrics) return;
 
     const finalResults: SessionDVs = {
@@ -349,6 +350,31 @@ const ResultsFeedbackPage: React.FC = () => {
     const existingLogs = JSON.parse(localStorage.getItem('sessionEventLogs') || '[]');
     existingLogs.push(telemetryEvent);
     localStorage.setItem('sessionEventLogs', JSON.stringify(existingLogs));
+
+    const sessionId = DatabaseService.getSessionId();
+    await DatabaseService.insertSessionFeedback({
+      session_id: sessionId,
+      decision_satisfaction: feedback.decisionSatisfaction,
+      process_satisfaction: feedback.processSatisfaction,
+      perceived_transparency: feedback.perceivedTransparency,
+      notes_free_text: feedback.notesFreeText,
+      value_consistency_index: metrics.valueConsistencyIndex,
+      performance_composite: metrics.performanceComposite,
+      balance_index: metrics.balanceIndex,
+      cvr_arrivals: metrics.cvrArrivals,
+      cvr_yes_count: metrics.cvrYesCount,
+      cvr_no_count: metrics.cvrNoCount,
+      apa_reorderings: metrics.apaReorderings,
+      total_switches: metrics.switchCountTotal,
+      avg_decision_time: metrics.avgDecisionTime
+    });
+
+    await DatabaseService.updateUserSession(sessionId, {
+      is_completed: true,
+      completed_at: new Date().toISOString()
+    });
+
+    await DatabaseService.syncFallbackData();
 
     setIsSubmitted(true);
     setShowExport(true);

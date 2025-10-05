@@ -13,6 +13,7 @@ import AdaptivePreferenceView from './components/AdaptivePreferenceView';
 import { SimulationMetrics, DecisionOption as DecisionOptionType, ExplicitValue } from './types';
 import { scenarios } from './data/scenarios';
 import { TrackingManager } from './utils/trackingUtils';
+import { DatabaseService } from './lib/databaseService';
 
 // Register Chart.js components
 ChartJS.register(RadialLinearScale, PointElement, LineElement, Filler, Tooltip, Legend);
@@ -467,7 +468,13 @@ const SimulationMainPage: React.FC = () => {
 
     // Track CVR answer
     if (selectedDecision) {
-      TrackingManager.recordCVRAnswer(currentScenario.id, answer);
+      TrackingManager.recordCVRAnswer(
+        currentScenario.id,
+        answer,
+        selectedDecision.id,
+        selectedDecision.label,
+        selectedDecision.cvrQuestion
+      );
     }
 
     if (answer) {
@@ -612,7 +619,31 @@ const SimulationMainPage: React.FC = () => {
     setSelectedDecision(null);
 
     // End scenario tracking
-    TrackingManager.endScenario();
+    const scenarioTracking = TrackingManager.endScenario();
+
+    // Save final decision to database
+    const sessionId = DatabaseService.getSessionId();
+    if (scenarioTracking) {
+      DatabaseService.insertFinalDecision({
+        session_id: sessionId,
+        scenario_id: currentScenario.id,
+        scenario_title: currentScenario.title,
+        option_id: selectedDecision.id,
+        option_label: selectedDecision.label,
+        option_title: selectedDecision.title,
+        is_aligned: isAligned,
+        from_top_two_ranked: isFromRankedView,
+        total_switches: scenarioTracking.switchCount,
+        total_time_seconds: Math.round((scenarioTracking.endTime! - scenarioTracking.startTime) / 1000),
+        cvr_visited: scenarioTracking.cvrVisited,
+        cvr_visit_count: scenarioTracking.cvrVisitCount,
+        cvr_yes_answers: scenarioTracking.cvrYesAnswers,
+        apa_reordered: scenarioTracking.apaReordered,
+        apa_reorder_count: scenarioTracking.apaReorderCount,
+        alternatives_explored: scenarioTracking.alternativesExplored,
+        final_metrics: newMetrics
+      });
+    }
 
     if (currentScenarioIndex < scenarios.length - 1) {
       setIsTransitioning(true);

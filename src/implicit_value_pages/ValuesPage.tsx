@@ -5,6 +5,7 @@ import type { DeepValue } from '../types/implicitPrefernce';
 import type { ExplicitValue } from '../types/explicitValues';
 import { explicitQuestions } from '../data/explicitQuestions';
 import { scenarios } from '../data/ImplicitScenarios';
+import { DatabaseService } from '../lib/databaseService';
 
 // Interface for tracking value frequency in explicit choices
 interface ValueFrequency {
@@ -152,12 +153,33 @@ const ValuesPage: React.FC = () => {
     // Handler for starting the simulation
     const handleStartSimulation = async () => {
         try {
+            const sessionId = DatabaseService.getSessionId();
+
             const userValues = {
                 explicit: explicitValues.map(v => v.value_selected),
                 implicit: deepValues.map(v => v.name)
             };
             localStorage.setItem('userValues', JSON.stringify(userValues));
             localStorage.setItem('finalValues', JSON.stringify(matchedStableValues));
+
+            const baselineValues = matchedStableValues.map((value, index) => ({
+                session_id: sessionId,
+                value_name: value.name,
+                match_percentage: value.matchPercentage,
+                rank_order: index + 1,
+                value_type: 'stable'
+            }));
+
+            await DatabaseService.insertBaselineValues(baselineValues);
+
+            await DatabaseService.insertValueEvolution({
+                session_id: sessionId,
+                scenario_id: 0,
+                value_list_snapshot: matchedStableValues,
+                change_trigger: 'baseline_established',
+                change_type: 'initial'
+            });
+
             navigate('/simulation');
         } catch (error) {
             console.error('Failed to save values:', error);
