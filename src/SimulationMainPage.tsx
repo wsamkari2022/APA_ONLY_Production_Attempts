@@ -606,33 +606,18 @@ const SimulationMainPage: React.FC = () => {
     TrackingManager.confirmOption(selectedDecision.id, selectedDecision.label, isAligned, newMetrics);
 
     // Update FinalTopTwoValues after confirming decision
-    const moralValuesReorderList = localStorage.getItem('MoralValuesReorderList');
-    let updatedTopTwoValues: string[] = [];
+    // Add the final decision value at the top of the list
+    const finalDecisionValue = selectedDecision.label.toLowerCase();
 
-    if (!moralValuesReorderList) {
-      // If moralvaluesreordering is empty, use first two values from finalValues
-      const savedFinalValues = localStorage.getItem('finalValues');
-      if (savedFinalValues) {
-        try {
-          const parsedValues = JSON.parse(savedFinalValues);
-          updatedTopTwoValues = parsedValues.slice(0, 2).map((v: any) => v.name.toLowerCase());
-        } catch (error) {
-          console.error('Error parsing finalValues:', error);
-        }
-      }
-    } else {
-      // If moralvaluesreordering is not empty, use first two values from it
-      try {
-        const parsedReorderList = JSON.parse(moralValuesReorderList);
-        updatedTopTwoValues = parsedReorderList.slice(0, 2).map((v: any) => v.id.toLowerCase());
-      } catch (error) {
-        console.error('Error parsing MoralValuesReorderList:', error);
-      }
-    }
+    // Remove the decision value if it already exists in the list, then add it to the top
+    const updatedTopTwoValues = [
+      finalDecisionValue,
+      ...finalTopTwoValues.filter(v => v !== finalDecisionValue)
+    ].slice(0, 2); // Keep only top 2
 
     setFinalTopTwoValues(updatedTopTwoValues);
     localStorage.setItem('FinalTopTwoValues', JSON.stringify(updatedTopTwoValues));
-    console.log('Updated FinalTopTwoValues:', updatedTopTwoValues);
+    console.log('Updated FinalTopTwoValues with final decision:', updatedTopTwoValues);
 
     // Set flag based on whether this decision came from ranked view top 2
     localStorage.setItem('selectedFromTop2Previous', isFromRankedView.toString());
