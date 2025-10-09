@@ -15,6 +15,11 @@ export interface TelemetryEvent {
   cvrAnswer?: boolean;
   preferenceType?: 'metrics' | 'values';
   question?: string;
+  flagsAtConfirmation?: {
+    hasReorderedValues: boolean;
+    cvrYesClicked: boolean;
+    cvrNoClicked: boolean;
+  };
 }
 
 export interface ScenarioTracking {

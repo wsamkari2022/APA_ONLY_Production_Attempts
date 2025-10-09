@@ -742,9 +742,12 @@ const ResultsFeedbackPage: React.FC = () => {
                     const allEvents = TrackingManager.getAllEvents();
                     const scenarioEvents = allEvents.filter(e => e.scenarioId === scenarioId);
 
-                    const hadCvrYes = scenarioEvents.some(e => e.event === 'cvr_answered' && e.cvrAnswer === true);
-                    const hadCvrNo = scenarioEvents.some(e => e.event === 'cvr_answered' && e.cvrAnswer === false);
-                    const hadApaReorder = scenarioEvents.some(e => e.event === 'apa_reordered');
+                    const confirmationEvent = scenarioEvents.find(e => e.event === 'option_confirmed');
+                    const flagsAtConfirmation = confirmationEvent?.flagsAtConfirmation;
+
+                    const hadApaReorder = flagsAtConfirmation?.hasReorderedValues ?? false;
+                    const hadCvrYes = flagsAtConfirmation?.cvrYesClicked ?? false;
+                    const hadCvrNo = flagsAtConfirmation?.cvrNoClicked ?? false;
 
                     const cvrYesCount = scenarioEvents.filter(e => e.event === 'cvr_answered' && e.cvrAnswer === true).length;
                     const cvrNoCount = scenarioEvents.filter(e => e.event === 'cvr_answered' && e.cvrAnswer === false).length;

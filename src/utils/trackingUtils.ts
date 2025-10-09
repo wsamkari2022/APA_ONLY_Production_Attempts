@@ -111,7 +111,17 @@ export class TrackingManager {
     });
   }
 
-  static confirmOption(optionId: string, optionLabel: string, aligned: boolean, objectives: any) {
+  static confirmOption(
+    optionId: string,
+    optionLabel: string,
+    aligned: boolean,
+    objectives: any,
+    flagsAtConfirmation?: {
+      hasReorderedValues: boolean;
+      cvrYesClicked: boolean;
+      cvrNoClicked: boolean;
+    }
+  ) {
     if (!this.currentScenarioTracking) return;
 
     const now = Date.now();
@@ -132,7 +142,8 @@ export class TrackingManager {
       optionLabel,
       alignedAfter: aligned,
       timeSinceScenarioOpen: timeSinceStart,
-      objectivesSnapshot: objectives
+      objectivesSnapshot: objectives,
+      flagsAtConfirmation
     });
   }
 

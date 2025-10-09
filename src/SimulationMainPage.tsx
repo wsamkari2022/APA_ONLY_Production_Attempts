@@ -748,7 +748,14 @@ const SimulationMainPage: React.FC = () => {
     // Track option confirmation
     const optionValue = selectedDecision.label.toLowerCase();
     const isAligned = matchedStableValues.includes(optionValue);
-    TrackingManager.confirmOption(selectedDecision.id, selectedDecision.label, isAligned, newMetrics);
+
+    const flagsAtConfirmation = {
+      hasReorderedValues: localStorage.getItem('hasReorderedValues') === 'true',
+      cvrYesClicked: localStorage.getItem('cvrYesClicked') === 'true',
+      cvrNoClicked: localStorage.getItem('cvrNoClicked') === 'true'
+    };
+
+    TrackingManager.confirmOption(selectedDecision.id, selectedDecision.label, isAligned, newMetrics, flagsAtConfirmation);
 
     // BEFORE updating FinalTopTwoValues, track the final decision value and check alignment
     const finalDecisionValue = selectedDecision.label.toLowerCase();
