@@ -159,6 +159,10 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
       localStorage.setItem('simulationMetricsRanking', JSON.stringify(rankingItems));
       localStorage.setItem('SimulationMetricsReorderList', JSON.stringify(rankingItems));
 
+      // Set SimulationMetricsReorderingFlag to true and MoralValuesReorderingFlag to false
+      localStorage.setItem('simulationMetricsReorderingFlag', 'true');
+      localStorage.setItem('moralValuesReorderingFlag', 'false');
+
       // Increment counter for simulation metrics selection
       const currentCount = localStorage.getItem('simulationMetricsSelectedCount');
       const newCount = currentCount ? parseInt(currentCount) + 1 : 1;
@@ -166,6 +170,10 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
     } else {
       localStorage.setItem('moralValuesRanking', JSON.stringify(rankingItems));
       localStorage.setItem('MoralValuesReorderList', JSON.stringify(rankingItems));
+
+      // Set MoralValuesReorderingFlag to true and SimulationMetricsReorderingFlag to false
+      localStorage.setItem('moralValuesReorderingFlag', 'true');
+      localStorage.setItem('simulationMetricsReorderingFlag', 'false');
 
       // Increment counter for moral values selection
       const currentCount = localStorage.getItem('moralValuesSelectedCount');

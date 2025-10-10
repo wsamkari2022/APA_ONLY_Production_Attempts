@@ -62,6 +62,8 @@ const SimulationMainPage: React.FC = () => {
   const [hasReorderedValues, setHasReorderedValues] = useState<boolean>(false);
   const [cvrYesClicked, setCvrYesClicked] = useState<boolean>(false);
   const [cvrNoClicked, setCvrNoClicked] = useState<boolean>(false);
+  const [simulationMetricsReorderingFlag, setSimulationMetricsReorderingFlag] = useState<boolean>(false);
+  const [moralValuesReorderingFlag, setMoralValuesReorderingFlag] = useState<boolean>(false);
   const [hasReorderedValuesCount, setHasReorderedValuesCount] = useState<number>(0);
   const [cvrYesClickedCount, setCvrYesClickedCount] = useState<number>(0);
   const [cvrNoClickedCount, setCvrNoClickedCount] = useState<number>(0);
@@ -115,6 +117,13 @@ const SimulationMainPage: React.FC = () => {
       // Update hasReorderedValues flag
       const reorderedFlag = localStorage.getItem('hasReorderedValues');
       setHasReorderedValues(reorderedFlag === 'true');
+
+      // Update new reordering flags
+      const simulationMetricsFlag = localStorage.getItem('simulationMetricsReorderingFlag');
+      setSimulationMetricsReorderingFlag(simulationMetricsFlag === 'true');
+
+      const moralValuesFlag = localStorage.getItem('moralValuesReorderingFlag');
+      setMoralValuesReorderingFlag(moralValuesFlag === 'true');
 
       // Update counters from localStorage
       const reorderedCount = localStorage.getItem('hasReorderedValuesCount');
@@ -171,6 +180,12 @@ const SimulationMainPage: React.FC = () => {
     // Reset hasReorderedValues flag for new scenario
     localStorage.setItem('hasReorderedValues', 'false');
     setHasReorderedValues(false);
+
+    // Reset new reordering flags for new scenario
+    setSimulationMetricsReorderingFlag(false);
+    setMoralValuesReorderingFlag(false);
+    localStorage.setItem('simulationMetricsReorderingFlag', 'false');
+    localStorage.setItem('moralValuesReorderingFlag', 'false');
 
     // Reset CVR flags for new scenario
     setCvrYesClicked(false);
@@ -752,7 +767,9 @@ const SimulationMainPage: React.FC = () => {
     const flagsAtConfirmation = {
       hasReorderedValues: localStorage.getItem('hasReorderedValues') === 'true',
       cvrYesClicked: localStorage.getItem('cvrYesClicked') === 'true',
-      cvrNoClicked: localStorage.getItem('cvrNoClicked') === 'true'
+      cvrNoClicked: localStorage.getItem('cvrNoClicked') === 'true',
+      simulationMetricsReorderingFlag: localStorage.getItem('simulationMetricsReorderingFlag') === 'true',
+      moralValuesReorderingFlag: localStorage.getItem('moralValuesReorderingFlag') === 'true'
     };
 
     const finalTopTwoValuesBeforeUpdate = [...finalTopTwoValues];

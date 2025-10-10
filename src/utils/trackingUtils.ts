@@ -120,6 +120,8 @@ export class TrackingManager {
       hasReorderedValues: boolean;
       cvrYesClicked: boolean;
       cvrNoClicked: boolean;
+      simulationMetricsReorderingFlag: boolean;
+      moralValuesReorderingFlag: boolean;
     },
     finalTopTwoValuesBeforeUpdate?: string[]
   ) {

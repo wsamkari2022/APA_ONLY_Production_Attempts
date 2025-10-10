@@ -751,6 +751,8 @@ const ResultsFeedbackPage: React.FC = () => {
                     const hadApaReorder = flagsAtConfirmation?.hasReorderedValues ?? false;
                     const hadCvrYes = flagsAtConfirmation?.cvrYesClicked ?? false;
                     const hadCvrNo = flagsAtConfirmation?.cvrNoClicked ?? false;
+                    const hadSimulationMetricsReordering = flagsAtConfirmation?.simulationMetricsReorderingFlag ?? false;
+                    const hadMoralValuesReordering = flagsAtConfirmation?.moralValuesReorderingFlag ?? false;
 
                     const cvrYesCount = scenarioEvents.filter(e => e.event === 'cvr_answered' && e.cvrAnswer === true).length;
                     const cvrNoCount = scenarioEvents.filter(e => e.event === 'cvr_answered' && e.cvrAnswer === false).length;
@@ -838,6 +840,18 @@ const ResultsFeedbackPage: React.FC = () => {
                               }`}>
                                 <span className="font-semibold">CVR "No":</span>
                                 <span className="ml-2 font-bold">{hadCvrNo ? '✓ Yes' : '✗ No'}</span>
+                              </div>
+                              <div className={`flex items-center justify-between px-2 py-1 rounded ${
+                                hadSimulationMetricsReordering ? 'bg-cyan-100 text-cyan-800' : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                <span className="font-semibold">Sim. Metrics Reord.:</span>
+                                <span className="ml-2 font-bold">{hadSimulationMetricsReordering ? '✓ Yes' : '✗ No'}</span>
+                              </div>
+                              <div className={`flex items-center justify-between px-2 py-1 rounded ${
+                                hadMoralValuesReordering ? 'bg-purple-100 text-purple-800' : 'bg-gray-100 text-gray-600'
+                              }`}>
+                                <span className="font-semibold">Moral Values Reord.:</span>
+                                <span className="ml-2 font-bold">{hadMoralValuesReordering ? '✓ Yes' : '✗ No'}</span>
                               </div>
                             </div>
                           )}
