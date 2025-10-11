@@ -9,6 +9,7 @@ interface DecisionSummaryModalProps {
   onConfirmDecision: () => void;
   canConfirm: boolean;
   onReviewAlternatives: () => void;
+  onResetCVRFlags?: () => void;
 }
 
 const DecisionSummaryModal: React.FC<DecisionSummaryModalProps> = ({
@@ -17,7 +18,8 @@ const DecisionSummaryModal: React.FC<DecisionSummaryModalProps> = ({
   option,
   onConfirmDecision,
   canConfirm,
-  onReviewAlternatives
+  onReviewAlternatives,
+  onResetCVRFlags
 }) => {
   const [showWarningPopup, setShowWarningPopup] = useState(false);
 
@@ -57,8 +59,9 @@ const DecisionSummaryModal: React.FC<DecisionSummaryModalProps> = ({
     localStorage.setItem('hasReorderedValues', 'false');
 
     // Reset CVR flags
-    localStorage.setItem('cvrYesClicked', 'false');
-    localStorage.setItem('cvrNoClicked', 'false');
+    if (onResetCVRFlags) {
+      onResetCVRFlags();
+    }
 
     setShowWarningPopup(false);
 
