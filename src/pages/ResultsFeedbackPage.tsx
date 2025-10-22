@@ -230,26 +230,21 @@ const ResultsFeedbackPage: React.FC = () => {
       scenarioDetails.forEach((scenario, index) => {
         const outcome = simulationOutcomes[index];
         const scenarioId = outcome.scenarioId;
-        const optionValue = (outcome.decision.label || '').toLowerCase();
         const scenarioEvents = allEvents.filter(e => e.scenarioId === scenario.scenarioId);
 
-        // Check if user answered "Yes" to CVR in this scenario
-        const cvrYesAnswered = scenarioEvents.some(e => e.event === 'cvr_answered' && e.cvrAnswer === true);
+        // Get the confirmation event to check the reordering flags
+        const confirmationEvent = scenarioEvents.find(e => e.event === 'option_confirmed');
+        const flagsAtConfirmation = confirmationEvent?.flagsAtConfirmation;
 
-        // Check if the selected option exists in the appropriate value list
-        let valueExistsInList = false;
-        if (scenarioId === 1) {
-          // Scenario 1: Check against matchedStableValues
-          valueExistsInList = matchedStableValues.includes(optionValue);
-        } else if (scenarioId === 2 || scenarioId === 3) {
-          // Scenarios 2 & 3: Check against moralValuesReorderList
-          valueExistsInList = moralValuesReorderList.includes(optionValue);
-        }
+        // Realignment Switch: Count if user reordered via simulation metrics OR moral values in APA modal
+        if (flagsAtConfirmation) {
+          const hadSimulationMetricsReordering = flagsAtConfirmation.simulationMetricsReorderingFlag ?? false;
+          const hadMoralValuesReordering = flagsAtConfirmation.moralValuesReorderingFlag ?? false;
 
-        // Realignment Switch: User answers "Yes, I would" to CVR AND confirms a decision NOT in their value list
-        // This means they consciously chose to go against their values
-        if (cvrYesAnswered && !valueExistsInList) {
-          realignAfterCvrApaCount++;
+          // Increment if EITHER reordering flag is true
+          if (hadSimulationMetricsReordering || hadMoralValuesReordering) {
+            realignAfterCvrApaCount++;
+          }
         }
 
         // Misalignment: Final choice is not aligned (either not in list OR CVR Yes)
