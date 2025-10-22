@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CircleUser as UserCircle, ArrowRight, Flame, Shield, Users, Zap } from 'lucide-react';
+import { CircleUser as UserCircle, ArrowRight, Flame, Shield, Users, Zap, Info } from 'lucide-react';
 import { DatabaseService } from '../lib/databaseService';
 
 const DemographicPage: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
-    id: ''
+    age: '',
+    gender: '',
+    aiExperience: '',
+    moralReasoningExperience: ''
   });
   const [error, setError] = useState('');
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
 
   useEffect(() => {
     // Clear all localStorage data when demographics page loads to ensure fresh start
@@ -23,8 +26,14 @@ const DemographicPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!formData.name.trim() || !formData.id.trim()) {
+    if (!formData.age || !formData.gender || !formData.aiExperience || !formData.moralReasoningExperience) {
       setError('Please fill in all fields');
+      return;
+    }
+
+    const age = parseInt(formData.age);
+    if (isNaN(age) || age < 18 || age > 120) {
+      setError('Please enter a valid age between 18 and 120');
       return;
     }
 
@@ -108,35 +117,101 @@ const DemographicPage: React.FC = () => {
               <div className="bg-white/80 backdrop-blur-lg py-6 px-6 shadow-2xl rounded-2xl border border-white/50">
                 <form className="space-y-4" onSubmit={handleSubmit}>
                   <div>
-                    <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Full Name
+                    <label htmlFor="age" className="block text-sm font-semibold text-gray-700 mb-1.5">
+                      Age
                     </label>
                     <input
-                      id="name"
-                      name="name"
-                      type="text"
+                      id="age"
+                      name="age"
+                      type="number"
                       required
-                      value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                      min="18"
+                      max="120"
+                      value={formData.age}
+                      onChange={(e) => setFormData(prev => ({ ...prev, age: e.target.value }))}
                       className="appearance-none block w-full px-4 py-2.5 border border-gray-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white/90 backdrop-blur-sm"
-                      placeholder="Enter your full name"
+                      placeholder="Enter your age"
                     />
                   </div>
 
                   <div>
-                    <label htmlFor="id" className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Participant ID
+                    <label htmlFor="gender" className="block text-sm font-semibold text-gray-700 mb-1.5">
+                      Gender
                     </label>
-                    <input
-                      id="id"
-                      name="id"
-                      type="text"
+                    <select
+                      id="gender"
+                      name="gender"
                       required
-                      value={formData.id}
-                      onChange={(e) => setFormData(prev => ({ ...prev, id: e.target.value }))}
-                      className="appearance-none block w-full px-4 py-2.5 border border-gray-200 rounded-xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white/90 backdrop-blur-sm"
-                      placeholder="Enter your participant ID"
-                    />
+                      value={formData.gender}
+                      onChange={(e) => setFormData(prev => ({ ...prev, gender: e.target.value }))}
+                      className="appearance-none block w-full px-4 py-2.5 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200 bg-white/90 backdrop-blur-sm text-gray-700"
+                    >
+                      <option value="">Select your gender</option>
+                      <option value="Male">Male</option>
+                      <option value="Female">Female</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Experience with AI Systems
+                    </label>
+                    <div className="flex gap-2">
+                      {['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'].map((level) => (
+                        <button
+                          key={level}
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, aiExperience: level }))}
+                          className={`flex-1 py-2 px-2 text-xs font-medium rounded-lg transition-all duration-200 ${
+                            formData.aiExperience === level
+                              ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg scale-105'
+                              : 'bg-white/90 text-gray-700 border border-gray-200 hover:border-orange-300 hover:shadow-md'
+                          }`}
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-1.5">
+                      Experience with Moral Reasoning
+                      <div className="relative">
+                        <button
+                          type="button"
+                          onMouseEnter={() => setShowTooltip(true)}
+                          onMouseLeave={() => setShowTooltip(false)}
+                          onClick={() => setShowTooltip(!showTooltip)}
+                          className="text-orange-500 hover:text-orange-600 transition-colors"
+                        >
+                          <Info size={16} />
+                        </button>
+                        {showTooltip && (
+                          <div className="absolute left-0 top-6 z-50 bg-gray-800 text-white text-xs rounded-lg py-2 px-3 shadow-xl whitespace-nowrap">
+                            i.e., Philosophy Class, Moral Machine
+                            <div className="absolute -top-1 left-4 w-2 h-2 bg-gray-800 transform rotate-45"></div>
+                          </div>
+                        )}
+                      </div>
+                    </label>
+                    <div className="flex gap-2">
+                      {['Poor', 'Fair', 'Good', 'Very Good', 'Excellent'].map((level) => (
+                        <button
+                          key={level}
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, moralReasoningExperience: level }))}
+                          className={`flex-1 py-2 px-2 text-xs font-medium rounded-lg transition-all duration-200 ${
+                            formData.moralReasoningExperience === level
+                              ? 'bg-gradient-to-r from-orange-500 to-red-600 text-white shadow-lg scale-105'
+                              : 'bg-white/90 text-gray-700 border border-gray-200 hover:border-orange-300 hover:shadow-md'
+                          }`}
+                        >
+                          {level}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   {error && (
