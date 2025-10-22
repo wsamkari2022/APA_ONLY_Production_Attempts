@@ -719,10 +719,57 @@ const ResultsFeedbackPage: React.FC = () => {
                     return [];
                   })();
 
+                  // Get scenario-specific moral value reordered lists
+                  const scenario1MoralValueReordered = (() => {
+                    try {
+                      const saved = localStorage.getItem('Scenario1_MoralValueReordered');
+                      if (saved) {
+                        return JSON.parse(saved);
+                      }
+                    } catch (e) {}
+                    return [];
+                  })();
+
+                  const scenario2MoralValueReordered = (() => {
+                    try {
+                      const saved = localStorage.getItem('Scenario2_MoralValueReordered');
+                      if (saved) {
+                        return JSON.parse(saved);
+                      }
+                    } catch (e) {}
+                    return [];
+                  })();
+
+                  const scenario3MoralValueReordered = (() => {
+                    try {
+                      const saved = localStorage.getItem('Scenario3_MoralValueReordered');
+                      if (saved) {
+                        return JSON.parse(saved);
+                      }
+                    } catch (e) {}
+                    return [];
+                  })();
+
                   return metrics.scenarioDetails.map((scenario, index) => {
                     const scenarioId = scenario.scenarioId;
                     const decisionLabel = scenariosFinalDecisionLabels[index] || 'N/A';
                     const alignmentStatus = checkingAlignmentList[index] || 'Unknown';
+
+                    // Get the scenario-specific value list
+                    let scenarioSpecificList: string[] = [];
+                    let scenarioSpecificListName = '';
+
+                    if (scenarioId === 1) {
+                      scenarioSpecificList = scenario1MoralValueReordered;
+                      scenarioSpecificListName = 'Scenario1_MoralValueReordered';
+                    } else if (scenarioId === 2) {
+                      scenarioSpecificList = scenario2MoralValueReordered;
+                      scenarioSpecificListName = 'Scenario2_MoralValueReordered';
+                    } else if (scenarioId === 3) {
+                      scenarioSpecificList = scenario3MoralValueReordered;
+                      scenarioSpecificListName = 'Scenario3_MoralValueReordered';
+                    }
+
                     const valueListUsed = scenarioId === 1 ? finalValues : moralValuesReorder;
                     const valueListName = scenarioId === 1 ? 'finalValues' : 'MoralValuesReorderList';
 
@@ -772,6 +819,17 @@ const ResultsFeedbackPage: React.FC = () => {
                                 }
                               </p>
                             </div>
+                            {scenarioSpecificList && (
+                              <div className="bg-purple-50 p-2 rounded border-2 border-purple-400">
+                                <p className="font-bold text-purple-900 mb-1">{scenarioSpecificListName}:</p>
+                                <p className="text-purple-700 font-mono break-words">
+                                  {scenarioSpecificList.length > 0
+                                    ? `[${scenarioSpecificList.map(v => v.charAt(0).toUpperCase() + v.slice(1)).join(', ')}]`
+                                    : '[ Empty ]'
+                                  }
+                                </p>
+                              </div>
+                            )}
                             <div className="bg-green-50 p-2 rounded border-2 border-green-400">
                               <p className="font-bold text-green-900 mb-1">FinalTopTwoValues:</p>
                               <p className="text-green-700 font-mono break-words">

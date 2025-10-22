@@ -61,6 +61,9 @@ const SimulationMainPage: React.FC = () => {
   const [scenariosFinalDecisionLabels, setScenariosFinalDecisionLabels] = useState<string[]>([]);
   const [checkingAlignmentList, setCheckingAlignmentList] = useState<string[]>([]);
   const [previousScenarioUsedSimulationMetrics, setPreviousScenarioUsedSimulationMetrics] = useState(false);
+  const [scenario1MoralValueReordered, setScenario1MoralValueReordered] = useState<string[]>([]);
+  const [scenario2MoralValueReordered, setScenario2MoralValueReordered] = useState<string[]>([]);
+  const [scenario3MoralValueReordered, setScenario3MoralValueReordered] = useState<string[]>([]);
 
   const currentScenario = scenarios[currentScenarioIndex];
 
@@ -744,6 +747,48 @@ const SimulationMainPage: React.FC = () => {
     console.log('Current FinalTopTwoValues (before update):', finalTopTwoValues);
     console.log('Updated ScenariosFinalDecisionLabels:', updatedDecisionLabels);
     console.log('Updated CheckingAlignmentList:', updatedAlignmentList);
+
+    // Capture MoralValuesReorderList for this scenario if moralValuesReorderingFlag is true
+    if (flagsAtConfirmation.moralValuesReorderingFlag) {
+      const moralValuesReorderList = localStorage.getItem('MoralValuesReorderList');
+      if (moralValuesReorderList) {
+        try {
+          const parsedList = JSON.parse(moralValuesReorderList);
+          const valuesList = parsedList.map((item: any) => item.id || item.label || item);
+
+          if (currentScenario.id === 1) {
+            setScenario1MoralValueReordered(valuesList);
+            localStorage.setItem('Scenario1_MoralValueReordered', JSON.stringify(valuesList));
+            console.log('Captured Scenario1_MoralValueReordered:', valuesList);
+          } else if (currentScenario.id === 2) {
+            setScenario2MoralValueReordered(valuesList);
+            localStorage.setItem('Scenario2_MoralValueReordered', JSON.stringify(valuesList));
+            console.log('Captured Scenario2_MoralValueReordered:', valuesList);
+          } else if (currentScenario.id === 3) {
+            setScenario3MoralValueReordered(valuesList);
+            localStorage.setItem('Scenario3_MoralValueReordered', JSON.stringify(valuesList));
+            console.log('Captured Scenario3_MoralValueReordered:', valuesList);
+          }
+        } catch (error) {
+          console.error('Error capturing MoralValuesReorderList for scenario:', error);
+        }
+      }
+    } else {
+      // If flag is false, store empty list for this scenario
+      if (currentScenario.id === 1) {
+        setScenario1MoralValueReordered([]);
+        localStorage.setItem('Scenario1_MoralValueReordered', JSON.stringify([]));
+        console.log('Scenario1_MoralValueReordered set to empty (flag is false)');
+      } else if (currentScenario.id === 2) {
+        setScenario2MoralValueReordered([]);
+        localStorage.setItem('Scenario2_MoralValueReordered', JSON.stringify([]));
+        console.log('Scenario2_MoralValueReordered set to empty (flag is false)');
+      } else if (currentScenario.id === 3) {
+        setScenario3MoralValueReordered([]);
+        localStorage.setItem('Scenario3_MoralValueReordered', JSON.stringify([]));
+        console.log('Scenario3_MoralValueReordered set to empty (flag is false)');
+      }
+    }
 
     // Update FinalTopTwoValues after confirming decision
     // Logic depends on which reordering flag is active
