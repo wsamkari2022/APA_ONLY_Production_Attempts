@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Shield, Zap, Leaf, Scale, Ban, ThumbsUp, ThumbsDown, Lightbulb, CheckCircle, ArrowLeft } from 'lucide-react';
+import { X, Shield, Zap, Leaf, Scale, Ban, ThumbsUp, ThumbsDown, Lightbulb, CheckCircle, ArrowLeft, ArrowRight } from 'lucide-react';
 import { DecisionOption } from '../types';
 
 interface AlternativeDecisionModalProps {
