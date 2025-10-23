@@ -1055,10 +1055,13 @@ const SimulationMainPage: React.FC = () => {
         
         <MetricsDisplay metrics={metrics} animatingMetrics={animatingMetrics} />
 
+        <div className="bg-gradient-to-br from-teal-50 via-teal-100 to-cyan-50 border-2 border-teal-300 rounded-lg shadow-lg p-5 mb-4">
+          <h2 className="text-sm font-bold uppercase tracking-wider mb-2 text-teal-700">Current Scenario</h2>
+          <h3 className="text-xl font-bold mb-2 text-teal-900" style={{ fontFamily: 'Georgia, serif' }}>{currentScenario.title}</h3>
+          <p className="text-base text-teal-800 leading-relaxed" style={{ fontFamily: 'Georgia, serif' }}>{currentScenario.description}</p>
+        </div>
+
         <div className="bg-white rounded-lg shadow-md p-4 flex-1 flex flex-col overflow-hidden">
-          <h2 className="text-lg font-semibold mb-1 text-gray-700">Current Scenario</h2>
-          <h3 className="text-base font-medium mb-1 text-gray-800">{currentScenario.title}</h3>
-          <p className="text-sm text-gray-600 mb-3">{currentScenario.description}</p>
 
           {!selectedDecision ? (
             <>
@@ -1136,7 +1139,7 @@ const SimulationMainPage: React.FC = () => {
                   </div>
                 )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 flex-1">
+                <div className="flex flex-col gap-4 flex-1">
                   {[...getInitialOptions(), ...addedAlternatives].map((option) => (
                     <DecisionOption
                       key={option.id}
