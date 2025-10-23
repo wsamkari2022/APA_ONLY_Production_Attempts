@@ -339,6 +339,11 @@ const ValuesPage: React.FC = () => {
                                     <Brain className="h-6 w-6 text-blue-600" />
                                     <h2 className="text-xl font-bold text-gray-900">Matched Stable Values</h2>
                                 </div>
+                                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6 rounded-r-lg">
+                                    <p className="text-gray-700 leading-relaxed">
+                                        <span className="font-semibold text-gray-900">What are Matched Stable Values?</span> These values appeared consistently across your implicit scenarios and align with your explicit value choices. The match percentage indicates how frequently each stable value appeared in your explicit responses, demonstrating the strength of alignment between your conscious choices and underlying decision patterns. Higher percentages suggest these values are deeply integrated into your decision-making framework.
+                                    </p>
+                                </div>
                                 <div className="space-y-3">
                                     {matchedStableValues.map((value, index) => (
                                         <div key={index} className="bg-blue-50 p-4 rounded-lg border border-blue-200">
@@ -367,9 +372,11 @@ const ValuesPage: React.FC = () => {
                                     <FileCheck className="h-6 w-6 text-blue-600" />
                                     <h2 className="text-xl font-bold text-gray-900">Explicit Values</h2>
                                 </div>
-                                <p className="text-gray-600 mb-4">
-                                    Your direct responses to everyday ethical scenarios reveal these value preferences:
-                                </p>
+                                <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4 rounded-r-lg">
+                                    <p className="text-sm text-gray-700 leading-relaxed">
+                                        <span className="font-semibold text-gray-900">Understanding Explicit Values:</span> These are the values you consciously selected when presented with straightforward ethical scenarios. Your direct choices provide insight into your stated value preferences and help us understand what you believe guides your decisions. Each scenario below shows the specific value you prioritized.
+                                    </p>
+                                </div>
                                 <div className="space-y-4">
                                     {explicitValues.map((value, index) => (
                                         <div key={index} className="bg-blue-50 rounded-lg p-4">
@@ -390,9 +397,11 @@ const ValuesPage: React.FC = () => {
                                     <Brain className="h-6 w-6 text-green-600" />
                                     <h2 className="text-xl font-bold text-gray-900">Implicit Values</h2>
                                 </div>
-                                <p className="text-gray-600 mb-4">
-                                    Through analysis of your decision patterns, these deeper values were identified:
-                                </p>
+                                <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-4 rounded-r-lg">
+                                    <p className="text-sm text-gray-700 leading-relaxed">
+                                        <span className="font-semibold text-gray-900">Understanding Implicit Values:</span> These values emerged from analyzing your preference patterns in complex scenarios where you ranked multiple options. Unlike explicit choices, these reflect the underlying values that guide your decision-making when faced with nuanced trade-offs. Stable values appeared consistently, while context-dependent values varied based on situational factors.
+                                    </p>
+                                </div>
 
                                 {/* Stable Values */}
                                 {groupedValues.stable.length > 0 && (
@@ -440,11 +449,19 @@ const ValuesPage: React.FC = () => {
                                 <BarChart2 className="h-6 w-6 text-teal-600" />
                                 <h2 className="text-xl font-bold text-gray-900">Value Alignment Analysis</h2>
                             </div>
+                            <div className="bg-teal-50 border-l-4 border-teal-400 p-4 mb-6 rounded-r-lg">
+                                <p className="text-gray-700 leading-relaxed">
+                                    <span className="font-semibold text-gray-900">How Value Alignment Works:</span> This section compares your explicit value choices with your implicit values to measure consistency. The frequency analysis shows which values you chose most often in explicit scenarios, while the alignment metrics reveal how well your stated preferences match your underlying decision patterns. Strong alignment suggests coherent value integration across different decision contexts.
+                                </p>
+                            </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Most Common Explicit Values */}
                                 <div className="space-y-4">
                                     <h3 className="text-lg font-semibold text-gray-800">Most Common Explicit Values</h3>
+                                    <p className="text-sm text-gray-600 mb-3">
+                                        These bars show how frequently each value appeared in your explicit choices. Higher percentages indicate values you consistently prioritized across different scenarios.
+                                    </p>
                                     {valueFrequencies.map((freq, index) => (
                                         <div key={index} className="bg-teal-50 rounded-lg p-4">
                                             <div className="flex items-center justify-between">
@@ -466,6 +483,9 @@ const ValuesPage: React.FC = () => {
                                 {/* Value Alignment Stats */}
                                 <div className="space-y-4">
                                     <h3 className="text-lg font-semibold text-gray-800">Value Alignment</h3>
+                                    <p className="text-sm text-gray-600 mb-3">
+                                        These metrics measure how well your explicit choices align with your implicit values. Higher alignment percentages indicate greater consistency between what you consciously choose and what your decision patterns reveal.
+                                    </p>
 
                                     {/* Stable Values Match */}
                                     <div className="bg-green-50 rounded-lg p-4">
