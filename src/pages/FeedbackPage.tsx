@@ -469,7 +469,7 @@ const FeedbackPage: React.FC = () => {
           </div>
 
           <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-            The CVR (Contextual Value Reflection) mechanism presented you with alternative scenarios to help understand your chosen options from different contexts and perspectives. Please rate how this feature impacted your decision-making process.
+            The CVR (Cognitive Value Recontextulization) mechanism presented you with alternative scenarios to help understand your chosen options from different contexts and perspectives. Please rate how this feature impacted your decision-making process.
           </p>
 
           <div className="space-y-6">
@@ -581,7 +581,7 @@ const FeedbackPage: React.FC = () => {
           </div>
 
           <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-            The APA (Adaptive Preference Analysis) feature allowed you to compare your chosen options with CVR scenarios and reorder your values based on new insights. This helped you understand options from different perspectives and align future choices with your reordered values.
+            The APA (Adaptive Preference Alignment) feature allowed you to compare your chosen options with CVR scenarios and reorder your values based on new insights. This helped you understand options from different perspectives and align future choices with your reordered values.
           </p>
 
           <div className="space-y-6">
