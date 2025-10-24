@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Check, ThumbsUp, ThumbsDown, Users, Skull, Droplets, Building, Trees as Tree, Factory, AlertTriangle, ChevronDown, ChevronUp, Info } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Check, ThumbsUp, ThumbsDown, Users, Skull, Droplets, Building, Trees as Tree, Factory, AlertTriangle, ChevronDown, ChevronUp, Info, RefreshCcw } from 'lucide-react';
 import { DecisionOption } from '../types';
 
 interface DecisionSummaryModalProps {
@@ -21,6 +21,26 @@ const DecisionSummaryModal: React.FC<DecisionSummaryModalProps> = ({
 }) => {
   const [showWarningPopup, setShowWarningPopup] = useState(false);
   const [isImpactExpanded, setIsImpactExpanded] = useState(true);
+  const [showScrollBubble, setShowScrollBubble] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isOpen && scrollContainerRef.current) {
+      const container = scrollContainerRef.current;
+      const hasScroll = container.scrollHeight > container.clientHeight;
+      setShowScrollBubble(hasScroll);
+
+      const handleScroll = () => {
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 50;
+        if (isNearBottom) {
+          setShowScrollBubble(false);
+        }
+      };
+
+      container.addEventListener('scroll', handleScroll);
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -121,7 +141,7 @@ const DecisionSummaryModal: React.FC<DecisionSummaryModalProps> = ({
         </div>
 
         {/* Body */}
-        <div className="p-6 flex-1 overflow-auto">
+        <div ref={scrollContainerRef} className="p-6 flex-1 overflow-auto relative">
           {/* Informative Message */}
           <div className="mb-6 bg-gradient-to-r from-yellow-50 to-amber-50 border-2 border-yellow-400 rounded-xl shadow-md p-4">
             <div className="flex items-start gap-3">
@@ -274,56 +294,51 @@ const DecisionSummaryModal: React.FC<DecisionSummaryModalProps> = ({
               </div>
             </div>
           )}
+
+          {/* Scroll Indicator Bubble */}
+          {showScrollBubble && (
+            <div className="sticky bottom-0 left-0 right-0 flex justify-center pb-4">
+              <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white text-xs px-4 py-2 rounded-full shadow-lg animate-bounce">
+                <div className="flex items-center gap-2">
+                  <ChevronDown size={16} />
+                  <span>Scroll down to see more</span>
+                  <ChevronDown size={16} />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Footer */}
-        <div className="border-t p-6">
-          <div className="flex justify-end gap-3">
-            {!canConfirm && (
-              <div className="relative">
-                <button
-                  onClick={() => handleCloseOrReview('review')}
-                  className="flex items-center gap-2 px-6 py-2 rounded-lg transition-all duration-300 bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-xl animate-pulse border-2 border-purple-300"
-                >
-                  <span className="relative">
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></span>
-                    <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full"></span>
-                  </span>
-                  Review Alternatives
-                </button>
-                
-                {/* Bubble tooltip */}
-                <div className="absolute -top-12 left-1/2 transform -translate-x-1/2 z-10">
-                  <div className="bg-gradient-to-r from-purple-600 to-pink-600 text-white text-xs px-3 py-2 rounded-lg shadow-lg animate-bounce whitespace-nowrap">
-                    Required Step!
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-t-4 border-t-purple-600 border-l-4 border-r-4 border-transparent"></div>
-                  </div>
-                </div>
-              </div>
-            )}
-            
-            {canConfirm && (
-              <button
-                onClick={() => handleCloseOrReview('review')}
-                className="flex items-center gap-2 px-6 py-2 rounded-lg transition-colors duration-200 bg-gray-100 text-gray-700 hover:bg-gray-200"
-              >
-                Review Alternatives
-              </button>
-            )}
-            
+        <div className="border-t p-6 bg-gray-50">
+          <div className="flex flex-col gap-3 max-w-md mx-auto">
+            <button
+              onClick={() => handleCloseOrReview('close')}
+              className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl transition-all duration-300 bg-gradient-to-r from-gray-600 to-gray-700 text-white hover:from-gray-700 hover:to-gray-800 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-base group"
+            >
+              <RefreshCcw size={20} className="group-hover:rotate-180 transition-transform duration-500" />
+              Change My Mind
+            </button>
+
             <button
               onClick={onConfirmDecision}
               disabled={!canConfirm}
-              className={`flex items-center gap-2 px-6 py-2 rounded-lg transition-colors duration-200 ${
+              className={`w-full flex items-center justify-center gap-3 px-8 py-4 rounded-xl transition-all duration-300 font-semibold text-base shadow-lg ${
                 canConfirm
-                  ? 'bg-green-600 text-white hover:bg-green-700'
+                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700 hover:shadow-xl transform hover:scale-105'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
               title={!canConfirm ? "Review alternatives to enable confirmation" : ""}
             >
-              <Check size={16} />
+              <Check size={20} />
               Confirm Decision
             </button>
+
+            {!canConfirm && (
+              <p className="text-xs text-center text-orange-600 italic">
+                You must view all alternatives before confirming
+              </p>
+            )}
           </div>
         </div>
       </div>
