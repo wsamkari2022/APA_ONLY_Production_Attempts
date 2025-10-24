@@ -10,7 +10,7 @@ export const scenarios: Scenario[] = [
     options: [
       {
         id: "safety-first",
-        title: "Prioritize Safety Protocol 🛡️",
+        title: "Prioritize Safety Protocol",
         label: "safety",
         description:
           "Deploy all available firefighters immediately to form defensive lines and evacuate population centers. This action will successfully evacuate all residents but exposes firefighters to intense danger, leading to casualties and resource depletion.",
@@ -105,7 +105,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: "efficiency-focused",
-        title: "Resource Optimization Strategy ⚡",
+        title: "Resource Optimization Strategy",
         label: "efficiency",
         description:
           "Deploy firefighter teams only to the most critical zones, minimizing resource use while attempting to save as many lives as possible. However, limited coverage results in preventable resident deaths and minor firefighter casualties.",
@@ -200,7 +200,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: "sustainability-focused",
-        title: "Eco-Conscious Containment 🌱",
+        title: "Eco-Conscious Containment",
         label: "sustainability",
         description:
           "Limit intervention to protect natural ecosystems and endangered species. Firefighters engage only in environmentally sensitive zones. Most civilians are left vulnerable, and several firefighters perish in inaccessible terrain.",
@@ -295,7 +295,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: "fairness-focused",
-        title: "Equitable Response Protocol ⚖️",
+        title: "Equitable Response Protocol",
         label: "fairness",
         description:
           "Distribute protection equally across all neighborhoods regardless of socioeconomic or geographic differences. This equitable approach stretches resources thin, leading to moderate civilian and firefighter losses.",
@@ -390,7 +390,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: "nonmaleficence-focused",
-        title: "Harm Minimization Approach 🤲",
+        title: "Harm Minimization Approach",
         label: "nonmaleficence",
         description:
           "Use every available strategy to minimize total harm—both human and ecological—by shielding vulnerable communities, preempting infrastructure collapse, and preserving firefighter life. All civilians are rescued, but some firefighter lives are lost in the process.",
@@ -493,7 +493,7 @@ export const scenarios: Scenario[] = [
     options: [
       {
         id: 'nuclear-safety-priority',
-        title: 'Shield the Reactor at All Costs ☢️',
+        title: 'Shield the Reactor at All Costs',
         label: 'safety',
         description:
           'Deploy all firefighting forces to fortify the nuclear facility perimeter. This prevents catastrophic radiation release but leaves most of the population unprotected, leading to severe civilian casualties.',
@@ -580,7 +580,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: 'evacuation-priority',
-        title: 'Evacuate Every Civilian 🏃',
+        title: 'Evacuate Every Civilian',
         label: 'fairness',
         description:
           'Redirect all resources to evacuate residents as quickly as possible. While this saves the majority of the population, the nuclear plant is left vulnerable, increasing the risk of partial radioactive leakage and infrastructure collapse.',
@@ -667,7 +667,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: 'divided-response-strategy',
-        title: 'Split Response Strategy 🔄',
+        title: 'Split Response Strategy',
         label: 'efficiency',
         description:
           'Divide firefighting units between civilian evacuation and securing the nuclear facility. This approach aims to minimize both civilian and infrastructure loss, but spreading resources may reduce overall effectiveness and increase complexity.',
@@ -754,7 +754,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: 'ecosystem-defense-priority',
-        title: 'Protect Ecosystems First 🌿',
+        title: 'Protect Ecosystems First',
         label: 'sustainability',
         description:
           'Redirect major resources toward halting wildfire spread through key biodiversity corridors. This protects sensitive ecosystems and prevents long-term environmental collapse but limits evacuation and increases casualties among both civilians and responders.',
@@ -841,7 +841,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: 'nonmaleficence-response',
-        title: 'Minimize Harm, Avoid Irreversible Fallout ⚖️',
+        title: 'Minimize Harm, Avoid Irreversible Fallout',
         label: 'nonmaleficence',
         description:
           'Choose a restrained approach that avoids high-risk maneuvers and minimizes irreversible harm. Firefighters will only secure defensible zones and allow natural containment. This reduces unnecessary loss of life among responders but increases the risk of radiation release and major regional damage.',
@@ -936,7 +936,7 @@ export const scenarios: Scenario[] = [
     options: [
       {
         id: 'evacuate-residents-priority',
-        title: 'Evacuate All Nearby Villages 🚨',
+        title: 'Evacuate All Nearby Villages',
         label: 'safety',
         description:
           'Mobilize all available forces to evacuate human populations near the biodiversity reserve. This ensures minimal civilian casualties but risks severe damage to the ecosystem and critical research stations.',
@@ -1023,7 +1023,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: 'logistics-balance-deployment',
-        title: 'Balance Fire Suppression with Evacuation 🚒',
+        title: 'Balance Fire Suppression with Evacuation',
         label: 'efficiency',
         description:
           'Split emergency resources between containment efforts around the reserve and limited village evacuations. This approach minimizes overall destruction but risks moderate casualties and partial loss of biodiversity.',
@@ -1110,7 +1110,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: 'preserve-ecological-integrity',
-        title: 'Prioritize Ecological Defense 🌲',
+        title: 'Prioritize Ecological Defense',
         label: 'sustainability',
         description:
           'Deploy firefighting resources to defend biodiversity hotspots and natural heritage areas. This decision limits damage to the ecosystem but delays human evacuation and increases casualties.',
@@ -1197,7 +1197,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: 'equitable-response-allocation',
-        title: 'Ensure Equitable Protection Across Communities ⚖️',
+        title: 'Ensure Equitable Protection Across Communities',
         label: 'fairness',
         description:
           'Distribute firefighting and evacuation efforts evenly between small rural villages and ecological assets, ensuring no community or habitat is deprioritized. This leads to moderate outcomes across all dimensions but avoids ethical favoritism.',
@@ -1284,7 +1284,7 @@ export const scenarios: Scenario[] = [
       },
       {
         id: 'do-no-harm-doctrine',
-        title: 'Minimize Harm Across All Fronts 🧭',
+        title: 'Minimize Harm Across All Fronts',
         label: 'nonmaleficence',
         description:
           'Adopt a conservative approach that aims to avoid irreversible damage in any single area. Focus efforts on minimizing harm to humans, firefighters, ecosystems, and infrastructure, even if this results in moderate damage across all dimensions.',
