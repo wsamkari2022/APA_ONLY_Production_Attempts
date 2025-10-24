@@ -112,17 +112,6 @@ const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, curre
           <p className="text-gray-700 text-sm leading-relaxed">{option.description}</p>
         </div>
         <div className="flex flex-col items-end gap-1 flex-shrink-0">
-          {option.isAlternative && (
-            <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full whitespace-nowrap font-medium">
-              Alternative
-            </span>
-          )}
-          {valueDisplay && (
-            <span className="text-xs bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full whitespace-nowrap flex items-center font-medium">
-              {valueDisplay.icon}
-              {valueDisplay.name}
-            </span>
-          )}
           <div className="flex items-center gap-1 bg-gray-100 px-2 py-0.5 rounded-full">
             <ThumbsUp size={12} className="text-green-600" />
             <span className="text-xs text-gray-700 whitespace-nowrap font-medium">
