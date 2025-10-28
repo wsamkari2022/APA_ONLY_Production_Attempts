@@ -209,12 +209,27 @@ const SimulationMainPage: React.FC = () => {
   useEffect(() => {
     // Set initial options for current scenario only once when scenario changes or when first loading
     if (currentScenario) {
+      // Check if we have stored initial options for this scenario
+      const storedOptionsKey = `scenario_${currentScenario.id}_initial_options`;
+      const storedOptions = sessionStorage.getItem(storedOptionsKey);
+
+      if (storedOptions) {
+        // Use stored options to maintain consistency across navigation
+        try {
+          const parsedOptions = JSON.parse(storedOptions);
+          setCurrentScenarioInitialOptions(parsedOptions);
+          return;
+        } catch (error) {
+          console.error('Error parsing stored initial options:', error);
+        }
+      }
+
       // Check if user has accessed AdaptivePreferenceView (MoralValuesReorderList exists)
       const moralValuesReorder = localStorage.getItem('MoralValuesReorderList');
       const simulationMetricsReorder = localStorage.getItem('SimulationMetricsReorderList');
-      
+
       let initialOptions: DecisionOptionType[] = [];
-      
+
       // If no reordering has occurred, use random selection for all scenarios
       if (!moralValuesReorder && !simulationMetricsReorder) {
         const shuffledOptions = [...currentScenario.options].sort(() => Math.random() - 0.5);
@@ -223,7 +238,9 @@ const SimulationMainPage: React.FC = () => {
         // Use preference-based selection (existing logic)
         initialOptions = calculatePreferenceBasedOptions();
       }
-      
+
+      // Store the initial options in sessionStorage for this scenario
+      sessionStorage.setItem(storedOptionsKey, JSON.stringify(initialOptions));
       setCurrentScenarioInitialOptions(initialOptions);
     }
     
@@ -247,10 +264,25 @@ const SimulationMainPage: React.FC = () => {
 
   // Reset added alternatives when scenario changes (but keep initial options calculation in main useEffect)
   useEffect(() => {
-    if (currentScenarioIndex > 0) {
+    if (currentScenario) {
+      // Check if we have stored added alternatives for this scenario
+      const storedAlternativesKey = `scenario_${currentScenario.id}_added_alternatives`;
+      const storedAlternatives = sessionStorage.getItem(storedAlternativesKey);
+
+      if (storedAlternatives) {
+        try {
+          const parsedAlternatives = JSON.parse(storedAlternatives);
+          setAddedAlternatives(parsedAlternatives);
+          return;
+        } catch (error) {
+          console.error('Error parsing stored alternatives:', error);
+        }
+      }
+
+      // Only reset if no stored alternatives found
       setAddedAlternatives([]);
     }
-  }, [currentScenarioIndex]);
+  }, [currentScenarioIndex, currentScenario]);
   const calculatePreferenceBasedOptions = useCallback((): DecisionOptionType[] => {
     if (!currentScenario) return [];
 
@@ -610,7 +642,13 @@ const SimulationMainPage: React.FC = () => {
   };
 
   const handleAddAlternative = (option: DecisionOptionType) => {
-    setAddedAlternatives(prev => [...prev, { ...option, isAlternative: true }]);
+    const newAlternatives = [...addedAlternatives, { ...option, isAlternative: true }];
+    setAddedAlternatives(newAlternatives);
+
+    // Store alternatives in sessionStorage for this scenario
+    const storedAlternativesKey = `scenario_${currentScenario.id}_added_alternatives`;
+    sessionStorage.setItem(storedAlternativesKey, JSON.stringify(newAlternatives));
+
     setShowAlternativesModal(false);
 
     // Increment alternatives explored counter

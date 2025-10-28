@@ -13,6 +13,10 @@ const ReviewOptionExpertAnalysisPage: React.FC = () => {
     return null;
   }
 
+  const handleBackClick = () => {
+    window.history.back();
+  };
+
   const valueMap = {
     safety: { name: 'Safety', icon: Shield, color: 'text-blue-600' },
     efficiency: { name: 'Efficiency', icon: Droplets, color: 'text-cyan-600' },
@@ -172,7 +176,7 @@ const ReviewOptionExpertAnalysisPage: React.FC = () => {
           </div>
 
           <button
-            onClick={() => navigate(-1)}
+            onClick={handleBackClick}
             className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-teal-600 to-cyan-600 text-white hover:from-teal-700 hover:to-cyan-700 px-6 py-3 rounded-lg font-semibold text-base transition-all duration-200 shadow-md hover:shadow-lg"
           >
             <ArrowLeft size={20} />
