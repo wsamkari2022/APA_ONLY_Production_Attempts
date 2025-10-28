@@ -5,12 +5,11 @@ import { DecisionOption as DecisionOptionType, SimulationMetrics } from '../type
 interface DecisionOptionProps {
   option: DecisionOptionType;
   onSelect: (option: DecisionOptionType) => void;
-  onReview: (option: DecisionOptionType) => void;
   currentMetrics?: SimulationMetrics;
   scenarioIndex?: number;
 }
 
-const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onReview, currentMetrics, scenarioIndex }) => {
+const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, currentMetrics, scenarioIndex }) => {
   const [isHovered, setIsHovered] = React.useState(false);
 
   const formatImpactValue = (value: number, isLivesSaved: boolean = false, isCasualties: boolean = false) => {
@@ -76,6 +75,7 @@ const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onRev
 
   const { isFeasible, insufficientResources } = checkFeasibility();
 
+  // Map value labels to their display properties
   const valueMap = {
     safety: { name: 'Safety', icon: <Shield size={12} className="mr-1" /> },
     efficiency: { name: 'Efficiency', icon: <Droplets size={12} className="mr-1" /> },
@@ -164,13 +164,6 @@ const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onRev
           </div>
         </div>
       </div>
-
-      <button
-        onClick={() => onReview(option)}
-        className="w-full py-2 px-4 rounded-md font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50 focus:ring-blue-500 shadow-sm hover:shadow-md mb-2"
-      >
-        Review
-      </button>
 
       <button
         onClick={() => !isFeasible ? null : onSelect(option)}
