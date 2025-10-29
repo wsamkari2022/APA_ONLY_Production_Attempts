@@ -8,10 +8,12 @@ interface DecisionOptionProps {
   onReview: (option: DecisionOptionType) => void;
   currentMetrics?: SimulationMetrics;
   scenarioIndex?: number;
+  hasExploredAlternatives?: boolean;
 }
 
-const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onReview, currentMetrics, scenarioIndex }) => {
+const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onReview, currentMetrics, scenarioIndex, hasExploredAlternatives = true }) => {
   const [isHovered, setIsHovered] = React.useState(false);
+  const [showTooltip, setShowTooltip] = React.useState(false);
 
   const handleReviewClick = () => {
     onReview(option);
@@ -178,17 +180,39 @@ const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onRev
           <Eye size={16} />
           Review
         </button>
-        <button
-          onClick={() => !isFeasible ? null : onSelect(option)}
-          disabled={!isFeasible}
-          className={`flex-1 py-2 px-4 rounded-md font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-            !isFeasible
-              ? 'bg-red-100 text-red-700 cursor-not-allowed border border-red-300'
-              : 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500 shadow-md hover:shadow-lg'
-          }`}
-        >
-          {!isFeasible ? 'Not Feasible' : 'Select'}
-        </button>
+        <div className="relative flex-1">
+          <button
+            onClick={() => (!isFeasible || !hasExploredAlternatives) ? null : onSelect(option)}
+            disabled={!isFeasible || !hasExploredAlternatives}
+            onMouseEnter={() => setShowTooltip(true)}
+            onMouseLeave={() => setShowTooltip(false)}
+            className={`w-full py-2 px-4 rounded-md font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+              !isFeasible
+                ? 'bg-red-100 text-red-700 cursor-not-allowed border border-red-300'
+                : !hasExploredAlternatives
+                ? 'bg-gray-300 text-gray-600 cursor-not-allowed border border-gray-400'
+                : 'bg-teal-600 text-white hover:bg-teal-700 focus:ring-teal-500 shadow-md hover:shadow-lg'
+            }`}
+          >
+            {!isFeasible ? 'Not Feasible' : 'Select'}
+          </button>
+          {!hasExploredAlternatives && showTooltip && (
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-30 w-72 pointer-events-none">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-400 text-gray-800 px-4 py-3 rounded-lg shadow-2xl">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle size={18} className="text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-sm text-amber-900 mb-1">Explore Alternatives First</p>
+                    <p className="text-xs leading-relaxed text-gray-700">
+                      Please explore alternative options before making your selection. Find the <span className="font-semibold text-amber-800">"Explore Alternatives"</span> button at the bottom of this page.
+                    </p>
+                  </div>
+                </div>
+                <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 rotate-45 w-3 h-3 bg-gradient-to-br from-amber-50 to-orange-50 border-r-2 border-b-2 border-amber-400"></div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       </div>
 

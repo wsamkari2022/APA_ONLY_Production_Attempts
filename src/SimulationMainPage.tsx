@@ -1159,6 +1159,7 @@ const SimulationMainPage: React.FC = () => {
                       onReview={handleReviewOption}
                       currentMetrics={metrics}
                       scenarioIndex={currentScenarioIndex}
+                      hasExploredAlternatives={hasExploredAlternatives}
                     />
                   ))}
                 </div>
