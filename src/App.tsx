@@ -11,7 +11,6 @@ import FeedbackPage from './pages/FeedbackPage';
 import FinalAnalysisPage from './pages/FinalAnalysisPage';
 import ViewResultsPage from './pages/ViewResultsPage';
 import ResultsFeedbackPage from './pages/ResultsFeedbackPage';
-import ReviewOptionExpertAnalysisPage from './pages/ReviewOptionExpertAnalysisPage';
 
 function App() {
   return (
@@ -24,7 +23,6 @@ function App() {
         <Route path="/completion" element={<CompletionPage />} />
         <Route path="/values" element={<ValuesPage />} />
         <Route path="/simulation" element={<SimulationPage />} />
-        <Route path="/review-option" element={<ReviewOptionExpertAnalysisPage />} />
         <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/feedback" element={<FeedbackPage />} />
         <Route path="/final-analysis" element={<FinalAnalysisPage />} />

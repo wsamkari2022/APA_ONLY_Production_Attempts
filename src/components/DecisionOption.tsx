@@ -1,25 +1,20 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Users, Skull, Droplets, Building, Trees as Tree, Factory, ThumbsUp, Shield, Scale, Leaf, Ban, AlertTriangle, Eye } from 'lucide-react';
 import { DecisionOption as DecisionOptionType, SimulationMetrics } from '../types';
 
 interface DecisionOptionProps {
   option: DecisionOptionType;
   onSelect: (option: DecisionOptionType) => void;
+  onReview: (option: DecisionOptionType) => void;
   currentMetrics?: SimulationMetrics;
   scenarioIndex?: number;
-  onBeforeNavigate?: () => void;
 }
 
-const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, currentMetrics, scenarioIndex, onBeforeNavigate }) => {
-  const navigate = useNavigate();
+const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onReview, currentMetrics, scenarioIndex }) => {
   const [isHovered, setIsHovered] = React.useState(false);
 
   const handleReviewClick = () => {
-    if (onBeforeNavigate) {
-      onBeforeNavigate();
-    }
-    navigate('/review-option', { state: { option } });
+    onReview(option);
   };
 
   const formatImpactValue = (value: number, isLivesSaved: boolean = false, isCasualties: boolean = false) => {

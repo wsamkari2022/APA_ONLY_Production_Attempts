@@ -11,6 +11,7 @@ import AlternativeDecisionModal from './components/AlternativeDecisionModal';
 import CVRQuestionModal from './components/CVRQuestionModal';
 import AdaptivePreferenceView from './components/AdaptivePreferenceView';
 import CollapsibleHelpMessage from './components/CollapsibleHelpMessage';
+import ReviewOptionModal from './components/ReviewOptionModal';
 import { SimulationMetrics, DecisionOption as DecisionOptionType, ExplicitValue } from './types';
 import { scenarios } from './data/scenarios';
 import { TrackingManager } from './utils/trackingUtils';
@@ -44,6 +45,8 @@ const SimulationMainPage: React.FC = () => {
   const [showExpertModal, setShowExpertModal] = useState(false);
   const [showDecisionSummary, setShowDecisionSummary] = useState(false);
   const [tempSelectedOption, setTempSelectedOption] = useState<DecisionOptionType | null>(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [reviewOption, setReviewOption] = useState<DecisionOptionType | null>(null);
   const [addedAlternatives, setAddedAlternatives] = useState<DecisionOptionType[]>([]);
   const [toggledOptions, setToggledOptions] = useState<{[key: string]: boolean}>({});
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -72,46 +75,6 @@ const SimulationMainPage: React.FC = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  // Save simulation state before navigation to review page
-  const saveSimulationState = useCallback(() => {
-    const state = {
-      metrics,
-      addedAlternatives,
-      toggledOptions,
-      hasExploredAlternatives,
-      showAlternativeNotification,
-      alternativesExploredCount,
-      currentScenarioIndex,
-      timestamp: Date.now()
-    };
-    localStorage.setItem('simulationPageState', JSON.stringify(state));
-  }, [metrics, addedAlternatives, toggledOptions, hasExploredAlternatives, showAlternativeNotification, alternativesExploredCount, currentScenarioIndex]);
-
-  // Restore simulation state when returning from review page
-  useEffect(() => {
-    const savedState = localStorage.getItem('simulationPageState');
-    if (savedState) {
-      try {
-        const state = JSON.parse(savedState);
-        // Only restore if the state is from the same scenario and recent (within 5 minutes)
-        const isRecent = Date.now() - state.timestamp < 5 * 60 * 1000;
-        if (state.currentScenarioIndex === currentScenarioIndex && isRecent) {
-          setMetrics(state.metrics);
-          setAddedAlternatives(state.addedAlternatives || []);
-          setToggledOptions(state.toggledOptions || {});
-          setHasExploredAlternatives(state.hasExploredAlternatives || false);
-          setShowAlternativeNotification(state.showAlternativeNotification || false);
-          setAlternativesExploredCount(state.alternativesExploredCount || 0);
-        }
-        // Clear the saved state after restoration
-        localStorage.removeItem('simulationPageState');
-      } catch (error) {
-        console.error('Error restoring simulation state:', error);
-        localStorage.removeItem('simulationPageState');
-      }
-    }
-  }, [currentScenarioIndex]);
 
   // Reset hasExploredAlternatives when scenario changes
   useEffect(() => {
@@ -510,6 +473,11 @@ const SimulationMainPage: React.FC = () => {
     });
     setToggledOptions(initialToggledOptions);
   }, [currentScenarioIndex, getInitialOptions, addedAlternatives]);
+
+  const handleReviewOption = (option: DecisionOptionType) => {
+    setReviewOption(option);
+    setShowReviewModal(true);
+  };
 
   const handleDecisionSelect = (decision: DecisionOptionType) => {
     const optionValue = decision.label.toLowerCase();
@@ -1188,9 +1156,9 @@ const SimulationMainPage: React.FC = () => {
                       key={option.id}
                       option={option}
                       onSelect={handleDecisionSelect}
+                      onReview={handleReviewOption}
                       currentMetrics={metrics}
                       scenarioIndex={currentScenarioIndex}
-                      onBeforeNavigate={saveSimulationState}
                     />
                   ))}
                 </div>
@@ -1321,6 +1289,17 @@ const SimulationMainPage: React.FC = () => {
           }}
           question={selectedDecision.cvrQuestion}
           onAnswer={handleCVRAnswer}
+        />
+      )}
+
+      {reviewOption && (
+        <ReviewOptionModal
+          isOpen={showReviewModal}
+          onClose={() => {
+            setShowReviewModal(false);
+            setReviewOption(null);
+          }}
+          option={reviewOption}
         />
       )}
 
