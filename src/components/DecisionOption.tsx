@@ -180,12 +180,14 @@ const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onRev
           <Eye size={16} />
           Review
         </button>
-        <div className="relative flex-1">
+        <div
+          className="relative flex-1"
+          onMouseEnter={() => !hasExploredAlternatives && setShowTooltip(true)}
+          onMouseLeave={() => setShowTooltip(false)}
+        >
           <button
             onClick={() => (!isFeasible || !hasExploredAlternatives) ? null : onSelect(option)}
             disabled={!isFeasible || !hasExploredAlternatives}
-            onMouseEnter={() => setShowTooltip(true)}
-            onMouseLeave={() => setShowTooltip(false)}
             className={`w-full py-2 px-4 rounded-md font-semibold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 ${
               !isFeasible
                 ? 'bg-red-100 text-red-700 cursor-not-allowed border border-red-300'
