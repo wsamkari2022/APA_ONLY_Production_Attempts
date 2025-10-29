@@ -1160,7 +1160,6 @@ const SimulationMainPage: React.FC = () => {
                       currentMetrics={metrics}
                       scenarioIndex={currentScenarioIndex}
                       hasExploredAlternatives={hasExploredAlternatives}
-                      matchedStableValues={matchedStableValues}
                     />
                   ))}
                 </div>
