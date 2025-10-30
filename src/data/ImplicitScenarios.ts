@@ -119,7 +119,7 @@ export const scenarios: PreferenceScenario[] = [
         ],
         followUpQuestions: {
             efficiency: {
-                question: 'In drug development, would you also support accelerated approval processes for potentially life-saving medications, even with limited long-term safety data?',
+                question: 'In a hospital management context, would you also prioritize launching a new digital patient record system quickly to improve operations, even if some data-security measures are not yet fully tested?',
                 valueIfYes: { name: 'Efficiency', type: 'Stable' },
                 valueIfNo: [
                     { name: 'Efficiency', type: 'Context-Dependent' },
