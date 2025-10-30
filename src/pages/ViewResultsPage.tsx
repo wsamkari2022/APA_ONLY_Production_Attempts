@@ -519,6 +519,16 @@ const ViewResultsPage: React.FC = () => {
                     return [];
                   })();
 
+                  const scenario3InfeasibleOptions = (() => {
+                    try {
+                      const saved = localStorage.getItem('Scenario3_InfeasibleOptions');
+                      if (saved) {
+                        return JSON.parse(saved);
+                      }
+                    } catch (e) {}
+                    return [];
+                  })();
+
                   const allEvents = TrackingManager.getAllEvents();
 
                   return metrics.scenarioDetails.map((scenario, index) => {
