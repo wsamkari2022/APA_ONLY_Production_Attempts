@@ -185,7 +185,7 @@ const ValuesPage: React.FC = () => {
                 change_type: 'initial'
             });
 
-            navigate('/simulation');
+            navigate('/tutorial');
         } catch (error) {
             console.error('Failed to save values:', error);
         }

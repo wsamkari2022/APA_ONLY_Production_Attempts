@@ -5,6 +5,7 @@ import ExplicitValuesPage from './pages/ExplicitValuesPage';
 import PreferencesPage from './implicit_value_pages/PreferencesPage';
 import CompletionPage from './implicit_value_pages/CompletionPage';
 import ValuesPage from './implicit_value_pages/ValuesPage';
+import TutorialPage from './pages/TutorialPage';
 import SimulationPage from './SimulationMainPage';
 import ThankYouPage from './pages/ThankYouPage';
 import FeedbackPage from './pages/FeedbackPage';
@@ -22,6 +23,7 @@ function App() {
         <Route path="/preferences" element={<PreferencesPage />} />
         <Route path="/completion" element={<CompletionPage />} />
         <Route path="/values" element={<ValuesPage />} />
+        <Route path="/tutorial" element={<TutorialPage />} />
         <Route path="/simulation" element={<SimulationPage />} />
         <Route path="/thank-you" element={<ThankYouPage />} />
         <Route path="/feedback" element={<FeedbackPage />} />
