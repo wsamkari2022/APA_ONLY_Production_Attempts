@@ -68,6 +68,7 @@ const SimulationMainPage: React.FC = () => {
   const [scenario1MoralValueReordered, setScenario1MoralValueReordered] = useState<string[]>([]);
   const [scenario2MoralValueReordered, setScenario2MoralValueReordered] = useState<string[]>([]);
   const [scenario3MoralValueReordered, setScenario3MoralValueReordered] = useState<string[]>([]);
+  const [infeasibleOptionsChecked, setInfeasibleOptionsChecked] = useState<{[key: string]: boolean}>({});
 
   const currentScenario = scenarios[currentScenarioIndex];
 
@@ -99,6 +100,9 @@ const SimulationMainPage: React.FC = () => {
     // Reset alternatives explored counter for new scenario
     setAlternativesExploredCount(0);
     localStorage.setItem('alternativesExploredCount', '0');
+
+    // Reset infeasible options checked for new scenario
+    setInfeasibleOptionsChecked({});
 
     // Initialize flag for first scenario
     if (currentScenarioIndex === 0) {
@@ -878,6 +882,20 @@ const SimulationMainPage: React.FC = () => {
     // Save final decision to database
     const sessionId = DatabaseService.getSessionId();
     if (scenarioTracking) {
+      // Prepare infeasible options checked data (only for scenario 3)
+      const infeasibleOptionsData = currentScenario.id === 3 ?
+        Object.entries(infeasibleOptionsChecked)
+          .filter(([_, checked]) => checked)
+          .map(([optionId, _]) => {
+            const option = [...getInitialOptions(), ...addedAlternatives].find(o => o.id === optionId);
+            return option ? {
+              id: option.id,
+              label: option.label,
+              title: option.title
+            } : null;
+          })
+          .filter(opt => opt !== null) : [];
+
       DatabaseService.insertFinalDecision({
         session_id: sessionId,
         scenario_id: currentScenario.id,
@@ -895,7 +913,8 @@ const SimulationMainPage: React.FC = () => {
         apa_reordered: scenarioTracking.apaReordered,
         apa_reorder_count: scenarioTracking.apaReorderCount,
         alternatives_explored: scenarioTracking.alternativesExplored,
-        final_metrics: newMetrics
+        final_metrics: newMetrics,
+        infeasible_options_checked: infeasibleOptionsData
       });
     }
 
@@ -944,6 +963,13 @@ const SimulationMainPage: React.FC = () => {
     setSelectedDecision(option);
     setIsFromRankedView(isTop2);
     setShowDecisionSummary(true);
+  };
+
+  const handleInfeasibleCheck = (option: DecisionOptionType, checked: boolean) => {
+    setInfeasibleOptionsChecked(prev => ({
+      ...prev,
+      [option.id]: checked
+    }));
   };
 
   const handleToggleOption = useCallback((optionId: string) => {
@@ -1160,6 +1186,8 @@ const SimulationMainPage: React.FC = () => {
                       currentMetrics={metrics}
                       scenarioIndex={currentScenarioIndex}
                       hasExploredAlternatives={hasExploredAlternatives}
+                      onInfeasibleCheck={handleInfeasibleCheck}
+                      isInfeasibleChecked={infeasibleOptionsChecked[option.id] || false}
                     />
                   ))}
                 </div>

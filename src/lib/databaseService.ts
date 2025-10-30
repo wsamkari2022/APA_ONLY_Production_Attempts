@@ -72,6 +72,7 @@ export interface FinalDecision {
   apa_reorder_count?: number;
   alternatives_explored?: boolean;
   final_metrics?: any;
+  infeasible_options_checked?: any;
 }
 
 export interface ValueEvolution {

@@ -9,15 +9,30 @@ interface DecisionOptionProps {
   currentMetrics?: SimulationMetrics;
   scenarioIndex?: number;
   hasExploredAlternatives?: boolean;
+  onInfeasibleCheck?: (option: DecisionOptionType, checked: boolean) => void;
+  isInfeasibleChecked?: boolean;
 }
 
-const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onReview, currentMetrics, scenarioIndex, hasExploredAlternatives = true }) => {
+const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onReview, currentMetrics, scenarioIndex, hasExploredAlternatives = true, onInfeasibleCheck, isInfeasibleChecked = false }) => {
   const [isHovered, setIsHovered] = React.useState(false);
   const [showTooltip, setShowTooltip] = React.useState(false);
+  const [localChecked, setLocalChecked] = React.useState(isInfeasibleChecked);
 
   const handleReviewClick = () => {
     onReview(option);
   };
+
+  const handleInfeasibleCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const checked = e.target.checked;
+    setLocalChecked(checked);
+    if (onInfeasibleCheck) {
+      onInfeasibleCheck(option, checked);
+    }
+  };
+
+  React.useEffect(() => {
+    setLocalChecked(isInfeasibleChecked);
+  }, [isInfeasibleChecked]);
 
   const formatImpactValue = (value: number, isLivesSaved: boolean = false, isCasualties: boolean = false) => {
     if (isLivesSaved) {
@@ -109,6 +124,19 @@ const DecisionOption: React.FC<DecisionOptionProps> = ({ option, onSelect, onRev
       {!isFeasible && (
         <div className="absolute top-2 left-2 z-10 flex items-center gap-1">
           <AlertTriangle size={16} className="text-red-600" />
+        </div>
+      )}
+      {!isFeasible && scenarioIndex === 2 && onInfeasibleCheck && (
+        <div className="absolute top-2 right-2 z-10">
+          <label className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-3 py-2 rounded-lg shadow-lg cursor-pointer hover:from-blue-600 hover:to-cyan-600 transition-all duration-200 border-2 border-white">
+            <input
+              type="checkbox"
+              checked={localChecked}
+              onChange={handleInfeasibleCheckChange}
+              className="w-5 h-5 rounded border-2 border-white cursor-pointer accent-yellow-400"
+            />
+            <span className="text-sm font-semibold whitespace-nowrap">Would choose if feasible</span>
+          </label>
         </div>
       )}
       <div className="flex items-start justify-between gap-3 mb-2">
