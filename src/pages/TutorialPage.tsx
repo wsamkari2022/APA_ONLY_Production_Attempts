@@ -1,23 +1,18 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlayCircle, ArrowRight, Video, RotateCcw } from 'lucide-react';
+import { PlayCircle, ArrowRight, Video, RotateCcw, CheckCircle } from 'lucide-react';
 
 const TutorialPage: React.FC = () => {
   const navigate = useNavigate();
   const [hasWatchedVideo, setHasWatchedVideo] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [videoStarted, setVideoStarted] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const handleVideoEnd = () => {
-    setHasWatchedVideo(true);
-    setIsPlaying(false);
-  };
-
   const handleReplay = () => {
-    setIsPlaying(true);
     if (iframeRef.current) {
-      const src = iframeRef.current.src;
-      iframeRef.current.src = src;
+      const videoId = 'VbISk2VL0G8';
+      iframeRef.current.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1&rel=0`;
+      setVideoStarted(true);
     }
   };
 
@@ -25,24 +20,34 @@ const TutorialPage: React.FC = () => {
     navigate('/simulation');
   };
 
-  React.useEffect(() => {
-    window.addEventListener('message', (event) => {
+  const handleMarkAsWatched = () => {
+    setHasWatchedVideo(true);
+  };
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
       if (event.origin === 'https://www.youtube.com') {
         try {
-          const data = JSON.parse(event.data);
+          const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+
           if (data.event === 'onStateChange') {
-            if (data.info === 0) {
-              handleVideoEnd();
-            } else if (data.info === 1) {
-              setIsPlaying(true);
-            } else if (data.info === 2) {
-              setIsPlaying(false);
+            if (data.info === 1) {
+              setVideoStarted(true);
+            } else if (data.info === 0) {
+              setHasWatchedVideo(true);
             }
           }
         } catch (e) {
+          console.log('YouTube message parsing error:', e);
         }
       }
-    });
+    };
+
+    window.addEventListener('message', handleMessage);
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+    };
   }, []);
 
   return (
@@ -89,33 +94,45 @@ const TutorialPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <button
-              onClick={handleReplay}
-              className="flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-300 font-semibold shadow-md hover:shadow-lg"
-            >
-              <RotateCcw className="h-5 w-5" />
-              Replay Video
-            </button>
+          <div className="flex flex-col gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full">
+              <button
+                onClick={handleReplay}
+                className="flex items-center gap-2 bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors duration-300 font-semibold shadow-md hover:shadow-lg"
+              >
+                <RotateCcw className="h-5 w-5" />
+                Replay Video
+              </button>
 
-            <button
-              onClick={handleProceed}
-              disabled={!hasWatchedVideo}
-              className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold shadow-md transition-all duration-300 ${
-                hasWatchedVideo
-                  ? 'bg-green-600 text-white hover:bg-green-700 hover:shadow-lg transform hover:-translate-y-0.5'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              Proceed to Simulation
-              <ArrowRight className="h-5 w-5" />
-            </button>
+              {!hasWatchedVideo && (
+                <button
+                  onClick={handleMarkAsWatched}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors duration-300 font-semibold shadow-md hover:shadow-lg"
+                >
+                  <CheckCircle className="h-5 w-5" />
+                  I've Watched the Video
+                </button>
+              )}
+
+              <button
+                onClick={handleProceed}
+                disabled={!hasWatchedVideo}
+                className={`flex items-center gap-2 px-8 py-3 rounded-lg font-semibold shadow-md transition-all duration-300 ${
+                  hasWatchedVideo
+                    ? 'bg-green-600 text-white hover:bg-green-700 hover:shadow-lg transform hover:-translate-y-0.5'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                Proceed to Simulation
+                <ArrowRight className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
           {!hasWatchedVideo && (
             <div className="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r-lg">
               <p className="text-sm text-yellow-800">
-                <strong>Note:</strong> The "Proceed to Simulation" button will become active once you've watched the video.
+                <strong>Note:</strong> After watching the video, click "I've Watched the Video" to enable the proceed button.
                 You can pause and resume the video at any time using the YouTube controls.
               </p>
             </div>
