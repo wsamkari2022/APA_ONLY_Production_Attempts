@@ -766,7 +766,7 @@ const FeedbackPage: React.FC = () => {
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">
-                How useful was comparing your simulation choices with CVR scenarios?
+                How useful was comparing your simulation choices with CVR scenarios (APA Comparsion Table)?
               </label>
               <div className="flex items-center space-x-4">
                 <span className="text-xs text-gray-500 w-4">1</span>
