@@ -498,19 +498,19 @@ const FeedbackPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-gradient-to-br from-blue-50 via-blue-100 to-cyan-50 rounded-lg shadow-lg border-2 border-blue-300 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-              <Eye className="h-5 w-5 mr-2 text-blue-600" />
+            <h3 className="text-xl font-bold text-blue-900 flex items-center">
+              <Eye className="h-6 w-6 mr-2 text-blue-700" />
               Value Reflection Mechanism (CVR)
             </h3>
-            <div className="flex items-center gap-2 bg-blue-50 px-3 py-1 rounded-full">
-              <span className="text-xs font-medium text-blue-700">Total CVR Interactions:</span>
+            <div className="flex items-center gap-2 bg-blue-200 px-3 py-1.5 rounded-full shadow-sm">
+              <span className="text-xs font-bold text-blue-900">Total CVR Interactions:</span>
               <span className="text-sm font-bold text-blue-900">{metrics.cvrArrivals}</span>
             </div>
           </div>
 
-          <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+          <p className="text-sm text-blue-800 font-medium mb-6 leading-relaxed bg-white/60 p-3 rounded-lg">
             The CVR (Cognitive Value Recontextualization) mechanism presented you with alternative scenarios to help understand your chosen options from different contexts and perspectives. Please share your experience with this feature.
           </p>
 
@@ -772,19 +772,19 @@ const FeedbackPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-gradient-to-br from-green-50 via-emerald-100 to-teal-50 rounded-lg shadow-lg border-2 border-green-300 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-              <RefreshCcw className="h-5 w-5 mr-2 text-green-600" />
+            <h3 className="text-xl font-bold text-green-900 flex items-center">
+              <RefreshCcw className="h-6 w-6 mr-2 text-green-700" />
               Adaptive Preference Analysis (APA)
             </h3>
-            <div className="flex items-center gap-2 bg-green-50 px-3 py-1 rounded-full">
-              <span className="text-xs font-medium text-green-700">Total APA Reorderings:</span>
+            <div className="flex items-center gap-2 bg-green-200 px-3 py-1.5 rounded-full shadow-sm">
+              <span className="text-xs font-bold text-green-900">Total APA Reorderings:</span>
               <span className="text-sm font-bold text-green-900">{metrics.apaReorderings}</span>
             </div>
           </div>
 
-          <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+          <p className="text-sm text-green-800 font-medium mb-6 leading-relaxed bg-white/60 p-3 rounded-lg">
             The APA (Adaptive Preference Alignment) feature allowed you to compare your chosen options with CVR scenarios and reprioritize your values based on new insights. The goal is to help you understand options from different perspectives and align future choices with your reordered values.
           </p>
 
@@ -1137,19 +1137,19 @@ const FeedbackPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div className="bg-gradient-to-br from-orange-50 via-amber-100 to-yellow-50 rounded-lg shadow-lg border-2 border-orange-300 p-6 mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-              <BarChart3 className="h-5 w-5 mr-2 text-orange-600" />
+            <h3 className="text-xl font-bold text-orange-900 flex items-center">
+              <BarChart3 className="h-6 w-6 mr-2 text-orange-700" />
               Decision Support Tools
             </h3>
-            <div className="flex items-center gap-2 bg-orange-50 px-3 py-1 rounded-full">
-              <Lightbulb className="h-4 w-4 text-orange-600" />
-              <span className="text-xs font-medium text-orange-700">Visualization & Analysis</span>
+            <div className="flex items-center gap-2 bg-orange-200 px-3 py-1.5 rounded-full shadow-sm">
+              <Lightbulb className="h-5 w-5 text-orange-900" />
+              <span className="text-xs font-bold text-orange-900">Visualization & Analysis</span>
             </div>
           </div>
 
-          <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+          <p className="text-sm text-orange-800 font-medium mb-6 leading-relaxed bg-white/60 p-3 rounded-lg">
             Throughout the simulation, you had access to expert recommendations, trade-off visualizations (radar and bar charts), and comparison tools to help you understand the implications of different choices.
           </p>
 
@@ -1249,9 +1249,9 @@ const FeedbackPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h3 className="text-lg font-semibold text-gray-800 mb-6 flex items-center">
-            <Star className="h-5 w-5 mr-2 text-yellow-500" />
+        <div className="bg-gradient-to-br from-purple-50 via-pink-100 to-rose-50 rounded-lg shadow-lg border-2 border-purple-300 p-6 mb-8">
+          <h3 className="text-xl font-bold text-purple-900 mb-6 flex items-center">
+            <Star className="h-6 w-6 mr-2 text-purple-700" />
             Overall Experience Feedback
           </h3>
 
