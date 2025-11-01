@@ -430,10 +430,17 @@ const FeedbackPage: React.FC = () => {
       setImplicitValueCounts(implicitCounts);
 
       const trends = initializeValueTrends();
+
+      // Initialize all values with zeros for all 3 scenarios
+      Object.keys(trends).forEach(value => {
+        trends[value] = [0, 0, 0];
+      });
+
+      // Set 100 for the scenarios where each value was actually selected
       simulationOutcomes.forEach((outcome: any, index: number) => {
         const value = outcome.decision.label.toLowerCase();
-        if (trends[value]) {
-          trends[value].push(100);
+        if (trends[value] && index < 3) {
+          trends[value][index] = 100;
         }
       });
       setValueTrends(trends);
