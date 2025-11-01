@@ -18,7 +18,9 @@ import {
   Scale,
   Brain,
   Flame,
-  AlertTriangle
+  AlertTriangle,
+  Target,
+  XCircle
 } from 'lucide-react';
 import {
   Chart as ChartJS,
