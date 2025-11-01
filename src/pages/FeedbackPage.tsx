@@ -579,7 +579,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Confidence Change: After engaging with the CVR questions, how did your confidence in your decision change?
               </label>
@@ -606,7 +606,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Helpfulness: How helpful were the CVR questions in helping you rethink or refine your decisions?
               </label>
@@ -632,7 +632,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Clarity: How clear and understandable were the CVR questions and their presented perspectives?
               </label>
@@ -658,7 +658,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Comfort Level: How comfortable did you feel with the way CVR questions challenged or prompted you to reconsider your decisions?
               </label>
@@ -684,7 +684,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Perceived Value: How valuable was CVR in helping you evaluate your options in these complex decision scenarios?
               </label>
@@ -710,7 +710,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Overall Impact: To what extent did CVR change the way you think about balancing values in ethical or operational decisions?
               </label>
@@ -736,7 +736,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
                 <MessageSquare className="h-4 w-4 mr-2 text-gray-500" />
                 Tell us about your CVR experience (optional)
@@ -1154,7 +1154,7 @@ const FeedbackPage: React.FC = () => {
           </p>
 
           <div className="space-y-6">
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 How useful were the expert analyses and recommendations?
               </label>
@@ -1180,7 +1180,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 How clear were the radar and bar chart visualizations?
               </label>
@@ -1206,7 +1206,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 How valuable were the trade-off comparisons and differences view?
               </label>
@@ -1232,7 +1232,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
                 <MessageSquare className="h-4 w-4 mr-2 text-gray-500" />
                 Comments about Visualization Tools (Optional)
@@ -1256,7 +1256,7 @@ const FeedbackPage: React.FC = () => {
           </h3>
 
           <div className="space-y-6">
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Decision Satisfaction
               </label>
@@ -1282,7 +1282,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Process Satisfaction
               </label>
@@ -1308,7 +1308,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-3">
                 Perceived Transparency
               </label>
@@ -1334,7 +1334,7 @@ const FeedbackPage: React.FC = () => {
               </div>
             </div>
 
-            <div>
+            <div className="bg-white rounded-lg p-4 shadow-sm">
               <label className="block text-sm font-medium text-gray-700 mb-2 flex items-center">
                 <MessageSquare className="h-4 w-4 mr-2 text-gray-500" />
                 Additional Comments (Optional)
