@@ -4,6 +4,10 @@ export interface UserSession {
   session_id: string;
   user_id?: string;
   demographics?: any;
+  age?: number;
+  gender?: string;
+  ai_experience?: string;
+  moral_reasoning_experience?: string;
 }
 
 export interface BaselineValue {
@@ -123,13 +127,22 @@ export interface SessionFeedback {
 export class DatabaseService {
   static async createUserSession(data: UserSession) {
     try {
+      const insertData: any = {
+        session_id: data.session_id,
+        user_id: data.user_id,
+        demographics: data.demographics
+      };
+
+      if (data.demographics) {
+        insertData.age = parseInt(data.demographics.age);
+        insertData.gender = data.demographics.gender;
+        insertData.ai_experience = data.demographics.aiExperience;
+        insertData.moral_reasoning_experience = data.demographics.moralReasoningExperience;
+      }
+
       const { data: session, error } = await supabase
         .from('user_sessions')
-        .insert({
-          session_id: data.session_id,
-          user_id: data.user_id,
-          demographics: data.demographics
-        })
+        .insert(insertData)
         .select()
         .maybeSingle();
 
