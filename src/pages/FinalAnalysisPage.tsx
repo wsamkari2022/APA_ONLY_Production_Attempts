@@ -8,7 +8,9 @@ import {
   Scale,
   Brain,
   Flame,
-  Target
+  Target,
+  CheckCircle2,
+  XCircle
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -208,7 +210,7 @@ const FinalAnalysisPage: React.FC = () => {
   const prepareConsistencyTrendData = () => {
     // Only include values that were actually selected in scenarios
     const selectedValues = Object.keys(valueTrends);
-    
+
     return {
       labels: ['Explicit Choices', 'Implicit Choices', 'Scenario 1', 'Scenario 2', 'Scenario 3'],
       datasets: selectedValues.map((value, index) => {
@@ -220,9 +222,17 @@ const FinalAnalysisPage: React.FC = () => {
           { line: 'rgb(139, 92, 246)', fill: 'rgba(139, 92, 246, 0.1)' }  // purple
         ];
 
-        // Calculate explicit and implicit scores based on actual selections
-        const explicitScore = explicitValueCounts[value] ? 100 : 0;
-        const implicitScore = implicitValueCounts[value] ? 100 : 0;
+        // Calculate explicit score as percentage of times this value appeared in explicit choices
+        const totalExplicitChoices = Object.values(explicitValueCounts).reduce((sum, count) => sum + count, 0);
+        const explicitScore = totalExplicitChoices > 0
+          ? ((explicitValueCounts[value] || 0) / totalExplicitChoices) * 100
+          : 0;
+
+        // Calculate implicit score as percentage of times this value appeared in implicit choices
+        const totalImplicitChoices = Object.values(implicitValueCounts).reduce((sum, count) => sum + count, 0);
+        const implicitScore = totalImplicitChoices > 0
+          ? ((implicitValueCounts[value] || 0) / totalImplicitChoices) * 100
+          : 0;
 
         return {
           label: value.charAt(0).toUpperCase() + value.slice(1),
