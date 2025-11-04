@@ -1511,7 +1511,7 @@ const FeedbackPage: React.FC = () => {
               <div className="space-y-6">
                 <div className="bg-white rounded-lg p-4 shadow-sm">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Trade-Off Value: How valuable were the trade-off comparisons and difference views in helping you evaluate your options?
+                    Trade-Off Evaluation: How valuable were the trade-off comparisons and difference views in helping you evaluate your options?
                   </label>
                   <div className="flex items-center space-x-4">
                     <span className="text-xs text-gray-500 w-4">1</span>
@@ -1537,7 +1537,7 @@ const FeedbackPage: React.FC = () => {
 
                 <div className="bg-white rounded-lg p-4 shadow-sm">
                   <label className="block text-sm font-medium text-gray-700 mb-3">
-                    Trade-Off Helpfulness: How helpful were these trade-off views in helping you reach or justify a decision?
+                    Trade-Off Justification: How helpful were these trade-off views in helping you reach or justify a decision?
                   </label>
                   <div className="flex items-center space-x-4">
                     <span className="text-xs text-gray-500 w-4">1</span>
