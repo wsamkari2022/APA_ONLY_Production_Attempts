@@ -625,7 +625,7 @@ const FeedbackPage: React.FC = () => {
       viz_clarity: feedback.vizClarity,
       viz_helpfulness: feedback.vizHelpfulness,
       viz_usefulness: feedback.vizUsefulness,
-      viz_tradeoff_value: feedback.vizTradeoffValue,
+      viz_tradeoff_Evaluation: feedback.vizTradeoffEvaluation,
       viz_tradeoff_helpfulness: feedback.vizTradeoffHelpfulness,
       viz_expert_usefulness: feedback.vizExpertUsefulness,
       viz_expert_confidence_impact: feedback.vizExpertConfidenceImpact,
@@ -1526,7 +1526,7 @@ const FeedbackPage: React.FC = () => {
                     />
                     <span className="text-xs text-gray-500 w-4">7</span>
                     <div className="w-10 h-10 bg-yellow-100 rounded-full flex items-center justify-center">
-                      <span className="text-base font-bold text-yellow-600">{feedback.vizTradeoffValue}</span>
+                      <span className="text-base font-bold text-yellow-600">{feedback.vizTradeoffEvaluation}</span>
                     </div>
                   </div>
                   <div className="flex justify-between text-xs text-gray-400 mt-1 px-8">
