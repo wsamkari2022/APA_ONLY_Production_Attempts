@@ -54,6 +54,7 @@ ChartJS.register(
 interface FeedbackData {
   cvrInitialReconsideration: boolean | null;
   cvrFinalReconsideration: boolean | null;
+  cvrPurposeClarity: number;
   cvrConfidenceChange: number;
   cvrHelpfulness: number;
   cvrClarity: number;
@@ -121,6 +122,7 @@ const FeedbackPage: React.FC = () => {
   const [feedback, setFeedback] = useState<FeedbackData>({
     cvrInitialReconsideration: null,
     cvrFinalReconsideration: null,
+    cvrPurposeClarity: 4,
     cvrConfidenceChange: 4,
     cvrHelpfulness: 4,
     cvrClarity: 4,
@@ -603,6 +605,7 @@ const FeedbackPage: React.FC = () => {
       session_id: sessionId,
       cvr_initial_reconsideration: feedback.cvrInitialReconsideration,
       cvr_final_reconsideration: feedback.cvrFinalReconsideration,
+      cvr_purpose_clarity: feedback.cvrPurposeClarity,
       cvr_confidence_change: feedback.cvrConfidenceChange,
       cvr_helpfulness: feedback.cvrHelpfulness,
       cvr_clarity: feedback.cvrClarity,
@@ -838,6 +841,30 @@ const FeedbackPage: React.FC = () => {
                     </button>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-lg p-4 shadow-sm">
+              <label className="block text-sm font-medium text-gray-700 mb-3">
+                How clear was the purpose of the CVR section in helping you reconsider your decisions and reinterpret your values when faced with new or changing moral contexts?
+              </label>
+              <div className="flex items-center space-x-4">
+                <span className="text-xs text-gray-500 w-20 text-left">Very unclear</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="7"
+                  value={feedback.cvrPurposeClarity}
+                  onChange={(e) => handleSliderChange('cvrPurposeClarity', parseInt(e.target.value))}
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
+                  disabled={isSubmitted}
+                />
+                <span className="text-xs text-gray-500 w-20 text-right">Very clear</span>
+              </div>
+              <div className="text-center mt-2">
+                <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
+                  {feedback.cvrPurposeClarity}
+                </span>
               </div>
             </div>
 

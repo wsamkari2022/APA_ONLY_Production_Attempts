@@ -94,6 +94,7 @@ export interface SessionFeedback {
   session_id: string;
   cvr_initial_reconsideration?: boolean | null;
   cvr_final_reconsideration?: boolean | null;
+  cvr_purpose_clarity?: number;
   cvr_confidence_change?: number;
   cvr_helpfulness?: number;
   cvr_clarity?: number;
