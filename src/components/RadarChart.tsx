@@ -458,61 +458,123 @@ const RadarChart: React.FC<RadarChartProps> = ({
           )}
 
           {comparisonView === 'bar' && (
-            <div className="h-[500px]">
-              <Bar data={prepareBarChartData()} options={{
-                responsive: true,
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    max: 100,
-                    title: {
-                      display: true,
-                      text: selectedMetric
-                    }
-                  }
-                },
-                plugins: {
-                  legend: {
-                    position: 'bottom' as const,
-                    labels: {
-                      filter: function(legendItem: any) {
-                        return legendItem.text === 'Ideal';
+            <>
+              {/* Decision Option Toggle Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                {allOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => handleToggleClick(option.id)}
+                    className={`w-full p-2 rounded-lg flex items-center justify-between transition-all duration-200 ${
+                      toggledOptions[option.id]
+                        ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                        : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <span className={`w-3 h-3 rounded-full mr-2 ${
+                        toggledOptions[option.id]
+                          ? 'bg-gray-500'
+                          : 'bg-gray-300'
+                      }`}></span>
+                      <span className="text-sm font-medium">{option.title}</span>
+                    </div>
+                    {toggledOptions[option.id] ? (
+                      <Eye size={16} className="text-current" />
+                    ) : (
+                      <EyeOff size={16} className="text-current" />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <div className="h-[500px]">
+                <Bar data={prepareBarChartData()} options={{
+                  responsive: true,
+                  scales: {
+                    y: {
+                      beginAtZero: true,
+                      max: 100,
+                      title: {
+                        display: true,
+                        text: selectedMetric
                       }
                     }
                   },
-                  tooltip: {
-                    callbacks: {
-                      label: (context: any) => {
-                        const value = context.raw;
-                        return `${context.dataset.label}: ${value} (${isPositiveMetric(selectedMetric) ? 'Higher is better' : 'Lower is better'})`;
+                  plugins: {
+                    legend: {
+                      position: 'bottom' as const,
+                      labels: {
+                        filter: function(legendItem: any) {
+                          return legendItem.text === 'Ideal';
+                        }
+                      }
+                    },
+                    tooltip: {
+                      callbacks: {
+                        label: (context: any) => {
+                          const value = context.raw;
+                          return `${context.dataset.label}: ${value} (${isPositiveMetric(selectedMetric) ? 'Higher is better' : 'Lower is better'})`;
+                        }
                       }
                     }
                   }
-                }
-              }} />
-            </div>
+                }} />
+              </div>
+            </>
           )}
 
           {comparisonView === 'differences' && (
-            <div className="space-y-3">
-              {calculateDifferences().map((diff, index) => (
-                <div key={index} className="bg-white border-2 border-gray-200 hover:border-blue-300 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold text-gray-800">{diff.option1}</span>
-                      <span className="text-gray-400 font-medium">vs</span>
-                      <span className="font-semibold text-gray-800">{diff.option2}</span>
+            <>
+              {/* Decision Option Toggle Buttons */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+                {allOptions.map((option) => (
+                  <button
+                    key={option.id}
+                    onClick={() => handleToggleClick(option.id)}
+                    className={`w-full p-2 rounded-lg flex items-center justify-between transition-all duration-200 ${
+                      toggledOptions[option.id]
+                        ? 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+                        : 'bg-gray-50 text-gray-400 hover:bg-gray-100'
+                    }`}
+                  >
+                    <div className="flex items-center">
+                      <span className={`w-3 h-3 rounded-full mr-2 ${
+                        toggledOptions[option.id]
+                          ? 'bg-gray-500'
+                          : 'bg-gray-300'
+                      }`}></span>
+                      <span className="text-sm font-medium">{option.title}</span>
                     </div>
-                    <span className="font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-lg">
-                      Δ {diff.difference.toFixed(1)}
-                    </span>
+                    {toggledOptions[option.id] ? (
+                      <Eye size={16} className="text-current" />
+                    ) : (
+                      <EyeOff size={16} className="text-current" />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              <div className="space-y-3">
+                {calculateDifferences().map((diff, index) => (
+                  <div key={index} className="bg-white border-2 border-gray-200 hover:border-blue-300 p-4 rounded-xl shadow-sm hover:shadow-md transition-all duration-200">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-gray-800">{diff.option1}</span>
+                        <span className="text-gray-400 font-medium">vs</span>
+                        <span className="font-semibold text-gray-800">{diff.option2}</span>
+                      </div>
+                      <span className="font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-lg">
+                        Δ {diff.difference.toFixed(1)}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 mt-2">
+                      <span className="font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded">{diff.better}</span> <span className="text-gray-500">performs better in this metric</span>
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-600 mt-2">
-                    <span className="font-semibold text-blue-700 bg-blue-50 px-2 py-1 rounded">{diff.better}</span> <span className="text-gray-500">performs better in this metric</span>
-                  </p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </>
           )}
 
         </div>
