@@ -74,6 +74,7 @@ interface FeedbackData {
   apaTradeoffChallenge: number;
   apaReflectionDepth: number;
   apaComments: string;
+  usedTradeoffComparison: boolean | null;
   vizClarity: number;
   vizHelpfulness: boolean | null;
   vizUsefulness: number;
@@ -142,6 +143,7 @@ const FeedbackPage: React.FC = () => {
     apaTradeoffChallenge: 4,
     apaReflectionDepth: 4,
     apaComments: '',
+    usedTradeoffComparison: null,
     vizClarity: 4,
     vizHelpfulness: null,
     vizUsefulness: 4,
@@ -1447,7 +1449,38 @@ const FeedbackPage: React.FC = () => {
             Throughout the simulation, you had access to expert recommendations, trade-off visualizations (radar and bar charts), and comparison tools to help you understand the implications of different choices.
           </p>
 
-          <div className="space-y-6">
+          <div className="bg-white rounded-lg p-4 shadow-sm mb-6">
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Did you use the trade-off comparison view (i.e. Radar and Bar Chart)?
+            </label>
+            <div className="flex gap-4">
+              <button
+                onClick={() => setFeedback(prev => ({ ...prev, usedTradeoffComparison: true }))}
+                disabled={isSubmitted}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+                  feedback.usedTradeoffComparison === true
+                    ? 'bg-orange-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-orange-400'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setFeedback(prev => ({ ...prev, usedTradeoffComparison: false }))}
+                disabled={isSubmitted}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+                  feedback.usedTradeoffComparison === false
+                    ? 'bg-orange-600 text-white shadow-lg'
+                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-orange-400'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                No
+              </button>
+            </div>
+          </div>
+
+          {feedback.usedTradeoffComparison === true && (
+            <div className="space-y-6">
             <div className="bg-gray-50 rounded-lg p-4">
               <h4 className="text-sm font-semibold text-gray-800 mb-4">Visualization (Radar & Bar Charts)</h4>
 
@@ -1689,6 +1722,7 @@ const FeedbackPage: React.FC = () => {
               />
             </div>
           </div>
+          )}
         </div>
 
         <div className="bg-gradient-to-br from-purple-50 via-pink-100 to-rose-50 rounded-lg shadow-lg border-2 border-purple-300 p-6 mb-8">
