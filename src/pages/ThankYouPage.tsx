@@ -42,9 +42,18 @@ const ThankYouPage: React.FC = () => {
     setIsVisible(true);
 
     const alreadyCalculated = sessionStorage.getItem('metricsCalculated');
+    const isReturningFromSilent = sessionStorage.getItem('returningFromSilent');
+
+    if (isReturningFromSilent === 'true') {
+      console.log('[ThankYouPage] Returned from silent calculation, ready for user interaction');
+      sessionStorage.removeItem('returningFromSilent');
+      setIsProcessing(false);
+      return;
+    }
 
     if (alreadyCalculated !== 'true') {
       console.log('[ThankYouPage] Triggering silent navigation to calculate metrics');
+      sessionStorage.setItem('returningFromSilent', 'true');
       navigate('/view-results?silent=true', { replace: true });
     } else {
       console.log('[ThankYouPage] Metrics already calculated, skipping silent navigation');
@@ -53,10 +62,6 @@ const ThankYouPage: React.FC = () => {
   }, [navigate]);
 
   const handleContinue = () => {
-    if (isProcessing) {
-      console.log('[ThankYouPage] Still processing metrics, please wait...');
-      return;
-    }
     navigate('/feedback');
   };
 

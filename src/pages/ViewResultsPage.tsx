@@ -147,8 +147,8 @@ const ViewResultsPage: React.FC = () => {
     const alreadyCalculated = sessionStorage.getItem('metricsCalculated');
 
     if (isSilentMode && alreadyCalculated === 'true') {
-      console.log('[Silent Mode] Metrics already calculated, navigating to feedback');
-      navigate('/feedback', { replace: true });
+      console.log('[Silent Mode] Metrics already calculated, navigating back to thank-you page');
+      navigate('/thank-you', { replace: true });
       return;
     }
 
@@ -369,9 +369,9 @@ const ViewResultsPage: React.FC = () => {
       console.log('[ViewResultsPage] Metrics calculated and saved to database successfully');
 
       if (isSilentMode) {
-        console.log('[Silent Mode] Metrics saved, navigating to feedback');
+        console.log('[Silent Mode] Metrics saved, navigating back to thank-you page');
         setTimeout(() => {
-          navigate('/feedback', { replace: true });
+          navigate('/thank-you', { replace: true });
         }, 100);
       }
     } catch (error) {
@@ -379,9 +379,9 @@ const ViewResultsPage: React.FC = () => {
       sessionStorage.setItem('metricsCalculated', 'true');
 
       if (isSilentMode) {
-        console.error('[Silent Mode] Error occurred, but navigating to feedback anyway');
+        console.error('[Silent Mode] Error occurred, but navigating back to thank-you page anyway');
         setTimeout(() => {
-          navigate('/feedback', { replace: true });
+          navigate('/thank-you', { replace: true });
         }, 100);
       }
     }
