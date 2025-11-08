@@ -117,7 +117,7 @@
  * - Shows impact of CVR and APA interventions 
  */
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { 
   BarChart3, 
   Clock, 
@@ -139,11 +139,21 @@ import { MongoService } from '../lib/mongoService';
 
 const ViewResultsPage: React.FC = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [metrics, setMetrics] = useState<SessionDVs | null>(null);
+  const isSilentMode = searchParams.get('silent') === 'true';
 
   useEffect(() => {
+    const alreadyCalculated = sessionStorage.getItem('metricsCalculated');
+
+    if (isSilentMode && alreadyCalculated === 'true') {
+      console.log('[Silent Mode] Metrics already calculated, navigating to feedback');
+      navigate('/feedback', { replace: true });
+      return;
+    }
+
     calculateMetrics();
-  }, []);
+  }, [isSilentMode, navigate]);
 
   const calculateMetrics = async () => {
     try {
@@ -354,8 +364,26 @@ const ViewResultsPage: React.FC = () => {
         scenario3_moral_value_reordered: scenario3MoralValueReordered,
         scenario3_infeasible_options: scenario3InfeasibleOptions
       });
+
+      sessionStorage.setItem('metricsCalculated', 'true');
+      console.log('[ViewResultsPage] Metrics calculated and saved to database successfully');
+
+      if (isSilentMode) {
+        console.log('[Silent Mode] Metrics saved, navigating to feedback');
+        setTimeout(() => {
+          navigate('/feedback', { replace: true });
+        }, 100);
+      }
     } catch (error) {
       console.error('Error calculating metrics:', error);
+      sessionStorage.setItem('metricsCalculated', 'true');
+
+      if (isSilentMode) {
+        console.error('[Silent Mode] Error occurred, but navigating to feedback anyway');
+        setTimeout(() => {
+          navigate('/feedback', { replace: true });
+        }, 100);
+      }
     }
   };
 
@@ -391,6 +419,7 @@ const ViewResultsPage: React.FC = () => {
     return Math.round((1 - variance) * 100) / 100;
   };
 
+  return null;
 };
 
 export default ViewResultsPage;

@@ -36,12 +36,27 @@ import { Heart, Award, CheckCircle, ArrowRight } from 'lucide-react';
 const ThankYouPage: React.FC = () => {
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(true);
 
   useEffect(() => {
     setIsVisible(true);
-  }, []);
+
+    const alreadyCalculated = sessionStorage.getItem('metricsCalculated');
+
+    if (alreadyCalculated !== 'true') {
+      console.log('[ThankYouPage] Triggering silent navigation to calculate metrics');
+      navigate('/view-results?silent=true', { replace: true });
+    } else {
+      console.log('[ThankYouPage] Metrics already calculated, skipping silent navigation');
+      setIsProcessing(false);
+    }
+  }, [navigate]);
 
   const handleContinue = () => {
+    if (isProcessing) {
+      console.log('[ThankYouPage] Still processing metrics, please wait...');
+      return;
+    }
     navigate('/feedback');
   };
 
