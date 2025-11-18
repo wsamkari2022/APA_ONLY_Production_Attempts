@@ -264,14 +264,21 @@ const RankedOptionsView: React.FC<RankedOptionsViewProps> = ({
                   }`}
                 >
                   <div className="grid grid-cols-[auto_1fr_auto] gap-4 p-4 items-start">
-                    {/* Column 1: Rank Number */}
-                    <div className="flex flex-col items-center justify-start pt-1">
+                    {/* Column 1: Rank Number and Value Label */}
+                    <div className="flex flex-col items-center justify-start pt-1 gap-2">
                       <span className={`w-10 h-10 flex items-center justify-center rounded-full font-semibold text-lg ${
                         isLocked
                           ? 'bg-gray-200 text-gray-500'
                           : 'bg-blue-100 text-blue-600'
                       }`}>
                         {index + 1}
+                      </span>
+                      <span className={`text-xs font-medium text-center px-2 py-1 rounded ${
+                        isLocked
+                          ? 'bg-gray-100 text-gray-500'
+                          : 'bg-blue-50 text-blue-700'
+                      }`}>
+                        {option.label}
                       </span>
                     </div>
 
