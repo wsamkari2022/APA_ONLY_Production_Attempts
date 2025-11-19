@@ -61,6 +61,8 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
   const [showRankedOptions, setShowRankedOptions] = useState(false);
   const [showMetricTooltip, setShowMetricTooltip] = useState(true);
   const [isWhyCollapsed, setIsWhyCollapsed] = useState(true);
+  const [hasClickedButton, setHasClickedButton] = useState(() => localStorage.getItem('hasClickedPreferenceButton') === 'true');
+  const [showButtonTooltip, setShowButtonTooltip] = useState(() => localStorage.getItem('hasClickedPreferenceButton') !== 'true');
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -461,10 +463,17 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                 onClick={() => {
                   setPreferenceType('metrics');
                   setRankingItems(simulationMetrics);
+                  if (!hasClickedButton) {
+                    setHasClickedButton(true);
+                    setShowButtonTooltip(false);
+                    localStorage.setItem('hasClickedPreferenceButton', 'true');
+                  }
                 }}
-                className={`py-6 px-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-3 shadow-sm hover:shadow-md ${
+                className={`py-6 px-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-3 shadow-sm hover:shadow-md relative ${
                   preferenceType === 'metrics'
                     ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg scale-105'
+                    : showButtonTooltip
+                    ? 'border-blue-400 bg-white hover:border-blue-500 hover:bg-blue-50 shadow-blue-300 shadow-lg animate-pulse'
                     : 'border-gray-300 bg-white hover:border-blue-400 hover:bg-blue-50'
                 }`}
               >
@@ -485,17 +494,25 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                 )}
               </button>
 
-              <button
-                onClick={() => {
-                  setPreferenceType('values');
-                  setRankingItems(moralValues);
-                }}
-                className={`py-6 px-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-3 shadow-sm hover:shadow-md ${
-                  preferenceType === 'values'
-                    ? 'border-emerald-500 bg-gradient-to-br from-emerald-50 to-emerald-100 shadow-lg scale-105'
-                    : 'border-gray-300 bg-white hover:border-emerald-400 hover:bg-emerald-50'
-                }`}
-              >
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setPreferenceType('values');
+                    setRankingItems(moralValues);
+                    if (!hasClickedButton) {
+                      setHasClickedButton(true);
+                      setShowButtonTooltip(false);
+                      localStorage.setItem('hasClickedPreferenceButton', 'true');
+                    }
+                  }}
+                  className={`w-full py-6 px-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-3 shadow-sm hover:shadow-md relative ${
+                    preferenceType === 'values'
+                      ? 'border-emerald-500 bg-gradient-to-br from-emerald-50 to-emerald-100 shadow-lg scale-105'
+                      : showButtonTooltip
+                      ? 'border-emerald-400 bg-white hover:border-emerald-500 hover:bg-emerald-50 shadow-emerald-300 shadow-lg animate-pulse'
+                      : 'border-gray-300 bg-white hover:border-emerald-400 hover:bg-emerald-50'
+                  }`}
+                >
                 <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
                   preferenceType === 'values' ? 'bg-emerald-500' : 'bg-gray-200'
                 }`}>
@@ -506,12 +523,22 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                 }`}>
                   Moral Values
                 </span>
-                {preferenceType === 'values' && (
-                  <span className="text-xs bg-emerald-500 text-white px-3 py-1 rounded-full font-medium">
-                    Selected
-                  </span>
+                  {preferenceType === 'values' && (
+                    <span className="text-xs bg-emerald-500 text-white px-3 py-1 rounded-full font-medium">
+                      Selected
+                    </span>
+                  )}
+                </button>
+                {showButtonTooltip && (
+                  <div className="absolute top-1/2 -right-4 transform translate-x-full -translate-y-1/2 z-10 animate-bounce">
+                    <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm px-4 py-3 rounded-xl shadow-xl whitespace-nowrap font-medium flex items-center gap-2">
+                      <Sparkles size={16} className="flex-shrink-0" />
+                      Click one of these buttons to continue
+                      <div className="absolute top-1/2 right-full transform -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-emerald-500 border-t-transparent border-b-transparent"></div>
+                    </div>
+                  </div>
                 )}
-              </button>
+              </div>
             </div>
 
             {preferenceType && (
