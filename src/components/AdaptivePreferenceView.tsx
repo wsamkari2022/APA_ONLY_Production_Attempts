@@ -530,11 +530,11 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                   )}
                 </button>
                 {showButtonTooltip && (
-                  <div className="absolute top-1/2 -right-4 transform translate-x-full -translate-y-1/2 z-10 animate-bounce">
+                  <div className="absolute -top-2 -right-4 transform translate-x-full z-10 animate-bounce">
                     <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-sm px-4 py-3 rounded-xl shadow-xl whitespace-nowrap font-medium flex items-center gap-2">
                       <Sparkles size={16} className="flex-shrink-0" />
                       Click one of these buttons to continue
-                      <div className="absolute top-1/2 right-full transform -translate-y-1/2 w-0 h-0 border-t-8 border-b-8 border-r-8 border-emerald-500 border-t-transparent border-b-transparent"></div>
+                      <div className="absolute top-4 right-full transform w-0 h-0 border-t-8 border-b-8 border-r-8 border-emerald-500 border-t-transparent border-b-transparent"></div>
                     </div>
                   </div>
                 )}
