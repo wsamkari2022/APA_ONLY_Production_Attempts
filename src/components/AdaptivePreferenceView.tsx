@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, MoveVertical, AlertCircle, Scale, Zap, Leaf, Shield, Ban, Calculator, Brain, ArrowRight, Sparkles, Target, Lightbulb, Eye } from 'lucide-react';
+import { ArrowLeft, MoveVertical, AlertCircle, Scale, Zap, Leaf, Shield, Ban, Calculator, Brain, ArrowRight, Sparkles, Target, Lightbulb, Eye, ChevronDown } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DecisionOption, MainScenario } from '../types';
 import RankedOptionsView from './RankedOptionsView';
@@ -60,6 +60,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
   const [rankingItems, setRankingItems] = useState<Array<{ id: string; label: string }>>(simulationMetrics);
   const [showRankedOptions, setShowRankedOptions] = useState(false);
   const [showMetricTooltip, setShowMetricTooltip] = useState(true);
+  const [isWhyCollapsed, setIsWhyCollapsed] = useState(true);
 
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
@@ -149,23 +150,56 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
         <div className="max-w-5xl mx-auto w-full">
           <button
             onClick={onBack}
-            className="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2 transition-colors"
+            className="mb-4 text-gray-600 hover:text-gray-800 flex items-center gap-2 transition-colors"
           >
             <ArrowLeft size={20} />
             Back to Scenario 3
           </button>
 
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">
+          <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-gray-200 rounded-xl p-4 mb-4">
+            <button
+              onClick={() => setIsWhyCollapsed(!isWhyCollapsed)}
+              className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
+                  <Lightbulb className="text-white" size={20} />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900">Why You're Seeing This Page</h3>
+              </div>
+              <ChevronDown
+                size={20}
+                className={`text-gray-600 transition-transform duration-300 ${isWhyCollapsed ? '' : 'rotate-180'}`}
+              />
+            </button>
+            <div
+              className={`overflow-hidden transition-all duration-300 ${isWhyCollapsed ? 'max-h-0' : 'max-h-96'}`}
+            >
+              <div className="pt-4 space-y-3">
+                <p className="text-gray-800 leading-relaxed text-sm">
+                  This section is here to simply help you reflect — not to tell you what you should have chosen.
+                </p>
+                <p className="text-gray-800 leading-relaxed text-sm">
+                  The purpose of the value-reflection scenario is to show how the same core values feel when they appear in a different storyline.
+                </p>
+                <p className="text-gray-800 leading-relaxed text-sm">
+                  Sometimes people respond differently without realizing it. This page helps you think about which part of your decision-making matters most to you right now.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <h1 className="text-2xl font-bold text-gray-900 mb-5 text-center">
               We Noticed a Contradiction in Your Recent Choices
             </h1>
 
-            <div className="bg-amber-50 border-l-4 border-amber-400 p-5 rounded-r-lg mb-6">
+            <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded-r-lg mb-6">
               <div className="flex items-start gap-3">
-                <AlertCircle className="text-amber-600 mt-0.5 flex-shrink-0" size={22} />
+                <AlertCircle className="text-amber-600 mt-0.5 flex-shrink-0" size={20} />
                 <div>
-                  <p className="text-amber-900 font-medium mb-2">This is the last scenario</p>
-                  <p className="text-amber-800 text-sm leading-relaxed">
+                  <p className="text-amber-900 font-medium mb-1 text-sm">This is the last scenario</p>
+                  <p className="text-amber-800 text-xs leading-relaxed">
                     You don't need to reorder your values since there are no more scenarios after this one. You can review the information below and return to the simulation to make a different choice if needed.
                   </p>
                 </div>
@@ -263,35 +297,68 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
       <div className="max-w-5xl mx-auto w-full">
         <button
           onClick={onBack}
-          className="mb-6 text-gray-600 hover:text-gray-800 flex items-center gap-2 transition-colors"
+          className="mb-4 text-gray-600 hover:text-gray-800 flex items-center gap-2 transition-colors"
         >
           <ArrowLeft size={20} />
           Back to Simulation
         </button>
 
-        <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+        <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-gray-200 rounded-xl p-4 mb-4">
+          <button
+            onClick={() => setIsWhyCollapsed(!isWhyCollapsed)}
+            className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
+                <Lightbulb className="text-white" size={20} />
+              </div>
+              <h3 className="text-lg font-bold text-gray-900">Why You're Seeing This Page</h3>
+            </div>
+            <ChevronDown
+              size={20}
+              className={`text-gray-600 transition-transform duration-300 ${isWhyCollapsed ? '' : 'rotate-180'}`}
+            />
+          </button>
+          <div
+            className={`overflow-hidden transition-all duration-300 ${isWhyCollapsed ? 'max-h-0' : 'max-h-96'}`}
+          >
+            <div className="pt-4 space-y-3">
+              <p className="text-gray-800 leading-relaxed text-sm">
+                This section is here to simply help you reflect — not to tell you what you should have chosen.
+              </p>
+              <p className="text-gray-800 leading-relaxed text-sm">
+                The purpose of the value-reflection scenario is to show how the same core values feel when they appear in a different storyline.
+              </p>
+              <p className="text-gray-800 leading-relaxed text-sm">
+                Sometimes people respond differently without realizing it. This page helps you think about which part of your decision-making matters most to you right now.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
+          <h1 className="text-2xl font-bold text-gray-900 mb-5 text-center">
             We Noticed a Contradiction in Your Recent Choices
           </h1>
 
-          <div className="bg-gradient-to-r from-blue-50 to-teal-50 border-l-4 border-blue-500 p-6 rounded-r-xl mb-8 shadow-sm">
-            <p className="text-gray-800 leading-relaxed mb-4">
+          <div className="bg-gradient-to-r from-blue-50 to-teal-50 border-l-4 border-blue-500 p-4 rounded-r-xl mb-6 shadow-sm">
+            <p className="text-gray-800 leading-relaxed mb-3 text-sm">
               Earlier in the simulation, you selected an option that reflected a certain value.
             </p>
-            <p className="text-gray-800 leading-relaxed mb-4">
+            <p className="text-gray-800 leading-relaxed mb-3 text-sm">
               A moment later, when you were shown a very similar scenario designed to reflect your chosen value-based option, you reacted differently and rejected the same value-based option you had previously accepted in a different scenario.
             </p>
-            <p className="text-gray-700 leading-relaxed italic">
+            <p className="text-gray-700 leading-relaxed italic text-sm">
               This happens to many people — especially when the same moral values appear in new or stressful contexts.
             </p>
           </div>
 
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center shadow-md">
-                <Eye className="text-white" size={24} />
+          <div className="mb-6">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center shadow-md">
+                <Eye className="text-white" size={20} />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">Here's What You Chose Before</h2>
+              <h2 className="text-xl font-bold text-gray-900">Here's What You Chose Before</h2>
             </div>
 
             <div className="grid md:grid-cols-2 gap-6 mb-6">
@@ -366,29 +433,9 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
               </div>
             </div>
 
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
-              <p className="text-amber-900 font-medium">
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-center">
+              <p className="text-amber-900 font-medium text-sm">
                 Both scenarios affected the same number of residents and carried nearly the same consequences, yet your reactions were different.
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-gray-200 rounded-xl p-6 mb-8 shadow-sm">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
-                <Lightbulb className="text-white" size={24} />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900">Why You're Seeing This Page</h2>
-            </div>
-            <div className="space-y-4">
-              <p className="text-gray-800 leading-relaxed">
-                This section is here to simply help you reflect — not to tell you what you should have chosen.
-              </p>
-              <p className="text-gray-800 leading-relaxed">
-                The purpose of the value-reflection scenario is to show how the same core values feel when they appear in a different storyline.
-              </p>
-              <p className="text-gray-800 leading-relaxed">
-                Sometimes people respond differently without realizing it. This page helps you think about which part of your decision-making matters most to you right now.
               </p>
             </div>
           </div>
@@ -489,7 +536,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                       <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className="space-y-3"
+                        className="space-y-2"
                       >
                         {rankingItems.map((item, index) => (
                           <Draggable key={item.id} draggableId={item.id} index={index}>
@@ -498,22 +545,17 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                className={`bg-white p-4 rounded-lg border-2 flex items-center gap-4 transition-all ${
+                                className={`bg-white p-4 rounded-lg border flex items-center gap-4 transition-shadow duration-150 ${
                                   snapshot.isDragging
-                                    ? 'border-blue-400 shadow-lg scale-105'
-                                    : 'border-gray-200 shadow-sm hover:border-blue-300 hover:shadow-md'
+                                    ? 'border-gray-400 shadow-lg'
+                                    : 'border-gray-200 shadow-sm'
                                 }`}
                               >
-                                <div className={`w-10 h-10 flex items-center justify-center rounded-full font-bold text-lg ${
-                                  index === 0 ? 'bg-green-100 text-green-700' :
-                                  index === 1 ? 'bg-blue-100 text-blue-700' :
-                                  index === 2 ? 'bg-amber-100 text-amber-700' :
-                                  'bg-gray-100 text-gray-700'
-                                }`}>
+                                <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-700 font-semibold">
                                   {index + 1}
                                 </div>
-                                <span className="flex-1 font-medium text-gray-800 text-lg">{item.label}</span>
-                                <MoveVertical size={22} className="text-gray-400" />
+                                <span className="flex-1 font-medium text-gray-700">{item.label}</span>
+                                <MoveVertical size={20} className="text-gray-400" />
                               </div>
                             )}
                           </Draggable>
