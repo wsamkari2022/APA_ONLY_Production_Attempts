@@ -340,7 +340,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
 
         <div className="bg-white rounded-xl shadow-lg p-6 mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-5 text-center">
-            We Noticed a Contradiction in Your Recent Choices
+            We Noticed a Difference in Your Recent Choices
           </h1>
 
           <div className="bg-gradient-to-r from-blue-50 to-teal-50 border-l-4 border-blue-500 p-4 rounded-r-xl mb-6 shadow-sm">
