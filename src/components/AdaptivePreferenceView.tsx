@@ -458,7 +458,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
               You can choose whichever matters more to you right now—Simulation Metrics or Moral Values—and you can always adjust this preference later if your priorities change.
             </p>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-2 gap-6 mb-6">
               <button
                 onClick={() => {
                   setPreferenceType('metrics');
@@ -469,7 +469,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                     localStorage.setItem('hasClickedPreferenceButton', 'true');
                   }
                 }}
-                className={`py-6 px-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-3 shadow-sm hover:shadow-md relative ${
+                className={`py-8 px-5 rounded-xl border-2 transition-all duration-300 flex flex-col items-center gap-4 shadow-sm hover:shadow-lg relative transform hover:-translate-y-1 ${
                   preferenceType === 'metrics'
                     ? 'border-blue-500 bg-gradient-to-br from-blue-50 to-blue-100 shadow-lg scale-105'
                     : showButtonTooltip
@@ -477,19 +477,25 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                     : 'border-gray-300 bg-white hover:border-blue-400 hover:bg-blue-50'
                 }`}
               >
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                  preferenceType === 'metrics' ? 'bg-blue-500' : 'bg-gray-200'
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-md transition-all duration-300 ${
+                  preferenceType === 'metrics' ? 'bg-gradient-to-br from-blue-500 to-blue-600' : 'bg-gray-200'
                 }`}>
                   <Calculator className={preferenceType === 'metrics' ? 'text-white' : 'text-gray-600'} size={32} />
                 </div>
-                <span className={`font-semibold text-lg ${
-                  preferenceType === 'metrics' ? 'text-blue-700' : 'text-gray-700'
-                }`}>
-                  Simulation Metrics
-                  (Focusing on the context of the problem)
-                </span>
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className={`font-bold text-xl ${
+                    preferenceType === 'metrics' ? 'text-blue-700' : 'text-gray-800'
+                  }`}>
+                    Simulation Metrics
+                  </span>
+                  <span className={`text-xs text-center leading-relaxed ${
+                    preferenceType === 'metrics' ? 'text-blue-600' : 'text-gray-500'
+                  }`}>
+                    Prioritize quantifiable outcomes and measurable impact
+                  </span>
+                </div>
                 {preferenceType === 'metrics' && (
-                  <span className="text-xs bg-blue-500 text-white px-3 py-1 rounded-full font-medium">
+                  <span className="text-xs bg-blue-500 text-white px-3 py-1 rounded-full font-medium shadow-sm">
                     Selected
                   </span>
                 )}
@@ -506,7 +512,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                       localStorage.setItem('hasClickedPreferenceButton', 'true');
                     }
                   }}
-                  className={`w-full py-6 px-4 rounded-xl border-2 transition-all duration-200 flex flex-col items-center gap-3 shadow-sm hover:shadow-md relative ${
+                  className={`w-full py-8 px-5 rounded-xl border-2 transition-all duration-300 flex flex-col items-center gap-4 shadow-sm hover:shadow-lg relative transform hover:-translate-y-1 ${
                     preferenceType === 'values'
                       ? 'border-emerald-500 bg-gradient-to-br from-emerald-50 to-emerald-100 shadow-lg scale-105'
                       : showButtonTooltip
@@ -514,19 +520,25 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                       : 'border-gray-300 bg-white hover:border-emerald-400 hover:bg-emerald-50'
                   }`}
                 >
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${
-                  preferenceType === 'values' ? 'bg-emerald-500' : 'bg-gray-200'
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-md transition-all duration-300 ${
+                  preferenceType === 'values' ? 'bg-gradient-to-br from-emerald-500 to-emerald-600' : 'bg-gray-200'
                 }`}>
                   <Brain className={preferenceType === 'values' ? 'text-white' : 'text-gray-600'} size={32} />
                 </div>
-                <span className={`font-semibold text-lg ${
-                  preferenceType === 'values' ? 'text-emerald-700' : 'text-gray-700'
-                }`}>
-                  Moral Values
-                (Focusing on universal morals)
-                </span>
+                <div className="flex flex-col items-center gap-1.5">
+                  <span className={`font-bold text-xl ${
+                    preferenceType === 'values' ? 'text-emerald-700' : 'text-gray-800'
+                  }`}>
+                    Moral Values
+                  </span>
+                  <span className={`text-xs text-center leading-relaxed ${
+                    preferenceType === 'values' ? 'text-emerald-600' : 'text-gray-500'
+                  }`}>
+                    Prioritize ethical principles and fundamental values
+                  </span>
+                </div>
                   {preferenceType === 'values' && (
-                    <span className="text-xs bg-emerald-500 text-white px-3 py-1 rounded-full font-medium">
+                    <span className="text-xs bg-emerald-500 text-white px-3 py-1 rounded-full font-medium shadow-sm">
                       Selected
                     </span>
                   )}
