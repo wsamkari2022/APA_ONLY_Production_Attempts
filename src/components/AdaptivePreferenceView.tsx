@@ -493,7 +493,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                   }`}>
                     Prioritize quantifiable outcomes and measurable impact
                   </span>
-                  <span className={`text-xs text-center leading-relaxed ${
+                  <span className={`text-xs text-center leading-relaxed italic  ${
                     preferenceType === 'metrics' ? 'text-blue-600' : 'text-gray-500'
                   }`}>
                     (The Context of the Problem)
