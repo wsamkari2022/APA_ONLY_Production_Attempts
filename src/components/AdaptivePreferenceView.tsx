@@ -486,6 +486,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                   preferenceType === 'metrics' ? 'text-blue-700' : 'text-gray-700'
                 }`}>
                   Simulation Metrics
+                  (Focusing on the context of the problem)
                 </span>
                 {preferenceType === 'metrics' && (
                   <span className="text-xs bg-blue-500 text-white px-3 py-1 rounded-full font-medium">
@@ -522,6 +523,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                   preferenceType === 'values' ? 'text-emerald-700' : 'text-gray-700'
                 }`}>
                   Moral Values
+                (Focusing on universal morals)
                 </span>
                   {preferenceType === 'values' && (
                     <span className="text-xs bg-emerald-500 text-white px-3 py-1 rounded-full font-medium">
