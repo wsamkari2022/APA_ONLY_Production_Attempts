@@ -69,7 +69,7 @@ const MetricsDisplay: React.FC<MetricsDisplayProps> = ({ metrics, animatingMetri
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-lg font-semibold text-gray-700 flex items-center">
           <Flame className="mr-1 text-orange-500" size={18} />
-          Cumulative Simulation Scores
+          Cumulative Simulation Metrics (Scores)
         </h2>
         
         {/* Critical Warnings */}
