@@ -171,7 +171,7 @@ const ReviewOptionModal: React.FC<ReviewOptionModalProps> = ({ isOpen, onClose, 
             <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl p-5 shadow-md">
               <div className="flex items-center gap-2 mb-4">
                 <div className="w-1 h-6 bg-gradient-to-b from-blue-500 to-indigo-500 rounded-full"></div>
-                <h2 className="text-xl font-bold text-gray-800">Impact Summary</h2>
+                <h2 className="text-xl font-bold text-gray-800">Simulation Metrics Impact Summary</h2>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div className="bg-white rounded-lg p-3 border-l-4 border-green-500 shadow-sm">
