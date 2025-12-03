@@ -139,7 +139,7 @@ const ReviewOptionModal: React.FC<ReviewOptionModalProps> = ({ isOpen, onClose, 
               <div className="w-1 h-6 bg-gradient-to-b from-teal-500 to-cyan-500 rounded-full"></div>
               <h2 className="text-2xl font-bold text-gray-800">Expert Analysis</h2>
             </div>
-            <div className="grid grid-cols-1 gap-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {Object.entries(option.expertOpinions).map(([key, opinion]) => {
                 const valueInfo = valueMap[key as keyof typeof valueMap];
                 const Icon = valueInfo.icon;
