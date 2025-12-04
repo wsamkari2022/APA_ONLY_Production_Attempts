@@ -626,17 +626,17 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                                   ...provided.draggableProps.style,
                                   transition: snapshot.isDragging
                                     ? 'none'
-                                    : 'transform 0.3s cubic-bezier(0.2, 0, 0, 1), box-shadow 0.3s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s ease-out',
+                                    : 'box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
                                 }}
                                 className={`bg-white p-5 rounded-lg border flex items-center gap-4 cursor-grab active:cursor-grabbing ${
                                   snapshot.isDragging
-                                    ? 'border-blue-400 shadow-2xl scale-[1.03] rotate-1 ring-2 ring-blue-200 ring-opacity-50 z-50'
-                                    : 'border-slate-300 shadow-sm hover:shadow-lg hover:border-slate-400 hover:scale-[1.01]'
+                                    ? 'border-blue-400 shadow-2xl ring-2 ring-blue-200 ring-opacity-50 z-50 opacity-90'
+                                    : 'border-slate-300 shadow-sm hover:shadow-lg hover:border-slate-400'
                                 }`}
                               >
-                                <div className={`w-9 h-9 flex items-center justify-center rounded-full text-slate-700 font-bold text-base shadow-sm transition-all duration-300 ease-out ${
+                                <div className={`w-9 h-9 flex items-center justify-center rounded-full text-slate-700 font-bold text-base shadow-sm transition-colors duration-200 ${
                                   snapshot.isDragging
-                                    ? 'bg-gradient-to-br from-blue-100 to-blue-200 scale-110'
+                                    ? 'bg-gradient-to-br from-blue-100 to-blue-200'
                                     : 'bg-gradient-to-br from-slate-100 to-slate-200'
                                 }`}>
                                   {index + 1}
