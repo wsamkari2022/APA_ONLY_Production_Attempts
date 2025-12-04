@@ -369,7 +369,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
           <div className="mb-8">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center shadow-md">
-                <Lightbulb className="text-white" size={22} />
+                <AlertCircle className="text-white" size={22} />
               </div>
               <h2 className="text-2xl font-bold text-slate-900 tracking-tight">This Is Completely Normal</h2>
             </div>
