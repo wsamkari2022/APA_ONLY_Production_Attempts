@@ -76,16 +76,23 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
         const finalValues = JSON.parse(finalValuesStr);
         // Handle both string arrays and object arrays
         const firstValue = typeof finalValues[0] === 'string' ? finalValues[0] : finalValues[0]?.name;
-        const secondValue = typeof finalValues[1] === 'string' ? finalValues[1] : finalValues[1]?.name;
-        return [firstValue || 'Safety', secondValue || 'Efficiency'];
+        const secondValue = finalValues[1] ? (typeof finalValues[1] === 'string' ? finalValues[1] : finalValues[1]?.name) : null;
+
+        // If both values exist and are different, return both
+        if (firstValue && secondValue && firstValue !== secondValue) {
+          return [firstValue, secondValue];
+        }
+        // If only one value exists, return it with null for second
+        return [firstValue || 'Safety', null];
       }
     } catch (error) {
       console.error('Error parsing finalValues:', error);
     }
-    return ['Safety', 'Efficiency'];
+    return ['Safety', null];
   };
 
   const [topStableValue, secondStableValue] = getStableValues();
+  const hasMultipleStableValues = secondStableValue !== null;
   const selectedValueLabel = selectedOption.label || 'Unknown';
 
   const handleDragEnd = (result: any) => {
@@ -347,10 +354,10 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                 </div>
                 <div className="flex-1">
                   <p className="text-[13px] text-slate-600 mb-2 uppercase tracking-wider font-semibold">
-                    Your current top value priorities are
+                    Your current top value {hasMultipleStableValues ? 'priorities are' : 'priority is'}
                   </p>
                   <p className="text-lg font-bold text-emerald-700 tracking-tight">
-                    {topStableValue} and {secondStableValue}
+                    {hasMultipleStableValues ? `${topStableValue} and ${secondStableValue}` : topStableValue}
                   </p>
                 </div>
               </div>
