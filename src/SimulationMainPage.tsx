@@ -640,12 +640,9 @@ const SimulationMainPage: React.FC = () => {
       console.log('Updated MoralValuesReorderList for aligned choice:', newMoralValuesReorderList);
     }
     
-    if (!isAligned && tempSelectedOption.cvrQuestion) {
+    if (!isAligned) {
       setSelectedDecision(tempSelectedOption);
-      setShowCVRModal(true);
-
-      // Track CVR visit
-      TrackingManager.recordCVRVisit(currentScenario.id, tempSelectedOption.id);
+      setShowAdaptivePreference(true);
     } else {
       setSelectedDecision(tempSelectedOption);
       setShowDecisionSummary(true);
