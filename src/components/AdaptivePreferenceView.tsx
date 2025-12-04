@@ -64,6 +64,23 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
   const [hasClickedButton, setHasClickedButton] = useState(() => localStorage.getItem('hasClickedPreferenceButton') === 'true');
   const [showButtonTooltip, setShowButtonTooltip] = useState(() => localStorage.getItem('hasClickedPreferenceButton') !== 'true');
 
+  // Get user's current stable values from localStorage
+  const getStableValues = () => {
+    try {
+      const finalValuesStr = localStorage.getItem('finalValues');
+      if (finalValuesStr) {
+        const finalValues = JSON.parse(finalValuesStr);
+        return [finalValues[0] || 'Safety', finalValues[1] || 'Efficiency'];
+      }
+    } catch (error) {
+      console.error('Error parsing finalValues:', error);
+    }
+    return ['Safety', 'Efficiency'];
+  };
+
+  const [topStableValue, secondStableValue] = getStableValues();
+  const selectedValueLabel = selectedOption.label || 'Unknown';
+
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
@@ -292,23 +309,6 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
       </div>
     );
   }
-
-  // Get user's current stable values from localStorage
-  const getStableValues = () => {
-    try {
-      const finalValuesStr = localStorage.getItem('finalValues');
-      if (finalValuesStr) {
-        const finalValues = JSON.parse(finalValuesStr);
-        return [finalValues[0] || 'Safety', finalValues[1] || 'Efficiency'];
-      }
-    } catch (error) {
-      console.error('Error parsing finalValues:', error);
-    }
-    return ['Safety', 'Efficiency'];
-  };
-
-  const [topStableValue, secondStableValue] = getStableValues();
-  const selectedValueLabel = selectedOption.label || 'Unknown';
 
   // Normal flow for scenarios 1 and 2
   return (
