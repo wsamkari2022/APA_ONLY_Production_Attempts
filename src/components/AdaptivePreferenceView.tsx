@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ArrowLeft, MoveVertical, AlertCircle, Scale, Zap, Leaf, Shield, Ban, Calculator, Brain, ArrowRight, Sparkles, Target, Lightbulb, Eye, ChevronDown } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, MoveVertical, AlertCircle, Scale, Zap, Leaf, Shield, Ban, Calculator, Brain, ArrowRight, Sparkles, Target, Eye } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { DecisionOption, MainScenario } from '../types';
 import RankedOptionsView from './RankedOptionsView';
@@ -60,9 +60,13 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
   const [rankingItems, setRankingItems] = useState<Array<{ id: string; label: string }>>(simulationMetrics);
   const [showRankedOptions, setShowRankedOptions] = useState(false);
   const [showMetricTooltip, setShowMetricTooltip] = useState(true);
-  const [isWhyCollapsed, setIsWhyCollapsed] = useState(true);
   const [hasClickedButton, setHasClickedButton] = useState(() => localStorage.getItem('hasClickedPreferenceButton') === 'true');
   const [showButtonTooltip, setShowButtonTooltip] = useState(() => localStorage.getItem('hasClickedPreferenceButton') !== 'true');
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   // Get user's current stable values from localStorage
   const getStableValues = () => {
@@ -178,39 +182,6 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
             Back to Scenario 3
           </button>
 
-          <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-200 rounded-xl p-5 mb-6 shadow-sm">
-            <button
-              onClick={() => setIsWhyCollapsed(!isWhyCollapsed)}
-              className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
-                  <Lightbulb className="text-white" size={20} />
-                </div>
-                <h3 className="text-xl font-bold text-slate-900 tracking-tight">Why You're Seeing This Page</h3>
-              </div>
-              <ChevronDown
-                size={20}
-                className={`text-slate-500 transition-transform duration-300 ${isWhyCollapsed ? '' : 'rotate-180'}`}
-              />
-            </button>
-            <div
-              className={`overflow-hidden transition-all duration-300 ${isWhyCollapsed ? 'max-h-0' : 'max-h-96'}`}
-            >
-              <div className="pt-5 space-y-4">
-                <p className="text-slate-700 leading-7 text-[15px]">
-                  This section is here to simply help you reflect — not to tell you what you should have chosen.
-                </p>
-                <p className="text-slate-700 leading-7 text-[15px]">
-                  The purpose of the value-reflection scenario is to show how the same core values feel when they appear in a different storyline.
-                </p>
-                <p className="text-slate-700 leading-7 text-[15px]">
-                  Sometimes people respond differently without realizing it. This page helps you think about which part of your decision-making matters most to you right now.
-                </p>
-              </div>
-            </div>
-          </div>
-
           <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
             <h1 className="text-3xl font-bold text-slate-900 mb-8 text-center tracking-tight leading-tight">
               We Noticed a Contradiction in Your Recent Choices
@@ -324,39 +295,6 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
           <ArrowLeft size={20} />
           Back to Simulation
         </button>
-
-        <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-200 rounded-xl p-5 mb-6 shadow-sm">
-          <button
-            onClick={() => setIsWhyCollapsed(!isWhyCollapsed)}
-            className="w-full flex items-center justify-between text-left hover:opacity-80 transition-opacity"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md">
-                <Lightbulb className="text-white" size={20} />
-              </div>
-              <h3 className="text-xl font-bold text-slate-900 tracking-tight">Why You're Seeing This Page</h3>
-            </div>
-            <ChevronDown
-              size={20}
-              className={`text-slate-500 transition-transform duration-300 ${isWhyCollapsed ? '' : 'rotate-180'}`}
-            />
-          </button>
-          <div
-            className={`overflow-hidden transition-all duration-300 ${isWhyCollapsed ? 'max-h-0' : 'max-h-96'}`}
-          >
-            <div className="pt-5 space-y-4">
-              <p className="text-slate-700 leading-7 text-[15px]">
-                This section is here to simply help you reflect — not to tell you what you should have chosen.
-              </p>
-              <p className="text-slate-700 leading-7 text-[15px]">
-                The purpose of the value-reflection scenario is to show how the same core values feel when they appear in a different storyline.
-              </p>
-              <p className="text-slate-700 leading-7 text-[15px]">
-                Sometimes people respond differently without realizing it. This page helps you think about which part of your decision-making matters most to you right now.
-              </p>
-            </div>
-          </div>
-        </div>
 
         <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
           <h1 className="text-3xl font-bold text-slate-900 mb-8 text-center tracking-tight leading-tight">
