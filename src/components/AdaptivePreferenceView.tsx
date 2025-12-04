@@ -101,6 +101,46 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
   const hasMultipleStableValues = secondStableValue !== null;
   const selectedValueLabel = selectedOption.label || 'Unknown';
 
+  const getReorderedMoralValues = (
+    selectedLabel: string,
+    topValue: string,
+    secondValue: string | null,
+    scenario: number
+  ) => {
+    if (scenario !== 1 && scenario !== 2) {
+      return moralValues;
+    }
+
+    const normalizeValue = (value: string) => {
+      return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+    };
+
+    const normalizedSelected = normalizeValue(selectedLabel);
+    const normalizedTop = normalizeValue(topValue);
+    const normalizedSecond = secondValue ? normalizeValue(secondValue) : null;
+
+    const orderedLabels: string[] = [normalizedSelected];
+
+    if (normalizedTop && !orderedLabels.includes(normalizedTop)) {
+      orderedLabels.push(normalizedTop);
+    }
+
+    if (normalizedSecond && !orderedLabels.includes(normalizedSecond)) {
+      orderedLabels.push(normalizedSecond);
+    }
+
+    const remainingValues = moralValues.filter(
+      value => !orderedLabels.includes(value.label)
+    );
+
+    const reorderedValues = orderedLabels.map(label => {
+      const matchingValue = moralValues.find(v => v.label === label);
+      return matchingValue || { id: label.toLowerCase(), label: label };
+    });
+
+    return [...reorderedValues, ...remainingValues];
+  };
+
   const handleDragEnd = (result: any) => {
     if (!result.destination) return;
 
@@ -490,7 +530,13 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                 <button
                   onClick={() => {
                     setPreferenceType('values');
-                    setRankingItems(moralValues);
+                    const reorderedValues = getReorderedMoralValues(
+                      selectedValueLabel,
+                      topStableValue,
+                      secondStableValue,
+                      scenarioId
+                    );
+                    setRankingItems(reorderedValues);
                     if (!hasClickedButton) {
                       setHasClickedButton(true);
                       setShowButtonTooltip(false);
