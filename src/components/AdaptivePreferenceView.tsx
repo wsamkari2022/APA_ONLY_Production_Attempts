@@ -71,12 +71,18 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
   // Get user's current stable values from localStorage
   const getStableValues = () => {
     try {
-      const finalValuesStr = localStorage.getItem('finalValues');
-      if (finalValuesStr) {
-        const finalValues = JSON.parse(finalValuesStr);
-        // Handle both string arrays and object arrays
-        const firstValue = typeof finalValues[0] === 'string' ? finalValues[0] : finalValues[0]?.name;
-        const secondValue = finalValues[1] ? (typeof finalValues[1] === 'string' ? finalValues[1] : finalValues[1]?.name) : null;
+      const finalTopTwoValuesStr = localStorage.getItem('FinalTopTwoValues');
+      if (finalTopTwoValuesStr) {
+        const finalTopTwoValues = JSON.parse(finalTopTwoValuesStr);
+
+        // FinalTopTwoValues is an array of lowercase strings like ["efficiency", "safety"]
+        // Capitalize first letter of each value for display
+        const firstValue = finalTopTwoValues[0]
+          ? finalTopTwoValues[0].charAt(0).toUpperCase() + finalTopTwoValues[0].slice(1)
+          : null;
+        const secondValue = finalTopTwoValues[1]
+          ? finalTopTwoValues[1].charAt(0).toUpperCase() + finalTopTwoValues[1].slice(1)
+          : null;
 
         // If both values exist and are different, return both
         if (firstValue && secondValue && firstValue !== secondValue) {
@@ -86,7 +92,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
         return [firstValue || 'Safety', null];
       }
     } catch (error) {
-      console.error('Error parsing finalValues:', error);
+      console.error('Error parsing FinalTopTwoValues:', error);
     }
     return ['Safety', null];
   };
