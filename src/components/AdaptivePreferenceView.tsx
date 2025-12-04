@@ -182,7 +182,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
 
   const { comparisonTableColumnContent } = selectedOption;
 
-  // Special case: Scenario 3 with CVR "No" response - show simplified view only
+  // Special case: Scenario 3 with CVR "No" response - show full content without reordering
   if (isLastScenario && scenarioId === 3) {
     return (
       <div className="bg-gradient-to-br from-slate-50 to-blue-50 min-h-screen p-6 flex-1 flex flex-col">
@@ -197,8 +197,94 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
 
           <div className="bg-white rounded-xl shadow-lg p-8 mb-6">
             <h1 className="text-3xl font-bold text-slate-900 mb-8 text-center tracking-tight leading-tight">
-              We Noticed a Contradiction in Your Recent Choices
+              Your Recent Choice Doesn't Fully Match Your Stated Priorities
             </h1>
+
+            <div className="bg-gradient-to-r from-blue-50 to-teal-50 border-l-4 border-blue-500 p-6 rounded-r-xl mb-8 shadow-sm">
+              <div className="space-y-4">
+                <p className="text-slate-700 leading-7 text-[15px]">
+                  In this scenario, you selected an option that reflects a specific moral value.
+                </p>
+                <p className="text-slate-700 leading-7 text-[15px]">
+                  When we compare this value with the priorities you set earlier, we see a misalignment: the value embedded in this choice is not among the top values you said matter most to you.
+                </p>
+                <p className="text-slate-800 leading-7 text-[15px] font-semibold">
+                  That's not a mistake, and it doesn't mean your choice is wrong.
+                </p>
+                <p className="text-slate-600 leading-7 text-[15px] italic bg-slate-50 px-4 py-2 rounded-lg border border-slate-200">
+                  It simply means that, in this moment, your action and your stated priorities are pulling in slightly different directions.
+                </p>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-teal-500 flex items-center justify-center shadow-md">
+                  <Eye className="text-white" size={22} />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">What We Detected</h2>
+              </div>
+
+              <div className="bg-gradient-to-br from-slate-50 to-gray-50 border border-slate-300 rounded-xl p-6 space-y-5 shadow-sm">
+                <div className="flex items-start gap-4">
+                  <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+                    <Target className="text-blue-600" size={18} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[13px] text-slate-600 mb-2 uppercase tracking-wider font-semibold">
+                      Your recent choice emphasizes
+                    </p>
+                    <p className="text-lg font-bold text-blue-700 tracking-tight">
+                      {selectedValueLabel}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5 shadow-sm">
+                    <Sparkles className="text-emerald-600" size={18} />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-[13px] text-slate-600 mb-2 uppercase tracking-wider font-semibold">
+                      Your current top value {hasMultipleStableValues ? 'priorities are' : 'priority is'}
+                    </p>
+                    <p className="text-lg font-bold text-emerald-700 tracking-tight">
+                      {hasMultipleStableValues ? `${topStableValue} and ${secondStableValue}` : topStableValue}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-4 border-t border-slate-300">
+                  <p className="text-[15px] text-slate-700 leading-7 mb-3">
+                    This suggests that your decision in this scenario is not fully aligned with your previously expressed preferences.
+                  </p>
+                  <p className="text-[15px] text-slate-600 leading-7 italic bg-white px-4 py-3 rounded-lg border border-slate-200">
+                    You might genuinely want to act differently than your earlier ranking suggested — or you might want your preferences to better match how you're actually choosing in these situations.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mb-8">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center shadow-md">
+                  <AlertCircle className="text-white" size={22} />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">This Is Completely Normal</h2>
+              </div>
+
+              <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 space-y-4 shadow-sm">
+                <p className="text-slate-700 leading-7 text-[15px]">
+                  Many people discover that their actions, when faced with concrete trade-offs, don't always match the values they listed as "most important" at the start.
+                </p>
+                <p className="text-slate-700 leading-7 text-[15px]">
+                  This page is here to help you notice that gap and decide what, if anything, you'd like to adjust.
+                </p>
+                <p className="text-emerald-900 leading-7 text-[15px] font-semibold italic bg-white px-4 py-3 rounded-lg border border-emerald-200">
+                  It is not telling you that your decision is right or wrong.
+                </p>
+              </div>
+            </div>
 
             <div className="bg-amber-50 border-l-4 border-amber-500 p-5 rounded-r-lg mb-8 shadow-sm">
               <div className="flex items-start gap-3">
@@ -208,78 +294,6 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                   <p className="text-amber-800 text-[14px] leading-7">
                     You don't need to reorder your values since there are no more scenarios after this one. You can review the information below and return to the simulation to make a different choice if needed.
                   </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-200 rounded-xl p-6 shadow-md">
-                <div className="flex items-center gap-2 mb-5">
-                  <div className="w-11 h-11 rounded-full bg-blue-100 flex items-center justify-center shadow-sm">
-                    <Scale className="text-blue-600" size={22} />
-                  </div>
-                  <h3 className="text-lg font-bold text-blue-900 tracking-tight">Your Simulation Scenario Choice</h3>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Scenario Title</p>
-                    <p className="text-[15px] text-slate-800 font-semibold leading-6">{comparisonTableColumnContent.firstColumnTitle}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Affected Population</p>
-                    <p className="text-[15px] text-slate-800 leading-6">{comparisonTableColumnContent.firstColumnAffected.toLocaleString()} residents</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Decision Trade-off</p>
-                    <p className="text-[15px] text-slate-800 leading-6">{comparisonTableColumnContent.firstColumnRisk}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Applied Moral Value</p>
-                    <p className="text-[15px] text-slate-800 font-semibold leading-6">{comparisonTableColumnContent.firstValue}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Your Response</p>
-                    <p className={`text-base font-bold ${
-                      comparisonTableColumnContent.firstColumnuserChoice === "Accepted" ? "text-green-600" : "text-red-600"
-                    }`}>
-                      {comparisonTableColumnContent.firstColumnuserChoice === "Accepted" ? "✓ Accepted" : "✗ Rejected"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gradient-to-br from-teal-50 to-white border-2 border-teal-200 rounded-xl p-6 shadow-md">
-                <div className="flex items-center gap-2 mb-5">
-                  <div className="w-11 h-11 rounded-full bg-teal-100 flex items-center justify-center shadow-sm">
-                    <Eye className="text-teal-600" size={22} />
-                  </div>
-                  <h3 className="text-lg font-bold text-teal-900 tracking-tight">Your Value-Reflection Scenario Choice</h3>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Scenario Title</p>
-                    <p className="text-[15px] text-slate-800 font-semibold leading-6">{comparisonTableColumnContent.secondColumnTitle}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Affected Population</p>
-                    <p className="text-[15px] text-slate-800 leading-6">{comparisonTableColumnContent.secondColumnaffected.toLocaleString()} residents</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Decision Trade-off</p>
-                    <p className="text-[15px] text-slate-800 leading-6">{comparisonTableColumnContent.secondColumnRisk}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Applied Moral Value</p>
-                    <p className="text-[15px] text-slate-800 font-semibold leading-6">{comparisonTableColumnContent.secondValue}</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">Your Response</p>
-                    <p className={`text-base font-bold ${
-                      comparisonTableColumnContent.secondColumnuserChoice === "Accepted" ? "text-green-600" : "text-red-600"
-                    }`}>
-                      {comparisonTableColumnContent.secondColumnuserChoice === "Accepted" ? "✓ Accepted" : "✗ Rejected"}
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>
