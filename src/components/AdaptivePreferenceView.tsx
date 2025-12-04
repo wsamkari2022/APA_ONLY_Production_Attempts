@@ -613,7 +613,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                       <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className="space-y-3"
+                        className="space-y-2"
                       >
                         {rankingItems.map((item, index) => (
                           <Draggable key={item.id} draggableId={item.id} index={index}>
@@ -622,32 +622,17 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
                                 {...provided.dragHandleProps}
-                                style={{
-                                  ...provided.draggableProps.style,
-                                  transition: snapshot.isDragging
-                                    ? 'none'
-                                    : 'box-shadow 0.2s ease, border-color 0.2s ease, opacity 0.2s ease',
-                                }}
-                                className={`bg-white p-5 rounded-lg border flex items-center gap-4 cursor-grab active:cursor-grabbing ${
+                                className={`bg-white p-5 rounded-lg border flex items-center gap-4 transition-all duration-150 ${
                                   snapshot.isDragging
-                                    ? 'border-blue-400 shadow-2xl ring-2 ring-blue-200 ring-opacity-50 z-50 opacity-90'
-                                    : 'border-slate-300 shadow-sm hover:shadow-lg hover:border-slate-400'
+                                    ? 'border-slate-400 shadow-xl scale-102'
+                                    : 'border-slate-300 shadow-sm hover:shadow-md hover:border-slate-400'
                                 }`}
                               >
-                                <div className={`w-9 h-9 flex items-center justify-center rounded-full text-slate-700 font-bold text-base shadow-sm transition-colors duration-200 ${
-                                  snapshot.isDragging
-                                    ? 'bg-gradient-to-br from-blue-100 to-blue-200'
-                                    : 'bg-gradient-to-br from-slate-100 to-slate-200'
-                                }`}>
+                                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-gradient-to-br from-slate-100 to-slate-200 text-slate-700 font-bold text-base shadow-sm">
                                   {index + 1}
                                 </div>
-                                <span className="flex-1 font-semibold text-slate-800 text-[15px] tracking-tight select-none">{item.label}</span>
-                                <MoveVertical
-                                  size={20}
-                                  className={`transition-colors duration-200 ${
-                                    snapshot.isDragging ? 'text-blue-500' : 'text-slate-400'
-                                  }`}
-                                />
+                                <span className="flex-1 font-semibold text-slate-800 text-[15px] tracking-tight">{item.label}</span>
+                                <MoveVertical size={20} className="text-slate-400" />
                               </div>
                             )}
                           </Draggable>
