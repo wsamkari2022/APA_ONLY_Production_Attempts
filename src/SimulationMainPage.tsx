@@ -642,7 +642,11 @@ const SimulationMainPage: React.FC = () => {
     
     if (!isAligned) {
       setSelectedDecision(tempSelectedOption);
-      setShowAdaptivePreference(true);
+      if (currentScenario.id === 3) {
+        setShowDecisionSummary(true);
+      } else {
+        setShowAdaptivePreference(true);
+      }
     } else {
       setSelectedDecision(tempSelectedOption);
       setShowDecisionSummary(true);
@@ -1394,6 +1398,9 @@ const SimulationMainPage: React.FC = () => {
         onConfirmDecision={handleConfirmDecision}
         canConfirm={hasExploredAlternatives}
         onReviewAlternatives={handleExploreAlternatives}
+        showMisalignmentWarning={currentScenario.id === 3 && selectedDecision ? !matchedStableValues.includes(selectedDecision.label.toLowerCase()) : false}
+        scenarioNumber={currentScenario.id}
+        matchedStableValues={matchedStableValues}
       />
 
       <RadarChart
