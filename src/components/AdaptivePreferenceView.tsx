@@ -152,6 +152,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
         <div className="max-w-5xl mx-auto w-full">
           <button
             onClick={() => {
+              localStorage.setItem('hasReorderedValues', 'false');
               localStorage.setItem('simulationMetricsReorderingFlag', 'false');
               localStorage.setItem('moralValuesReorderingFlag', 'false');
               onBack();
@@ -286,6 +287,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
 
             <button
               onClick={() => {
+                localStorage.setItem('hasReorderedValues', 'false');
                 localStorage.setItem('simulationMetricsReorderingFlag', 'false');
                 localStorage.setItem('moralValuesReorderingFlag', 'false');
                 onBack();
@@ -307,6 +309,7 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
       <div className="max-w-5xl mx-auto w-full">
         <button
           onClick={() => {
+            localStorage.setItem('hasReorderedValues', 'false');
             localStorage.setItem('simulationMetricsReorderingFlag', 'false');
             localStorage.setItem('moralValuesReorderingFlag', 'false');
             onBack();
