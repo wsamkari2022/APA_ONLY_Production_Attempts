@@ -70,7 +70,10 @@ const AdaptivePreferenceView: React.FC<AdaptivePreferenceViewProps> = ({
       const finalValuesStr = localStorage.getItem('finalValues');
       if (finalValuesStr) {
         const finalValues = JSON.parse(finalValuesStr);
-        return [finalValues[0] || 'Safety', finalValues[1] || 'Efficiency'];
+        // Handle both string arrays and object arrays
+        const firstValue = typeof finalValues[0] === 'string' ? finalValues[0] : finalValues[0]?.name;
+        const secondValue = typeof finalValues[1] === 'string' ? finalValues[1] : finalValues[1]?.name;
+        return [firstValue || 'Safety', secondValue || 'Efficiency'];
       }
     } catch (error) {
       console.error('Error parsing finalValues:', error);
